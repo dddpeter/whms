@@ -1,0 +1,78 @@
+@charset "utf-8";
+@import "var";
+body,.ant-card{
+  font-size: 16px!important;
+}
+.clear {
+  overflow: auto;
+  zoom: 1;
+}
+.ant-layout-header {
+  background-color: $theme_color;
+  position: fixed;
+  z-index: 900;
+  width: 100%;
+  top:0;
+  box-shadow:  1px 0px 2px 1px $primary-outline;
+  >.logo{
+    height: 64 - 16px;
+    background: $theme_color;
+    border-radius: 6px;
+    margin: 8px 24px 8px 0;
+    float: left;
+    >a{
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    >.logo-img{
+      display: inline-block;
+      float: left;
+
+    }
+    >.sysName{
+      display: inline-block;
+      float: left;
+      color: white;
+      >span{
+        display:block;
+        height: 64 - 16px;
+        line-height: 64-16px;
+        font-size: 20px;
+      }
+    }
+  }
+  > .ant-menu {
+    float: left;
+    color: #666666;
+    font-size: 16px;
+    border: 0;
+    >.ant-menu-item{
+      height: 64px;
+      line-height: 64px;
+      background-color: $theme_color;
+      color: white;
+      border: 0;
+      top: 0;
+
+    }
+    > .ant-menu-item-active{
+      //border-bottom: 2px solid white;
+      color: white;
+      background-color: $primary-half;
+    }
+     > .ant-menu-item-selected {
+     // border-bottom: 2px solid white;
+      color: white;
+      background-color: $primary-half;
+    }
+  }
+}
+.ant-layout-content{
+  margin: 65px 50px 0 50px;
+  background-color: white;
+  border: 1px solid $primary-outline;
+}
+.ant-layout-footer{
+  text-align: center;
+  color: $theme_color;
+}
