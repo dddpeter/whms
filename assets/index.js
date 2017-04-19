@@ -6,8 +6,8 @@ import {render} from 'react-dom';
 import { Router,browserHistory } from 'react-router';
 import App from './components/App.js';
 import DashBoard from './components/dashboard/DashBoard.js';
+import Project from './components/project/Project.js';
 import NotFound from './components/NotFound.js'
-
 
 const routerConfig = [
     {
@@ -15,7 +15,8 @@ const routerConfig = [
         component: App,
         indexRoute: { component: DashBoard },
         childRoutes: [
-            { path: 'dashboard', component: DashBoard}
+            { path: 'dashboard', component: DashBoard},
+            { path: 'project', component: Project}
         ]
     },
     {
