@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require("webpack");
 
@@ -60,7 +59,6 @@ module.exports = {
             {
                 from: './assets/favicon.ico', to: 'favicon.ico'
             }]),
-        new ExtractTextPlugin("styles/[name].css"),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin (),
     ],

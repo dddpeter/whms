@@ -5,6 +5,7 @@ import '../sass/App.scss'
 import {Layout,Menu} from 'antd';
 
 const { Header, Content, Footer } = Layout;
+
 class App extends Component {
     constructor(props) {
         super(props);

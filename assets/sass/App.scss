@@ -1,23 +1,22 @@
 @charset "utf-8";
 @import "var";
-body {
-  font-family: "lucida grande", "lucida sans unicode",
-  lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
-  color: #555;
-  background: #f5f7f9;
-  font-size: 16px;
-  margin: 0 auto;
+body,.ant-card{
+  font-size: 16px!important;
+}
+.clear {
+  overflow: auto;
+  zoom: 1;
 }
 .ant-layout-header {
-  background-color: white;
+  background-color: $theme_color;
   position: fixed;
+  z-index: 900;
   width: 100%;
   top:0;
-  border-bottom: 1px solid #e9e9e9;
-  box-shadow:  1px 0px 1px 1px $primary-outline;
+  box-shadow:  1px 0px 2px 1px $primary-outline;
   >.logo{
     height: 64 - 16px;
-    background: white;
+    background: $theme_color;
     border-radius: 6px;
     margin: 8px 24px 8px 0;
     float: left;
@@ -33,7 +32,7 @@ body {
     >.sysName{
       display: inline-block;
       float: left;
-      color: $theme_color;
+      color: white;
       >span{
         display:block;
         height: 64 - 16px;
@@ -45,25 +44,31 @@ body {
   > .ant-menu {
     float: left;
     color: #666666;
+    font-size: 16px;
+    border: 0;
     >.ant-menu-item{
       height: 64px;
       line-height: 64px;
+      background-color: $theme_color;
+      color: white;
+      border: 0;
+      top: 0;
+
     }
     > .ant-menu-item-active{
-      border-bottom: 2px solid $primary-outline;
-      color: $theme_color;
-      background-color: $primary-grey;
+      //border-bottom: 2px solid white;
+      color: white;
+      background-color: $primary-half;
     }
      > .ant-menu-item-selected {
-      border-bottom: 2px solid $theme_color;
-      color: $theme_color;
-      background-color: $primary-grey;
+     // border-bottom: 2px solid white;
+      color: white;
+      background-color: $primary-half;
     }
   }
 }
 .ant-layout-content{
   margin: 65px 50px 0 50px;
-  min-height: 200px;
   background-color: white;
   border: 1px solid $primary-outline;
 }
