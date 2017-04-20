@@ -37,7 +37,7 @@ class App extends Component {
                         </Link>
                     </div>
                     <Menu theme="light" mode="horizontal"
-                          selectedKeys={this.state.current}
+                          selectedKeys={[this.state.current]}
                           onClick={this.handleClick}
                     >
                         <Menu.Item key="dashboard">My Dashboard</Menu.Item>
