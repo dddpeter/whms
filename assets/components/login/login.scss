@@ -1,0 +1,48 @@
+@charset "utf-8";
+@import "../../sass/var";
+
+
+body,html{
+  margin:0;
+  padding:0;
+}
+.login{
+&-background{
+
+  background:$primary-half;
+  width: 99%;
+  height: 250px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  margin: auto;
+
+
+}
+  &-content{
+    position:absolute;
+    background-color:rgb(240,240,240);
+    width:400px;
+    height:350px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: auto;
+    border:1px solid $primary-grey;
+    text-align: center;
+    padding:20px 0;
+    &-form{
+      margin:50px auto 0;
+      width:50%;
+      &-submit{
+        margin-top:10px;
+        width:100%;
+        background:rgba(145,6,133,0.75);
+        color:white;
+      }
+    }
+  }
+}

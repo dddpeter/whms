@@ -1,0 +1,17 @@
+@charset "utf-8";
+@import "../../sass/var";
+.modal-dialog{
+  padding:20px 0;
+
+}
+.dialog-footer{
+  text-align: center;
+  &-button{
+    background:$primary-half;
+    min-width:75px;
+    color:white;
+  }
+  .cancel{
+    margin-left:25px;
+  }
+}
