@@ -7,8 +7,21 @@ import {Layout,Menu} from 'antd';
 const { Header, Content, Footer } = Layout;
 
 class App extends Component {
+    static contextTypes = {
+        router: React.PropTypes.object.isRequired
+    }
     constructor(props) {
         super(props);
+        this.state = {
+            current: 'dashboard',
+        }
+    }
+    handleClick = (e) => {
+        console.log('click ', e);
+        this.setState({
+            current: e.key,
+        });
+        this.context.router.push('/'+e.key)
     }
     render() {
         return (
@@ -23,9 +36,12 @@ class App extends Component {
                             <span>中青IT工时统计系统</span>
                         </Link>
                     </div>
-                    <Menu theme="light" mode="horizontal">
-                        <Menu.Item>My Dashboard</Menu.Item>
-                        <Menu.Item>Projects</Menu.Item>
+                    <Menu theme="light" mode="horizontal"
+                          selectedKeys={this.state.current}
+                          onClick={this.handleClick}
+                    >
+                        <Menu.Item key="dashboard">My Dashboard</Menu.Item>
+                        <Menu.Item key="project">Projects</Menu.Item>
                     </Menu>
                 </Header>
                 <Layout>
