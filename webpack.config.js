@@ -30,15 +30,7 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                loader:'react-hot-loader!babel-loader',
-                query: {
-                    presets: ['es2015', 'react', 'stage-2'],
-                    plugins: ['transform-decorators-legacy',["import", { 'libraryName': 'antd', 'style': true }]]
-                },
-                loaders: ['react-hot-loader','babel-loader?' +
-                'presets[]=es2015,' +
-                'presets[]=stage-2,' +
-                'presets[]=react,' +
+                loaders: ['babel-loader?presets[]=es2015,presets[]=stage-2,presets[]=react,' +
                 'plugins[]=transform-decorators-legacy'],
                 include: path.join(__dirname, 'assets'),
                 exclude: /node_modules/
