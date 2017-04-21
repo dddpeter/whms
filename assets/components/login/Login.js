@@ -3,10 +3,9 @@
  */
 import React, {Component} from 'react';
 import './login.scss'
-import { Form,Layout,Card, Icon, Input, Button} from 'antd';
+import { Form,Card, Icon, Input, Button} from 'antd';
 const FormItem = Form.Item;
 
-const { Header, Content, Footer } = Layout;
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }

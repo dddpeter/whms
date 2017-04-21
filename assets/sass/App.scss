@@ -82,7 +82,11 @@ body,.ant-card{
     }
   }
 }
-
+.ant-btn:hover, .ant-btn:focus, .ant-btn:active, .ant-btn.active{
+  background:rgba(145, 6, 133, 0.75)!important;
+  color:#fff!important;
+  border:none!important;
+}
 .ant-layout-content{
   margin: 65px 50px 0 50px;
   background-color: white;

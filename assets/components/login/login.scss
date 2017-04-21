@@ -9,14 +9,14 @@ body,html{
 .login{
 &-background{
 
-  background:$primary-half;
+  background:#930784;
   width: 99%;
   height: 250px;
   position: fixed;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   margin: auto;
 
 
@@ -26,10 +26,10 @@ body,html{
     background-color:rgb(240,240,240);
     width:400px;
     height:350px;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     margin: auto;
     border:1px solid $primary-grey;
     text-align: center;
@@ -40,7 +40,7 @@ body,html{
       &-submit{
         margin-top:10px;
         width:100%;
-        background:rgba(145,6,133,0.75);
+        background:#930784;
         color:white;
       }
     }
