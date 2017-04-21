@@ -12,9 +12,18 @@ class App extends Component {
     }
     constructor(props) {
         super(props);
-        this.state = {
-            current: 'dashboard',
+        var pathname = this.props.location.pathname.replace('/','');
+        if(pathname===undefined || pathname===null || pathname === '') {
+            this.state = {
+                current: 'dashboard',
+            }
         }
+        else{
+            this.state = {
+                current: pathname,
+            }
+        }
+
     }
     handleClick = (e) => {
         console.log('click ', e);

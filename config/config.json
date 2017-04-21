@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "whmser",
+    "password": "whmser",
+    "database": "whmsdevdb",
+    "host": "101.201.153.154",
+    "dialect": "postgres",
+    "ldap":{
+      "url":"ldap://auth.dev.s.unicc.com.cn:389",
+      "ou":"it",
+      "dc":["unicc","com","cn"]
+    }
+  },
+  "production": {
+    "username": "whmser",
+    "password": "whmser",
+    "database": "whmsdevdb",
+    "host": "101.201.153.154",
+    "dialect": "postgres",
+    "ldap":{
+      "url":"ldap://auth.dev.s.unicc.com.cn:389",
+      "ou":"it",
+      "dc":["unicc","com","cn"]
+    }
+  }
+}

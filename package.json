@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
     "prestart": "webpack",
-    "predev": "webpack --config webpack.config.dev.js",
+    "ppredev": "webpack --config webpack.config.dev.js",
     "dev": "cross-env NODE_ENV=development node  --harmony  server.js",
     "start": "cross-env NODE_ENV=production node  --harmony server.js"
   },
@@ -58,16 +58,21 @@
     "antd": "^2.9.1",
     "body-parser": "^1.17.0",
     "compression": "^1.6.2",
+    "cookie-parser": "^1.4.3",
     "cross-env": "^3.1.4",
     "events": "^1.1.1",
     "express": "^4.15.0",
+    "express-session": "^1.15.2",
     "highcharts": "^5.0.10",
+    "ldapjs": "^1.0.1",
     "moment": "^2.17.1",
     "morgan": "^1.8.1",
+    "pg": "^6.1.5",
+    "pg-hstore": "^2.3.2",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-router": "^3.0.2",
     "reload": "^1.1.1",
-    "supervisor": "^0.12.0"
+    "sequelize": "^3.30.4"
   }
 }
