@@ -63,8 +63,8 @@ module.exports = function(app) {
                     console.log('search status: ' + result.status);
                     //unbind操作，必须要做
                     client.unbind();
-                    //console.log(resultObj);
-                    if(resultObj.message === 'ok'){
+                    console.log(resultObj);
+                    if(resultObj.message === 'ok' && resultObj.user.userPassword){
                         let user = {uid:resultObj.user.uid,email:resultObj.user.mail};
                         req.session.loginUser = user;
                         saveOrUpdate(user);
