@@ -1,7 +1,45 @@
 @import "../../sass/var";
 .content{
+  .button-purple{
+    background:#930784;
+    color:white;
+    margin-top:10px;
+  }
+  .button-white{
+    background:#fff;
+  }
+
+  &-title{
+    border:1px solid #d9d9d9;
+    &-big{
+      font-size:16px;
+    }
+    &-icon-big{
+      font-size:16px;
+      color:#930784;
+    }
+    &-icon-small{
+      font-size:14px;
+      color:#930784;
+      margin:1px 4px;
+    }
+    &-secondary{
+    margin-bottom:16px;
+    border:1px solid #d9d9d9;
+    }
+  }
   .ant-card-head-title{
-    font-size: 20px;
+    font-size: 14px;
     color: $theme_color;
+  }
+  .right-content{
+    font-size:14px !important;
+    margin-bottom:10px;
+    &-table{
+     line-height:30px;
+      color:#930784;
+      margin:20px auto;
+      width:70%;
+    }
   }
 }

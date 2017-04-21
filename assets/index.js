@@ -8,6 +8,7 @@ import App from './components/App.js';
 import DashBoard from './components/dashboard/DashBoard.js';
 import Project from './components/project/Project.js';
 import NotFound from './components/NotFound.js'
+import Login from './components/login/Login'
 
 const routerConfig = [
     {
@@ -18,6 +19,10 @@ const routerConfig = [
             { path: 'dashboard', component: DashBoard},
             { path: 'project', component: Project}
         ]
+    },
+    {
+        path: '/login',
+        component: Login,
     },
     {
         path: '*',

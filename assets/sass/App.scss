@@ -7,6 +7,20 @@ body,.ant-card{
   overflow: auto;
   zoom: 1;
 }
+.ant-card-head{
+  height: 30px!important;
+  line-height: 30px!important;
+  padding:0 16px!important;
+}
+.ant-card-body{
+  padding:16px!important;
+}
+.ant-card-extra{
+  top: 7px !important;
+}
+.ant-form-item{
+  margin-bottom: 12px!important;
+}
 .ant-layout-header {
   background-color: $theme_color;
   position: fixed;
@@ -37,10 +51,11 @@ body,.ant-card{
         display:block;
         height: 64 - 16px;
         line-height: 64-16px;
-        font-size: 20px;
+        font-size: 14px;
       }
     }
   }
+
   > .ant-menu {
     float: left;
     color: #666666;
@@ -66,6 +81,11 @@ body,.ant-card{
       background-color: $primary-half;
     }
   }
+}
+.ant-btn:hover, .ant-btn:focus, .ant-btn:active, .ant-btn.active{
+  background:rgba(145, 6, 133, 0.75)!important;
+  color:#fff!important;
+  border:none!important;
 }
 .ant-layout-content{
   margin: 65px 50px 0 50px;

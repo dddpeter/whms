@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Card, Row, Col, Icon} from 'antd';
+import {Card, Row, Col, Icon,Button} from 'antd';
 import  Highcharts from 'highcharts'
+import ModalDialog from './ModalDialog'
 
 import './dashboard.scss'
 
@@ -59,8 +60,24 @@ class DashBoard extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            visibleState:false,
+        };
     }
+    //点击add图标之后弹出对话框
+    clickPlus=()=>{
+        this.setState({
+            visibleState:true,
+        });
+    };
+    //响应用户是否点击了关闭按钮
+    onClickChanged=()=>{
+        this.setState({
+            visibleState:false,
+        });
+    };
     componentDidMount(){
+
         this.renderChart();
     }
 
@@ -69,20 +86,17 @@ class DashBoard extends Component {
             <div className="content">
                 <Row gutter={8}>
                     <Col span={16}>
-                        <Card title="My Entries"
-                              style={{border:'2px solid rgba(145,6,133,0.2)'}}
-                              extra={<Icon style={{fontSize:'20px',color:'#930784'}}
-                              type="plus-circle"
-
+                        <Card className="content-title" title={<span className="content-title-big">My Entries</span>}
+                              extra={<Icon className='content-title-icon-big'
+                                           type="plus-circle" onClick={this.clickPlus}
                               />}>
-
-                            <Card title="青青互助"  style = {{marginBottom:'16px',border:'2px solid rgba(145,6,133,0.2)'}} extra={
-                            <span>
-                            <Icon type="edit" style={{fontSize:'19px',color:'#930784',margin:'4px'}}></Icon>
-                            <Icon type="delete" style={{fontSize:'19px',color:'#930784',margin:'4px'}}></Icon>
+                            <Card title="青青互助" className="content-title-secondary" extra={
+                                <span>
+                            <Icon type="edit" className='content-title-icon-small'></Icon>
+                            <Icon type="delete" className='content-title-icon-small'></Icon>
                             </span>
                             }
-                            bodyStyle={{fontSize:'15px',background:'rgba(220,220,220,0.2)'}}>
+                                  bodyStyle={{fontSize:'12px',background:'rgba(220,220,220,0.2)'}}>
                                 <Row>
                                     <Col span={3}>xiexin</Col>
                                     <Col span={3}>2017/04/10</Col>
@@ -104,36 +118,15 @@ class DashBoard extends Component {
                                             </Row>
                                         </div>
                                     </Col>
-                                    </Row>
-                            </Card>
-                            <Card title="青青互助"  style = {{marginBottom:'16px',border:'2px solid rgba(145,6,133,0.2)'}} extra={
-                            <span>
-                            <Icon type="edit" style={{fontSize:'19px',color:'#930784',margin:'4px'}}></Icon>
-                            <Icon type="delete" style={{fontSize:'19px',color:'#930784',margin:'4px'}}></Icon>
-                            </span>
-                            }
-                                  bodyStyle={{fontSize:'15px',background:'rgba(220,220,220,0.2)'}}>
-                                <Row>
-                                    <Col span={3}>xiexin</Col>
-                                    <Col span={3}>2017/04/10</Col>
-                                    <Col span={3}>需求</Col>
-                                    <Col span={3}>30h</Col>
-                                    <Col span={12}>
-                                        <div>
-                                            <Row>
-                                                <Col span={24}>需求分析</Col>
-                                            </Row>
-                                        </div>
-                                    </Col>
                                 </Row>
                             </Card>
-                            <Card title="青青互助"  style = {{marginBottom:'16px',border:'2px solid rgba(145,6,133,0.2)'}} extra={
-                            <span>
-                            <Icon type="edit" style={{fontSize:'19px',color:'#930784',margin:'4px'}}></Icon>
-                            <Icon type="delete" style={{fontSize:'19px',color:'#930784',margin:'4px'}}></Icon>
+                            <Card title="青青互助"  className="content-title-secondary" extra={
+                                <span>
+                            <Icon type="edit" className='content-title-icon-small'></Icon>
+                            <Icon type="delete" className='content-title-icon-small'></Icon>
                             </span>
                             }
-                                  bodyStyle={{fontSize:'15px',background:'rgba(220,220,220,0.2)'}}>
+                                  bodyStyle={{fontSize:'12px',background:'rgba(220,220,220,0.2)'}}>
                                 <Row>
                                     <Col span={3}>xiexin</Col>
                                     <Col span={3}>2017/04/10</Col>
@@ -151,16 +144,27 @@ class DashBoard extends Component {
                         </Card>
                     </Col>
                     <Col span={8}>
-                        <Card style={{marginBottom:'10px'}}
-                              bodyStyle={{color:'#930784',margin:'20px auto',width:'60%'}}>
-                            Welcome, Xiexin<br/>
-                            xiexin@unicc.com.cn
+                        <Card className="right-content">
+                            <div className="right-content-table">
+                                <Row className="right-content-table">
+                                    <Col>Welcome! Xiexin</Col>
+                                    <Col>xiexin@unicc.com.cn</Col>
+                                    <Col><a href="#">Change your password</a></Col>
+                                    <Col> <Button className='button-purple'>
+                                        <Icon type="logout"/>Log out
+                                    </Button></Col>
+                                </Row>
+
+                            </div>
+
                         </Card>
                         <Card title="My Summary">
                             <div id="summaryCharts"></div>
                         </Card>
                     </Col>
                 </Row>
+                <ModalDialog  visible={this.state.visibleState}
+                              callbackClick={this.onClickChanged}/>
             </div>
 
         );
