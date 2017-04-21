@@ -12,22 +12,25 @@ const task = sequelize.define('task', {
             defaultValue: Sequelize.DataTypes.UUIDV4,
             primaryKey: true
         },
-        issueDate:{
-            type:Sequelize.DataTypes.DATE,
-            allowNull:false
+        issueDate: {
+            type: Sequelize.DataTypes.DATE,
+            allowNull: false
         },
-        type:{
-            type:Sequelize.DataTypes.ENUM,
-            values:['DEVELOPMENT','TEST','REQUIREMENT','MAINTAIN','TEAM','ADMIN']
+        type: {
+            type: Sequelize.DataTypes.ENUM,
+            values: ['DEVELOPMENT', 'TEST', 'REQUIREMENT', 'MAINTAIN', 'TEAM', 'ADMIN']
         },
-        uid:{
+        uid: {
             type: Sequelize.DataTypes.STRING,
-            references: {model:'t_user',key:'uid'}
+            references: {model: 't_user', key: 'uid'}
         },
-        pid:{
+        pid: {
             type: Sequelize.DataTypes.UUID,
-            references: {model:'t_project',key:'pid'}
+            references: {model: 't_project', key: 'pid'}
         },
+        content: {
+            type: Sequelize.DataTypes.STRING,
+        }
     },
     {
         tableName: 't_task',

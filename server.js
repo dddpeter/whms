@@ -4,14 +4,18 @@ const path = require('path');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+var FileStore = require('session-file-store')(session);
 var cookieParser = require('cookie-parser');
+var favicon = require('serve-favicon')
 const app = express();
 const PORT = process.env.PORT || 3005;
 const ENV = process.env.NODE_ENV || 'development';
 require('./app/Models');
 app.set('trust proxy', 1) // trust first proxy
+app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')))
 app.use(session({
     secret: '12345',
+    store: new FileStore(),
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge:1000*60*30,httpOnly:false,secure: false }
