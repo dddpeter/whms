@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import '../sass/noFound.scss'
 
 class  NotFound extends Component{
     render() {
@@ -9,9 +10,10 @@ class  NotFound extends Component{
                     <h3>Sorry,We cannot find the page you requested.</h3>
                     <p>输入的网址不正确</p>
                     <p>页面已被删除</p>
-                <span className="back-home"><a className="back-home-link" href="/">返回首页</a></span>
+                <h3 className="back-home"><a className="back-home-link" href="/">返回首页</a></h3>
             </div>
         );
     }
 }
 
+export default NotFound

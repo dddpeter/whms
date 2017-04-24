@@ -18,8 +18,6 @@ body,html{
   right: 0;
   bottom: 0;
   margin: auto;
-
-
 }
   &-content{
     position:absolute;
@@ -40,9 +38,10 @@ body,html{
       &-submit{
         margin-top:10px;
         width:100%;
-        background:#930784;
-        color:white;
+
       }
     }
   }
+
+
 }

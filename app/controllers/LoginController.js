@@ -96,7 +96,7 @@ module.exports = function(app) {
                 return;
             }
             res.clearCookie('connect.sid');
-            res.redirect('/login');
+            res.end(res.json({result:true}));
         });
     });
 }

@@ -1,12 +1,22 @@
 import React, {Component} from 'react';
-import {Card, Row, Col, Icon,Button} from 'antd';
+import {Card, Row, Col, Icon, Button, Popconfirm, Pagination} from 'antd';
+import {Link} from 'react-router'
 import  Highcharts from 'highcharts'
 import ModalDialog from './ModalDialog'
-
+import ePromise from 'es6-promise'
+ePromise.polyfill();
+import fetch from 'isomorphic-fetch';
 import './dashboard.scss'
+import EditDialog from './EditDialog';
+
+
 
 class DashBoard extends Component {
-    renderChart(){
+    static contextTypes = {
+        router: React.PropTypes.object.isRequired
+    };
+
+    renderChart() {
         var charts = new Highcharts.chart('summaryCharts', {
             chart: {
                 plotBackgroundColor: null,
@@ -58,25 +68,110 @@ class DashBoard extends Component {
         });
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            visibleState:false,
-        };
-    }
     //点击add图标之后弹出对话框
-    clickPlus=()=>{
+    clickPlus = () => {
         this.setState({
-            visibleState:true,
+            visibleState: true,
         });
     };
     //响应用户是否点击了关闭按钮
-    onClickChanged=()=>{
+    onClickChanged = () => {
         this.setState({
-            visibleState:false,
+            visibleState: false,
         });
     };
-    componentDidMount(){
+    //点击修改图标后弹出修改对话框
+    editChanged = () => {
+        this.setState({
+            editState: true,
+        });
+    };
+
+    //修改页面用户是否点击了关闭按钮
+    backEditClick = () => {
+        this.setState({
+            editState: false,
+        });
+    };
+
+    //点击退出登陆
+    constructor(props) {
+        super(props);
+        this.handleOutClick = this.handleOutClick.bind(this);
+        this.state = {
+            login: false,
+            styleError: {
+                fontSize: '12px',
+                display: 'none',
+            },
+            dataList: [{
+                id: '1',
+                project: '青青互助',
+                name: 'linqj',
+                date: '2017-01-22',
+                type: '需求',
+                duration: '34',
+                description: '需求分析',
+            }, {
+                id: '2',
+                project: '青青互助',
+                name: 'linqj',
+                date: '2017-01-22',
+                type: '需求',
+                duration: '34',
+                description: '需求分析',
+            }, {
+                id: '3',
+                project: '青青互助',
+                name: 'linqj',
+                date: '2017-01-22',
+                type: '需求',
+                duration: '34',
+                description: '需求分析',
+            },
+                {
+                    id: '4',
+                    project: '青青互助',
+                    name: 'linqj',
+                    date: '2017-01-22',
+                    type: '需求',
+                    duration: '34',
+                    description: '需求分析',
+                }]
+        }
+
+    }
+
+    handleOutClick = (e) => {
+        e.preventDefault();
+        let that = this;
+        fetch('/api/logout', {    //发送退出登录的请求
+            method: 'DELETE'
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    this.setState({
+                        styleError: {
+                            fontSize: '12px',
+                            display: 'block',
+                        }
+                    })
+                    //todo: 显示错误信息 网络错误
+                }
+            }).then(function (data) {
+            that.context.router.push({pathname: '/login'});
+        }).catch((error) => {
+            console.log('logout failed', error)
+        })
+    };
+    //list
+    showTotal=(total)=>{
+    return `Total ${total} items`;
+}
+
+    componentDidMount() {
 
         this.renderChart();
     }
@@ -90,81 +185,75 @@ class DashBoard extends Component {
                               extra={<Icon className='content-title-icon-big'
                                            type="plus-circle" onClick={this.clickPlus}
                               />}>
-                            <Card title="青青互助" className="content-title-secondary" extra={
-                                <span>
-                            <Icon type="edit" className='content-title-icon-small'></Icon>
-                            <Icon type="delete" className='content-title-icon-small'></Icon>
-                            </span>
-                            }
-                                  bodyStyle={{fontSize:'12px',background:'rgba(220,220,220,0.2)'}}>
-                                <Row>
-                                    <Col span={3}>xiexin</Col>
-                                    <Col span={3}>2017/04/10</Col>
-                                    <Col span={3}>需求</Col>
-                                    <Col span={3}>30h</Col>
-                                    <Col span={12}>
-                                        <div>
-                                            <Row>
-                                                <Col span={24}>1.需求分析</Col>
-                                            </Row>
-                                            <Row>
-                                                <Col span={24}>2.需求分析</Col>
-                                            </Row>
-                                            <Row>
-                                                <Col span={24}>3.需求分析</Col>
-                                            </Row>
-                                            <Row>
-                                                <Col span={24}>4.需求分析</Col>
-                                            </Row>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </Card>
-                            <Card title="青青互助"  className="content-title-secondary" extra={
-                                <span>
-                            <Icon type="edit" className='content-title-icon-small'></Icon>
-                            <Icon type="delete" className='content-title-icon-small'></Icon>
-                            </span>
-                            }
-                                  bodyStyle={{fontSize:'12px',background:'rgba(220,220,220,0.2)'}}>
-                                <Row>
-                                    <Col span={3}>xiexin</Col>
-                                    <Col span={3}>2017/04/10</Col>
-                                    <Col span={3}>需求</Col>
-                                    <Col span={3}>30h</Col>
-                                    <Col span={12}>
-                                        <div>
-                                            <Row>
-                                                <Col span={24}>需求分析</Col>
-                                            </Row>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </Card>
+
+                                {
+                                    /*this.state.data*/
+                                    this.state.dataList.map(function (list) {
+                                        return (
+                                            <Card key={list.id} title={list.project} className="content-title-secondary" extra={
+                                                <span>
+                                                    <Link>
+                                                        <Icon className="className='content-title-icon-small'" type="edit"/>
+                                                    </Link>
+                                                    <Popconfirm title="确认删除？"
+                                                                placement="right"
+                                                                okText="确认"
+                                                                cancelText="取消">
+                                                       <a><Icon type="delete" className='content-title-icon-small'/></a>
+                                                    </Popconfirm>
+                                              </span>
+                                            }
+                                                  bodyStyle={{fontSize: '12px', background: 'rgba(220,220,220,0.2)'}}>
+                                                <Row>
+                                                    <Col span={3}>{list.name}</Col>
+                                                    <Col span={3}>{list.date}</Col>
+                                                    <Col span={3}>{list.type}</Col>
+                                                    <Col span={3}>{list.duration}</Col>
+                                                    <Col span={12}>
+                                                        {list.description}
+                                                    </Col>
+                                                </Row>
+                                            </Card>
+                                        );
+                                    }.bind(this))
+                                }
+                            <div>
+                                <Pagination size="small" total={50} showSizeChanger showQuickJumper />
+                            </div>
                         </Card>
+
                     </Col>
                     <Col span={8}>
                         <Card className="right-content">
                             <div className="right-content-table">
                                 <Row className="right-content-table">
-                                    <Col>Welcome! Xiexin</Col>
-                                    <Col>xiexin@unicc.com.cn</Col>
+                                    <Col><span className="col-span">Welcome!</span>{this.props.location.state.uid}</Col>
+                                    <Col>{this.props.location.state.uid}@unicc.com.cn</Col>
                                     <Col><a href="#">Change your password</a></Col>
-                                    <Col> <Button className='button-purple'>
-                                        <Icon type="logout"/>Log out
-                                    </Button></Col>
+                                    <Col>
+                                        <Button className='button-purple' onClick={this.handleOutClick}>
+                                            <Icon type="logout"/>Log out
+                                        </Button>
+                                        <p style={this.state.styleError}>网络错误</p>
+                                    </Col>
                                 </Row>
 
                             </div>
 
                         </Card>
                         <Card title="My Summary">
-                            <div id="summaryCharts"></div>
+                            <div id="summaryCharts">
+
+                            </div>
                         </Card>
                     </Col>
                 </Row>
-                <ModalDialog  visible={this.state.visibleState}
-                              callbackClick={this.onClickChanged}/>
+                <ModalDialog visible={this.state.visibleState}
+                             callbackClick={this.onClickChanged}/>
+                <EditDialog visible={this.state.editState}
+                            backEditClick={this.backEditClick}
+                />
+
             </div>
 
         );

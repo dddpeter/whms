@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import './login.scss'
-import { Form,Card, Icon, Input, Button} from 'antd';
+import { Form,Card, Icon, Input, Button,Tooltip} from 'antd';
 const FormItem = Form.Item;
 import ePromise from 'es6-promise'
 ePromise.polyfill();
@@ -20,11 +20,14 @@ class Login extends Component {
     constructor(props){
         super(props);
         this.state={
-            canSubmit:true
+            canSubmit:true,
+            error:false,
+            errorTitle:false,
+
+
         };
-
-
     }
+
     componentDidMount() {
         // To disabled submit button at the beginning.
         this.props.form.validateFields();
@@ -43,35 +46,49 @@ class Login extends Component {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
+                    credentials:'same-origin',
                     body:JSON.stringify(values)
                 }).then(function(response) {
                     if (response.status === 200) {
                         return response.json();
                     }else{
                         this.setState({canSubmit:true});
-                        //todo: 显示错误信息
+                        //todo: 显示错误信息 网络错误
+                        that.setState({
+                            errorTitle:true,
+                            error:true});
+
                     }
                 })
                     .then(function(data){
+                       var uid=data.uid;
                         if(data.result){
                             if(returnUrl){
                                 that.context.router.push(returnUrl);
                             }
                             else{
-                                that.context.router.push('/');
+                                that.context.router.push({pathname:'/',state:{uid:uid}});
                             }
-
                         }
                         else{
-
-                            this.setState({canSubmit:true});
-                            //todo: 显示错误信息
+                            that.setState({canSubmit:true,
+                                error:true});
+                            //todo: 显示错误信息用户名/密码错误
                         }
 
                     });
             }
         });
     };
+  //网络错误提示框显示的时间限制
+    visibleChange=()=>{
+        setTimeout(()=>{
+            this.setState({
+                error:false
+            })
+        }, 2000)
+    };
+
 
     render() {
         const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
@@ -106,13 +123,19 @@ class Login extends Component {
                                 )}
                             </FormItem>
                             <FormItem>
-                                <Button
-                                    className='login-content-form-submit'
-                                    htmlType="submit"
-                                    disabled={this.state.canSubmit && hasErrors(getFieldsError())}
-                                >
-                                    Log in
-                                </Button>
+                                <Tooltip placement="topLeft" title={(this.errorTitle)?"网络错误":"用户名/密码错误"}
+                                         visible={this.state.error}
+                                         style={{width:'100%'}}
+                                         onVisibleChange={this.visibleChange}>
+                                    <Button
+                                        style={{width:'100%'}}
+                                        className='login-content-form-submit'
+                                        htmlType="submit"
+                                        disabled={this.state.canSubmit && hasErrors(getFieldsError())}
+                                    >
+                                        Log in
+                                    </Button>
+                                </Tooltip>
                             </FormItem>
                         </Form>
                     </Card>
