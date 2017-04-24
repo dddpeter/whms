@@ -36,9 +36,17 @@ if(ENV ==='production'){
 else{
     require('./webpackdev.server')(app);
 }
-require('./app/controllers/ProjectController')(app);
-require('./app/controllers/TaskController')(app);
-require('./app/controllers/LoginController')(app);
+function authChecker(req, res, next) {
+    if (req.session.loginUser) {
+        next();
+    } else {
+        res.writeHead(401, {"Content-Type": "application/json; charset=utf8"});
+        res.end(JSON.stringify({result: false, 'error': 'need login'}));
+    }
+}
+require('./app/controllers/ProjectController')(app,authChecker);
+require('./app/controllers/TaskController')(app,authChecker);
+require('./app/controllers/LoginController')(app,authChecker);
 
 app.use(express.static(path.resolve(__dirname, '.', staticPath)));
 app.use(express.query());

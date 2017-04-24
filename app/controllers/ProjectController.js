@@ -1,9 +1,8 @@
 /**
  * Created by lijinde on 2017-4-20.
  */
+const sequelize = require('../utils/SequelizeConfig');
+const Task = require('../models/Task');
+module.exports = function (app) {
 
-module.exports = function(app) {
-    app.get('/api/projects/with/tasks',function(req,res,next){
-        res.end(JSON.stringify({'projects':[]}));
-    });
 }

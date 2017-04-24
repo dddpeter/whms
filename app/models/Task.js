@@ -24,9 +24,19 @@ const task = sequelize.define('task', {
             type: Sequelize.DataTypes.STRING,
             references: {model: 't_user', key: 'uid'}
         },
+        spendTime:{
+            type:Sequelize.DataTypes.BIGINT,
+            allowNull:false,
+            defaultValue:60
+        },
         pid: {
             type: Sequelize.DataTypes.UUID,
             references: {model: 't_project', key: 'pid'}
+        },
+        status:{
+            type:Sequelize.DataTypes.INTEGER,
+            allowNull:false,
+            defaultValue:1
         },
         content: {
             type: Sequelize.DataTypes.STRING,
