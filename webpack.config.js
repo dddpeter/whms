@@ -26,7 +26,9 @@ module.exports = {
         },
             {
                 test: /\.js$/,
-                loader: 'jsx-loader?harmony'
+                loader: 'jsx-loader?harmony',
+                include: path.join(__dirname, 'assets'),
+                exclude: /node_modules/
             },
             {
                 test: /\.js$/,
