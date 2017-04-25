@@ -28,19 +28,19 @@ module.exports = function (app, authChecker) {
                     });
             });
     });
-    app.post('/api/tasks/:taskId', authChecker,function (req, res, next) {
+    app.post('/api/tasks/:taskId', authChecker, function (req, res, next) {
         let taskId = req.params.taskId;
         let loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         let data = req.body;
-        Task.findOne({ where: {uid:uid,id:taskId }})
-            .then(function(obj) {
-                if(obj) {
+        Task.findOne({where: {uid: uid, id: taskId}})
+            .then(function (obj) {
+                if (obj) {
                     obj.update({data})
-                        .then(function(){
+                        .then(function () {
                                 res.end(JSON.stringify({result: true}));
                             },
-                            function(){
+                            function () {
                                 res.writeHead(500,
                                     {"Content-Type": "application/json; charset=utf8"});
                                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -55,22 +55,22 @@ module.exports = function (app, authChecker) {
             })
 
     });
-    app.delete('/api/tasks/:taskId', authChecker,function (req, res, next) {
+    app.delete('/api/tasks/:taskId', authChecker, function (req, res, next) {
         var taskId = req.params.taskId;
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
-        Task.findOne({ where: {uid:uid,id:taskId }})
-            .then(function(obj) {
-                if(obj) {
-                   obj.destroy({ where: {uid:uid,id:taskId }})
-                       .then(function(){
-                               res.end(JSON.stringify({result: true}));
-                       },
-                       function(){
-                           res.writeHead(500,
-                               {"Content-Type": "application/json; charset=utf8"});
-                           res.end(JSON.stringify({result: false, 'error': 'Server error'}));
-                       });
+        Task.findOne({where: {uid: uid, id: taskId}})
+            .then(function (obj) {
+                if (obj) {
+                    obj.destroy({where: {uid: uid, id: taskId}})
+                        .then(function () {
+                                res.end(JSON.stringify({result: true}));
+                            },
+                            function () {
+                                res.writeHead(500,
+                                    {"Content-Type": "application/json; charset=utf8"});
+                                res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+                            });
                 }
                 else {
                     res.writeHead(200,
@@ -80,7 +80,7 @@ module.exports = function (app, authChecker) {
                 }
             })
     });
-    app.get('/api/tasks/last/week',authChecker,function (req, res, next) {
+    app.get('/api/tasks/last/week', authChecker, function (req, res, next) {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize.query(`SELECT round(sum(t."speedTime")/(select sum(t."speedTime")+0.00
@@ -94,23 +94,23 @@ module.exports = function (app, authChecker) {
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-6
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+1
         AND uid='${uid}' GROUP BY t.pid`)
-            .then(function(obj) {
-                    res.json({result: true,data:obj[0]});
-            },
-                function(){
+            .then(function (obj) {
+                    res.json({result: true, data: obj[0]});
+                },
+                function () {
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
                 }
-        );
+            );
     });
-    app.get('/api/tasks/last/month',authChecker,function (req, res, next) {
+    app.get('/api/tasks/last/month', authChecker, function (req, res, next) {
         let nowdays = new Date();
         let year = nowdays.getFullYear();
         let month = nowdays.getMonth();
-        if(month==0)        {
-            month=12;
-            year=year-1;
+        if (month == 0) {
+            month = 12;
+            year = year - 1;
         }
         if (month < 10) {
             month = "0" + month;
@@ -131,10 +131,10 @@ module.exports = function (app, authChecker) {
         to_date( '${firstDay}','yyyy-mm-dd')
         AND  to_date('${lastDay}','yyyy-mm-dd')
         AND uid='${uid}' GROUP BY t.pid`)
-            .then(function(obj) {
-                    res.json({result: true,data:obj[0]});
+            .then(function (obj) {
+                    res.json({result: true, data: obj[0]});
                 },
-                function(){
+                function () {
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -143,7 +143,7 @@ module.exports = function (app, authChecker) {
 
     });
 
-    app.get('/api/tasks/this/week',authChecker,function (req, res, next) {
+    app.get('/api/tasks/this/week', authChecker, function (req, res, next) {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize.query(`SELECT round(sum(t."speedTime")/(select sum(t."speedTime")+0.00
@@ -157,10 +157,10 @@ module.exports = function (app, authChecker) {
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+7
         AND uid='${uid}' GROUP BY t.pid`)
-            .then(function(obj) {
-                    res.json({result: true,data:obj[0]});
+            .then(function (obj) {
+                    res.json({result: true, data: obj[0]});
                 },
-                function(){
+                function () {
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));

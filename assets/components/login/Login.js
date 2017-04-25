@@ -39,6 +39,7 @@ class Login extends Component {
             if (!err) {
                 fetch('/api/login',{
                     method:'POST',
+                    credentials:'same-origin',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
