@@ -221,19 +221,22 @@ class DashBoard extends Component {
             }
         }).then((data) => {
             if (data) {
+                console.log(data);
                 that.setState({
                     dataList: data.tasks,
                     total: Number(data.total)
-                })
+                });
+                if(Number(data.total)===0){
+                    this.setState({
+                        paginationHiden: {
+                            display:'none',
+                        },
+                        blankTask:{
+                            display:'block',
+                        }
+                    });
+                }
             } else {
-                // this.setState({
-                //     paginationHiden: {
-                //         display:'none',
-                //     },
-                //     blankTask:{
-                //         display:'block',
-                //     }
-                // });
                 return {data: []};
             }
         });
@@ -319,10 +322,10 @@ class DashBoard extends Component {
                                         <Card key={list.id} title={list.projectname} className="content-title-secondary"
                                               extra={
                                                   <span>
-                                                   <Link to={"/EditDialog" + list.id}>
+                                                   <span onClick={this.editChanged}>
                                                         <Icon className='content-title-icon-small'
                                                               type="edit"/>
-                                                    </Link>
+                                                    </span>
                                                     <Popconfirm title="确认删除？"
                                                                 placement="right"
                                                                 okText="确认"
@@ -352,15 +355,16 @@ class DashBoard extends Component {
                                    <Icon type="info-circle-o" className="icon-tip"/>
                                    您当前还没有填写任何信息
                                </p>
-                                    <Pagination pageSize={this.state.pageSize + 1}
-                                                current={this.state.current + 1}
-                                                total={this.state.pageSize * this.state.total}
-                                                showQuickJumper
-                                                onChange={this.onChange}
-                                                className="pagination"
-                                                style={this.state.paginationHiden}
-                                    />
-                                    <span className="pagination-tip">(<Icon type="info-circle-o" className="icon-tip" />点击回车进行跳转)</span>
+                               <div  style={this.state.paginationHiden}>
+                                   <Pagination pageSize={this.state.pageSize + 1}
+                                               current={this.state.current + 1}
+                                               total={this.state.pageSize * this.state.total}
+                                               showQuickJumper
+                                               onChange={this.onChange}
+                                               className="pagination"
+                                   />
+                                   <span className="pagination-tip">(<Icon type="info-circle-o" className="icon-tip" />点击回车进行跳转)</span>
+                               </div>
                            </div>
                         </Card>
 
@@ -407,6 +411,8 @@ class DashBoard extends Component {
                              callbackContent={this.callbackVal}/>
                 <EditDialog visible={this.state.editState}
                             backEditClick={this.backEditClick}
+
+
                 />
 
             </div>
