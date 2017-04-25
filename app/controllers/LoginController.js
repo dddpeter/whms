@@ -99,7 +99,7 @@ module.exports = function(app,authChecker) {
                 return;
             }
             res.clearCookie('connect.sid');
-            res.redirect('/login');
+            res.end(res.json({result:true}));
         });
     });
     app.get('/api/check/login',function(req,res,next){
