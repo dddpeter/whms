@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Row, Col, Icon, Button, Popconfirm, Pagination} from 'antd';
+import {Card, Row, Col, Icon, Button, Popconfirm, Pagination, Select,Alert} from 'antd';
 import {Link} from 'react-router'
 import  Highcharts from 'highcharts'
 import ModalDialog from './ModalDialog'
@@ -10,13 +10,16 @@ import './dashboard.scss'
 import EditDialog from './EditDialog';
 
 
-
 class DashBoard extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
     };
+    //修改饼图选择框的内容
+    changeSelect = (value) => {
+        this.getStat(value);
+    }
 
-    renderChart() {
+    renderChart(data) {
         var charts = new Highcharts.chart('summaryCharts', {
             chart: {
                 plotBackgroundColor: null,
@@ -25,45 +28,25 @@ class DashBoard extends Component {
                 type: 'pie'
             },
             title: {
-                text: 'Browser market shares January, 2015 to May, 2015'
+                text: ''
             },
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
             },
             plotOptions: {
                 pie: {
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
-                        enabled: false
+                        enabled: false,
                     },
                     showInLegend: true
                 }
             },
             series: [{
-                name: 'Brands',
+                name: 'Projects',
                 colorByPoint: true,
-                data: [{
-                    name: 'Microsoft Internet Explorer',
-                    y: 56.33
-                }, {
-                    name: 'Chrome',
-                    y: 24.03,
-                    sliced: true,
-                    selected: true
-                }, {
-                    name: 'Firefox',
-                    y: 10.38
-                }, {
-                    name: 'Safari',
-                    y: 4.77
-                }, {
-                    name: 'Opera',
-                    y: 0.91
-                }, {
-                    name: 'Proprietary or Undetectable',
-                    y: 0.2
-                }]
+                data: data
             }]
         });
     }
@@ -73,6 +56,14 @@ class DashBoard extends Component {
         this.setState({
             visibleState: true,
         });
+    };
+    //点击增加按钮后
+    callbackVal=(params)=>{
+        console.log(params);
+        this.setState({
+
+        });
+
     };
     //响应用户是否点击了关闭按钮
     onClickChanged = () => {
@@ -94,6 +85,7 @@ class DashBoard extends Component {
         });
     };
 
+
     //点击退出登陆
     constructor(props) {
         super(props);
@@ -104,42 +96,22 @@ class DashBoard extends Component {
                 fontSize: '12px',
                 display: 'none',
             },
-            dataList: [{
-                id: '1',
-                project: '青青互助',
-                name: 'linqj',
-                date: '2017-01-22',
-                type: '需求',
-                duration: '34',
-                description: '需求分析',
-            }, {
-                id: '2',
-                project: '青青互助',
-                name: 'linqj',
-                date: '2017-01-22',
-                type: '需求',
-                duration: '34',
-                description: '需求分析',
-            }, {
-                id: '3',
-                project: '青青互助',
-                name: 'linqj',
-                date: '2017-01-22',
-                type: '需求',
-                duration: '34',
-                description: '需求分析',
+            blankTask:{
+                display:'none',
+            },//列表为空时默认显示
+            paginationHiden: {
+                display:'inline-block',
             },
-                {
-                    id: '4',
-                    project: '青青互助',
-                    name: 'linqj',
-                    date: '2017-01-22',
-                    type: '需求',
-                    duration: '34',
-                    description: '需求分析',
-                }]
+            uid: '--',
+            email: '--',
+            data: [],
+            dataList: [],
+            current: 0,
+            total: 1,
+            pageSize: 1,
+            pageNum: 0,
+            loading: false,
         }
-
     }
 
     handleOutClick = (e) => {
@@ -158,7 +130,6 @@ class DashBoard extends Component {
                             display: 'block',
                         }
                     })
-                    //todo: 显示错误信息 网络错误
                 }
             }).then(function (data) {
             that.context.router.push({pathname: '/login'});
@@ -166,14 +137,171 @@ class DashBoard extends Component {
             console.log('logout failed', error)
         })
     };
+
     //list
-    showTotal=(total)=>{
-    return `Total ${total} items`;
-}
+    showTotal = (total) => {
+        return `Total ${total} items`;
+    }
+//调取工作统计接口
+    getStat(val) {
+        var that = this;
+        var url = '/api/tasks/this/week';
+        if (val === 1) {
+            url = '/api/tasks/last/week';
+        }
+        else if (val === 2) {
+            url = '/api/tasks/last/month';
+        }
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return {data: []};
+            }
+        })
+            .then(function (data) {
+                data.data.map((o) => {
+                    o.y = Number(o.y);
+                });
+                console.log(data.data);
+
+                that.renderChart(data.data);
+            });
+    }
+
+//调取姓名接口
+    getName() {
+        var that = this;
+        fetch('/api/user', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return {data: []};
+            }
+        }).then((data) => {
+            if (data) {
+                this.setState({
+                    uid: data.user.uid,
+                    email: data.user.email,
+                })
+            }
+        });
+    }
+
+    //调取pageNum和pageSize接口
+    getTasks(pageNum = 0) {
+        let that = this;
+        fetch(`/api/tasks?pageNum=${pageNum}&pageSize=${this.state.pageSize}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                //todo: 显示错误信息 网络错误
+            }
+        }).then((data) => {
+            if (data) {
+                that.setState({
+                    dataList: data.tasks,
+                    total: Number(data.total)
+                })
+            } else {
+                // this.setState({
+                //     paginationHiden: {
+                //         display:'none',
+                //     },
+                //     blankTask:{
+                //         display:'block',
+                //     }
+                // });
+                return {data: []};
+            }
+        });
+    };
+
+    //删除项目
+    deleteTask = (taskId) => {
+        let that = this;
+        fetch(`/api/tasks/${taskId}`, {
+            method: 'DELETE',
+            credentials:'same-origin',
+        }).then((response)=>{
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return {data: []};
+            }
+        }).then((data) => {
+            console.log(data+"data")
+           if(data.result){
+               this.getTasks(this.state.pageNum);
+           }
+        }).catch(err => {
+            console.error(err);
+        });
+    };
+    //Pagination改变时
+    onChange = (page) => {
+        this.setState({
+            pageNum: page - 1,
+            current: page - 1
+        });
+        this.getTasks(page - 1);
+
+    };
+//判断是否是登陆状态
+    checkLogin() {
+        let that = this;
+        fetch('/api/check/login', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            }
+            else {
+                return [];
+            }
+        }).then((data) => {
+            if (!data.result) {
+                that.context.router.push({pathname: '/login'});
+            }
+        }).catch((error) => {
+            console.log('not logins', error)
+        })
+    }
 
     componentDidMount() {
+        this.checkLogin();
+        this.getName();
+        this.getStat(0);
+        this.getTasks();
 
-        this.renderChart();
+        //this.deleteProduct();
     }
 
     render() {
@@ -185,41 +313,55 @@ class DashBoard extends Component {
                               extra={<Icon className='content-title-icon-big'
                                            type="plus-circle" onClick={this.clickPlus}
                               />}>
-
-                                {
-                                    /*this.state.data*/
-                                    this.state.dataList.map(function (list) {
-                                        return (
-                                            <Card key={list.id} title={list.project} className="content-title-secondary" extra={
-                                                <span>
-                                                    <Link>
-                                                        <Icon className="className='content-title-icon-small'" type="edit"/>
+                            {
+                                this.state.dataList.map(function (list) {
+                                    return (
+                                        <Card key={list.id} title={list.projectname} className="content-title-secondary"
+                                              extra={
+                                                  <span>
+                                                   <Link to={"/EditDialog" + list.id}>
+                                                        <Icon className='content-title-icon-small'
+                                                              type="edit"/>
                                                     </Link>
                                                     <Popconfirm title="确认删除？"
                                                                 placement="right"
                                                                 okText="确认"
-                                                                cancelText="取消">
+                                                                cancelText="取消"
+                                                                onConfirm={() =>this.deleteTask(list.id)}>
                                                        <a><Icon type="delete" className='content-title-icon-small'/></a>
                                                     </Popconfirm>
                                               </span>
-                                            }
-                                                  bodyStyle={{fontSize: '12px', background: 'rgba(220,220,220,0.2)'}}>
-                                                <Row>
-                                                    <Col span={3}>{list.name}</Col>
-                                                    <Col span={3}>{list.date}</Col>
-                                                    <Col span={3}>{list.type}</Col>
-                                                    <Col span={3}>{list.duration}</Col>
-                                                    <Col span={12}>
-                                                        {list.description}
-                                                    </Col>
-                                                </Row>
-                                            </Card>
-                                        );
-                                    }.bind(this))
-                                }
-                            <div>
-                                <Pagination size="small" total={50} showSizeChanger showQuickJumper />
-                            </div>
+                                              }
+                                              bodyStyle={{fontSize: '12px', background: 'rgba(220,220,220,0.2)'}}>
+                                            <Row>
+                                                <Col span={3}>{list.uid}</Col>
+                                                <Col span={3}>{list.issueDate.substring(0, 10)}</Col>
+                                                <Col span={4}>{list.type}</Col>
+                                                <Col span={3}>{list.spendTime}</Col>
+                                                <Col span={11}>
+                                                    {list.content}
+                                                </Col>
+                                            </Row>
+                                        </Card>
+                                    );
+                                }.bind(this))
+                            }
+
+                           <div className="clear">
+                               <p className="blankTip" style={this.state.blankTask}>
+                                   <Icon type="info-circle-o" className="icon-tip"/>
+                                   您当前还没有填写任何信息
+                               </p>
+                                    <Pagination pageSize={this.state.pageSize + 1}
+                                                current={this.state.current + 1}
+                                                total={this.state.pageSize * this.state.total}
+                                                showQuickJumper
+                                                onChange={this.onChange}
+                                                className="pagination"
+                                                style={this.state.paginationHiden}
+                                    />
+                                    <span className="pagination-tip">(<Icon type="info-circle-o" className="icon-tip" />点击回车进行跳转)</span>
+                           </div>
                         </Card>
 
                     </Col>
@@ -227,8 +369,8 @@ class DashBoard extends Component {
                         <Card className="right-content">
                             <div className="right-content-table">
                                 <Row className="right-content-table">
-                                    <Col><span className="col-span">Welcome!</span>{this.props.location.state.uid}</Col>
-                                    <Col>{this.props.location.state.uid}@unicc.com.cn</Col>
+                                    <Col><span className="col-span">Welcome!</span>{this.state.uid}</Col>
+                                    <Col>{this.state.email}</Col>
                                     <Col><a href="#">Change your password</a></Col>
                                     <Col>
                                         <Button className='button-purple' onClick={this.handleOutClick}>
@@ -242,14 +384,27 @@ class DashBoard extends Component {
 
                         </Card>
                         <Card title="My Summary">
-                            <div id="summaryCharts">
-
+                            <Select
+                                showSearch
+                                className="selectOption"
+                                placeholder="this week"
+                                optionFilterProp="children"
+                                onChange={this.changeSelect}
+                                filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                            >
+                                <Option value={0}>This week</Option>
+                                <Option value={1}>Last week</Option>
+                                <Option value={2}>Last month</Option>
+                            </Select>
+                            <div id="summaryCharts" style={{height: '300px'}}>
                             </div>
                         </Card>
                     </Col>
                 </Row>
                 <ModalDialog visible={this.state.visibleState}
-                             callbackClick={this.onClickChanged}/>
+                             uidName={this.state.uid}
+                             callbackClick={this.onClickChanged}
+                             callbackContent={this.callbackVal}/>
                 <EditDialog visible={this.state.editState}
                             backEditClick={this.backEditClick}
                 />

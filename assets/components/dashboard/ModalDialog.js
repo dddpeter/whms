@@ -2,6 +2,7 @@
  * Created by lin on 2017/4/20.
  */
 import React from 'react'
+import ReactDOM from 'react-dom';
 import {
     Form,
     Modal,
@@ -52,8 +53,11 @@ class ModalDialog extends React.Component {
         super(props);
         this.state = {
             visible: false,
+            uidName: '',
+            selectProject: '',
         };
     }
+
 
     //点击了弹出框的关闭按钮
     handleCancel = () => {
@@ -63,8 +67,8 @@ class ModalDialog extends React.Component {
         this.props.callbackClick(this.state.visible);
     };
     //点击选择project
-    handleChangeProject(value) {
-        console.log(`selected ${value}`);
+    handleChangeProject(event) {
+
     };
 
     //点击date后选择日期
@@ -78,6 +82,27 @@ class ModalDialog extends React.Component {
     //Description内容改变
     onChangeDescription = (value) => {
         console.log('changed', value);
+    };
+    //点击add按钮
+    onAdd = (e) => {
+        e.preventDefault();
+        let params = {};
+        let projectname = this.refs.selectProject;
+        let uid = this.props.uidName;
+        let issueDate = ReactDOM.findDOMNode(this.refs.selectData).value;
+        let type = ReactDOM.findDOMNode(this.refs.selectType).value;
+        let spendTime = ReactDOM.findDOMNode(this.refs.selectNum).value;
+        let content = ReactDOM.findDOMNode(this.refs.content).value;
+        params['projectname'] = projectname;
+        params['uid'] = uid;
+        params['issueDate'] = issueDate;
+        params['type'] = type;
+        params['spendTime'] = spendTime;
+        params['content'] = content;
+        this.props.callbackContent(params);
+        setTimeout(() => {
+            this.handleCancel();
+                }, 500);
     };
 
     render() {
@@ -95,21 +120,21 @@ class ModalDialog extends React.Component {
             <div>
 
                 <Modal
-
                     visible={this.props.visible}
                     closable={false}
                     maskClosable={true}
                     footer={null}
-
-                    // onOk={this.handleOk}
-                    // onCancel={this.handleCancel}
                 >
                     <Form className="modal-dialog">
                         <FormItem
                             {...formItemLayout}
                             label="Project:"
                         >
-                            <Select defaultValue="zqit" style={{width: 120}} onChange={this.handleChangeProject}>
+                            <Select className='selectProject'
+                                    defaultValue="zqit"
+                                    ref="selectProject"
+                                    style={{width: 120}}
+                                    onChange={this.handleChangeProject}>
                                 <Option value="zqit">中青IT</Option>
                                 <Option value="qqhz">青青互助</Option>
                             </Select>
@@ -118,19 +143,20 @@ class ModalDialog extends React.Component {
                             {...formItemLayout}
                             label="Name:"
                         >
-                            <span>xiexin</span>
+                            <span>{this.props.uidName}</span>
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
                             label="Date:"
                         >
-                            <DatePicker onChange={this.onChangeDate}/>
+                            <DatePicker ref='selectData' onChange={this.onChangeDate}/>
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
                             label="Type:"
                         >
-                            <Select defaultValue="zqit" style={{width: 120}} onChange={this.handleChangeProject}>
+                            <Select ref="selectType" defaultValue="demand" style={{width: 120}}
+                                    onChange={this.handleChangeProject}>
                                 <Option value="demand">需求</Option>
                                 <Option value="group">团队</Option>
                             </Select>
@@ -139,18 +165,22 @@ class ModalDialog extends React.Component {
                             {...formItemLayout}
                             label="Duration"
                         >
-                            <InputNumber min={1} max={7} defaultValue={1} onChange={this.onChangeDuration}/>
+                            <InputNumber ref="selectNum" min={1} max={35} defaultValue={1}
+                                         onChange={this.onChangeDuration}/>(单位：h)
 
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
                             label="Description"
                         >
-                            <Input type="textarea" style={{width:'80%'}} rows={4} onChange={this.onChangeDescription}/>
+                            <Input ref="content" type="textarea" style={{width: '80%'}} rows={4}
+                                   onChange={this.onChangeDescription}/>
                         </FormItem>
                         <div className="dialog-footer">
-                            <Button key="add" className="dialog-footer-button" size="large" onClick={this.handleCancel}>Add</Button>
-                            <Button key="cancel" className="dialog-footer-button cancel" size="large" onClick={this.handleCancel}>cancel</Button>
+                            <Button key="add" className="dialog-footer-button" size="large"
+                                    onClick={this.onAdd}>Add</Button>
+                            <Button key="cancel" className="dialog-footer-button cancel" size="large"
+                                    onClick={this.handleCancel}>cancel</Button>
                         </div>
                     </Form>
                 </Modal>
