@@ -93,17 +93,18 @@ module.exports = function(app,authChecker) {
         }});
 
     app.delete('/api/logout',function(req,res,next){
+        var  user = req.session.loginUser;
         req.session.destroy(function(err) {
             if(err){
                 res.json({result: false, error: 'logout fail'});
                 return;
             }
+            delete user;
             res.clearCookie('connect.sid');
             res.end(res.json({result:true}));
         });
     });
     app.get('/api/check/login',function(req,res,next){
-        console.log(req.session);
         if(req.session.loginUser){
             res.json({result:true });
         }
