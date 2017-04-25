@@ -16,7 +16,8 @@ module.exports = function (app, authChecker) {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize
-            .query(`select t."issueDate",t.type,uid,(select p."projectName" from t_project p WHERE  p.pid=t.pid) projectName,t."speedTime",t.status,t.content 
+            .query(`select t.id,t."issueDate",t.type,uid,(select p."projectName" from t_project p WHERE  p.pid=t.pid) projectName,
+            t."spendTime",t.status,t.content 
                 from t_task t where t.uid='${uid}' order by "issueDate" desc,pid
                 limit ${pageSize} offset ${pageNum}`)
             .then(function (projects) {
@@ -83,7 +84,7 @@ module.exports = function (app, authChecker) {
     app.get('/api/tasks/last/week',authChecker,function (req, res, next) {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
-        sequelize.query(`SELECT to_char(sum(t."speedTime")/(select sum(t."speedTime")+0.00
+        sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
         FROM t_task t
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-6
@@ -120,7 +121,7 @@ module.exports = function (app, authChecker) {
         let lastDay = year + "-" + month + "-" + myDate.getDate();//上个月的最后一天
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
-        sequelize.query(`SELECT to_char(sum(t."speedTime")/(select sum(t."speedTime")+0.00
+        sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
         FROM t_task t
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         '${firstDay}'
@@ -146,7 +147,7 @@ module.exports = function (app, authChecker) {
     app.get('/api/tasks/this/week',authChecker,function (req, res, next) {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
-        sequelize.query(`SELECT to_char(sum(t."speedTime")/(select sum(t."speedTime")+0.00
+        sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
         FROM t_task t
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER

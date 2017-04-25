@@ -52,8 +52,7 @@ class Login extends Component {
                     if (response.status === 200) {
                         return response.json();
                     }else{
-                        this.setState({canSubmit:true});
-                        //todo: 显示错误信息 网络错误
+                        that.setState({canSubmit:true});
                         that.setState({
                             errorTitle:true,
                             error:true});
@@ -73,7 +72,6 @@ class Login extends Component {
                         else{
                             that.setState({canSubmit:true,
                                 error:true});
-                            //todo: 显示错误信息用户名/密码错误
                         }
 
                     });
