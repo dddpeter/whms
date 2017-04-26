@@ -8,12 +8,41 @@ ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
 import './dashboard.scss'
 import EditDialog from './EditDialog';
+import { browserHistory } from 'react-router';
+
 
 
 class DashBoard extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
     };
+    //点击退出登陆
+    constructor(props) {
+        super(props);
+        this.handleOutClick = this.handleOutClick.bind(this);
+        this.state = {
+            login: false,
+            styleError: {
+                fontSize: '12px',
+                display: 'none',
+            },
+            blankTask:{
+                display:'none',
+            },//列表为空时默认显示
+            paginationHiden: {
+                display:'inline-block',
+            },
+            uid: '--',
+            email: '--',
+            data: [],
+            dataList: [],
+            current: 0,
+            total: 1,
+            pageSize: 2,
+            pageNum: 0,
+            loading: false,
+        }
+    }
     //修改饼图选择框的内容
     changeSelect = (value) => {
         this.getStat(value);
@@ -59,7 +88,7 @@ class DashBoard extends Component {
     };
     //点击增加按钮后
     callbackVal=(params)=>{
-        console.log(params);
+        // console.log(params);
         this.setState({
 
         });
@@ -86,39 +115,16 @@ class DashBoard extends Component {
     };
 
 
-    //点击退出登陆
-    constructor(props) {
-        super(props);
-        this.handleOutClick = this.handleOutClick.bind(this);
-        this.state = {
-            login: false,
-            styleError: {
-                fontSize: '12px',
-                display: 'none',
-            },
-            blankTask:{
-                display:'none',
-            },//列表为空时默认显示
-            paginationHiden: {
-                display:'inline-block',
-            },
-            uid: '--',
-            email: '--',
-            data: [],
-            dataList: [],
-            current: 0,
-            total: 1,
-            pageSize: 1,
-            pageNum: 0,
-            loading: false,
-        }
-    }
+
 
     handleOutClick = (e) => {
         e.preventDefault();
+        var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
         let that = this;
         fetch('/api/logout', {    //发送退出登录的请求
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'same-origin'
+
         })
             .then((response) => {
                 if (response.status === 200) {
@@ -132,7 +138,7 @@ class DashBoard extends Component {
                     })
                 }
             }).then(function (data) {
-            that.context.router.push({pathname: '/login'});
+            that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
         }).catch((error) => {
             console.log('logout failed', error)
         })
@@ -171,8 +177,6 @@ class DashBoard extends Component {
                 data.data.map((o) => {
                     o.y = Number(o.y);
                 });
-                console.log(data.data);
-
                 that.renderChart(data.data);
             });
     }
@@ -221,7 +225,6 @@ class DashBoard extends Component {
             }
         }).then((data) => {
             if (data) {
-                console.log(data);
                 that.setState({
                     dataList: data.tasks,
                     total: Number(data.total)
@@ -255,10 +258,9 @@ class DashBoard extends Component {
                 return {data: []};
             }
         }).then((data) => {
-            console.log(data+"data")
-           if(data.result){
-               this.getTasks(this.state.pageNum);
-           }
+            if(data.result){
+                this.getTasks(this.state.pageNum);
+            }
         }).catch(err => {
             console.error(err);
         });
@@ -275,6 +277,8 @@ class DashBoard extends Component {
 //判断是否是登陆状态
     checkLogin() {
         let that = this;
+        var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
+
         fetch('/api/check/login', {
             method: 'GET',
             headers: {
@@ -291,7 +295,7 @@ class DashBoard extends Component {
             }
         }).then((data) => {
             if (!data.result) {
-                that.context.router.push({pathname: '/login'});
+                that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
             }
         }).catch((error) => {
             console.log('not logins', error)
@@ -303,8 +307,6 @@ class DashBoard extends Component {
         this.getName();
         this.getStat(0);
         this.getTasks();
-
-        //this.deleteProduct();
     }
 
     render() {
@@ -350,22 +352,22 @@ class DashBoard extends Component {
                                 }.bind(this))
                             }
 
-                           <div className="clear">
-                               <p className="blankTip" style={this.state.blankTask}>
-                                   <Icon type="info-circle-o" className="icon-tip"/>
-                                   您当前还没有填写任何信息
-                               </p>
-                               <div  style={this.state.paginationHiden}>
-                                   <Pagination pageSize={this.state.pageSize + 1}
-                                               current={this.state.current + 1}
-                                               total={this.state.pageSize * this.state.total}
-                                               showQuickJumper
-                                               onChange={this.onChange}
-                                               className="pagination"
-                                   />
-                                   <span className="pagination-tip">(<Icon type="info-circle-o" className="icon-tip" />点击回车进行跳转)</span>
-                               </div>
-                           </div>
+                            <div className="clear">
+                                <p className="blankTip" style={this.state.blankTask}>
+                                    <Icon type="info-circle-o" className="icon-tip"/>
+                                    您当前还没有填写任何信息
+                                </p>
+                                <div  style={this.state.paginationHiden}>
+                                    <Pagination pageSize={this.state.pageSize + 1}
+                                                current={this.state.current + 1}
+                                                total={this.state.pageSize * this.state.total}
+                                                showQuickJumper
+                                                onChange={this.onChange}
+                                                className="pagination"
+                                    />
+                                    <span className="pagination-tip">（点击回车进行跳转）</span>
+                                </div>
+                            </div>
                         </Card>
 
                     </Col>
@@ -383,9 +385,7 @@ class DashBoard extends Component {
                                         <p style={this.state.styleError}>网络错误</p>
                                     </Col>
                                 </Row>
-
                             </div>
-
                         </Card>
                         <Card title="My Summary">
                             <Select
@@ -411,6 +411,7 @@ class DashBoard extends Component {
                              callbackContent={this.callbackVal}/>
                 <EditDialog visible={this.state.editState}
                             backEditClick={this.backEditClick}
+
 
 
                 />
