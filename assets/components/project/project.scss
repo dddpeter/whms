@@ -1,0 +1,251 @@
+@import "../../sass/var";
+.content-title-big{
+  color: $theme_color;
+}
+.content-title-icon-big{
+  margin: 0 4px;
+}
+.ant-collapse > .ant-collapse-item > .ant-collapse-header > .collapse-panel-title > .title{
+  font-size: 14px;
+  color: $theme_color;
+}
+.ant-card{
+  //border:2px solid rgba(145,6,133,0.2);
+  >.ant-card-head{
+    border-bottom:1px solid $border-color;
+  }
+  >.ant-card-extra{
+    >.icon-container{
+      .header-icon{
+        font-size: 16px;
+        margin: 4px;
+        color:  $theme_color;
+      }
+    }
+  }
+  >.ant-card-body {
+    > .pagination-box {
+      padding-top:25px;
+      display: flex;
+      justify-content: center;
+    > .ant-pagination {
+      > .ant-pagination-item-50 {
+        display: none;
+      }
+      > .ant-pagination-jump-next {
+        display: none;
+      }
+    }
+  }
+
+    >.filter{
+      padding-bottom: 25px;
+      >.status{
+        padding-left:30px;
+        padding-right:15px;
+      }
+      >.ant-select{
+        padding-right:40px;
+        width: 120px;
+      }
+      >.project{
+        padding-left:18px;
+        padding-right: 15px;
+      }
+    }
+    >.ant-collapse{
+      >.ant-collapse-item{
+        >.ant-collapse-content{
+          >.ant-collapse-content-box {
+            > div {
+
+            > .ant-row {
+
+              > .table-row {
+                padding-top: 20px;
+
+              }
+              > .update {
+                padding-top: 15px;
+              }
+              > .ant-col-16 {
+                background-color: rgba(1, 1, 1, 0.5);
+                padding-top: 10px;
+                > .brief-content {
+                  > span {
+                    padding-left: 35px;
+                  }
+                }
+                > .ant-row {
+                  > .brief {
+                    padding-left: 20px;
+                  }
+                }
+                background: rgba(220, 220, 220, 0.4);
+                height: 155px;
+              }
+              > .ant-col-8 {
+                > div {
+                  padding-left: 50px;
+                  padding-top: 20px;
+
+                  > .ant-row {
+
+                    > div {
+                      > text {
+                        padding-left: 10px;
+                      }
+                      > .anticon-edit {
+                        float: right;
+                        font-size: 14px;
+                        color: $theme_color;
+                        margin: 4px
+                      }
+
+                    }
+
+                    > .second-right {
+                      padding-top: 15px;
+                    }
+                    > .third-right {
+                      padding-top: 15px;
+                      padding-bottom: 15px;
+                      >text{
+                        >span{
+                          padding-left: 2px;
+                          padding-right: 5px;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+            }
+          }
+          }
+        }
+        >.ant-collapse-header{
+          >.collapse-panel-title{
+            >.title{
+              padding-left:14px;
+            }
+            >.rightExtra{
+              >.edit-div{
+
+                >.edit-icon{
+                  padding-right: 15px;
+                  font-size:14px;
+                  color:$theme_color;
+                  margin:4px
+                }
+                >span{
+                  padding-right:20px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.ant-modal-content{
+  >.ant-modal-header{
+    border-bottom: 1px solid rgba(1,1,1,0);
+}
+  >.ant-modal-footer{
+    display: flex;
+    justify-content: center;
+    border-top:1px solid rgba(1,1,1,0);
+    padding-bottom:55px;
+    >.ant-btn-primary{
+      background: $theme_color;
+      border:1px solid rgba(1,1,1,0)
+    }
+    >button{
+
+    }
+  }
+  >.ant-modal-body{
+    border-bottom: 1px solid rgba(1,1,1,0);
+    >div{
+      >.report-input1{
+        padding-left: 25px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        >input{
+          width:60%;
+          margin-left:15px
+        }
+      }
+      >.report-input2{
+        padding-left: 33px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        >.ant-calendar-picker{
+          >span{
+            >.ant-input{
+              width:110px;
+
+              margin-right: 7px;
+              margin-left:10px;
+            }
+          }
+        }
+        >.ant-select{
+          margin-left:15px;
+          margin-right:10px;
+        }
+      }
+    }
+    >.addContent{
+      >.addDuration{
+        padding-left: 29px;
+        padding-bottom: 20px;
+        >.ant-input{
+          width: 35px;
+        }
+      }
+      display: flex;
+      flex-direction: column;
+      >.add-input1{
+        padding-left: 50px;
+        >.ant-select{
+          margin-left:15px;
+        }
+      }
+      >.add-input2{
+        padding-left: 9px;
+      }
+      >.add-input3{
+        padding-left: 5px;
+      }
+      >.add-input4{
+        padding-left: 57px;
+      }
+      >div{
+        padding-top: 5px;
+        padding-bottom: 5px;
+
+        >input{
+          margin-left:16px;
+        }
+
+        >.ant-input{
+          width: 60%;
+        }
+        >.big-input{
+
+          width:67.2%;
+          height:40%;
+        }
+      }
+    }
+  }
+}
+.ant-pagination-item-active{
+background-color: $theme_color;
+  border:1px solid rgba(1,1,1,0)
+}
+
