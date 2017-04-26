@@ -9,10 +9,11 @@ import fetch from 'isomorphic-fetch';
 import './dashboard.scss'
 import EditDialog from './EditDialog';
 import { browserHistory } from 'react-router';
-
+const typeList={'DEVELOPMENT':'开发','TEST':'测试','REQUIREMENT':'需求','MAINTAIN':'运维','TEAM':'团队','ADMIN':'管理'};
 
 
 class DashBoard extends Component {
+
     static contextTypes = {
         router: React.PropTypes.object.isRequired
     };
@@ -87,11 +88,28 @@ class DashBoard extends Component {
         });
     };
     //点击增加按钮后
-    callbackVal=(params)=>{
-        // console.log(params);
-        this.setState({
-
-        });
+    callbackVal=(task)=>{
+        console.log(task);
+        //增加项目
+        addTask= (taskId) => {
+            let that = this;
+            fetch(`/api/tasks/${taskId}`, {
+                method: 'POST',
+                credentials:'same-origin',
+            }).then((response)=>{
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return {data: []};
+                }
+            }).then((data) => {
+                if(data.result){
+                    that.getTasks(this.state.pageNum);
+                }
+            }).catch(err => {
+                console.error(err);
+            });
+        };
 
     };
     //响应用户是否点击了关闭按钮
@@ -113,10 +131,6 @@ class DashBoard extends Component {
             editState: false,
         });
     };
-
-
-
-
     handleOutClick = (e) => {
         e.preventDefault();
         var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
@@ -198,7 +212,7 @@ class DashBoard extends Component {
                 return {data: []};
             }
         }).then((data) => {
-            if (data) {
+            if (data.result) {
                 this.setState({
                     uid: data.user.uid,
                     email: data.user.email,
@@ -265,6 +279,7 @@ class DashBoard extends Component {
             console.error(err);
         });
     };
+
     //Pagination改变时
     onChange = (page) => {
         this.setState({
@@ -341,9 +356,9 @@ class DashBoard extends Component {
                                             <Row>
                                                 <Col span={3}>{list.uid}</Col>
                                                 <Col span={3}>{list.issueDate.substring(0, 10)}</Col>
-                                                <Col span={4}>{list.type}</Col>
+                                                <Col span={3} value={list.type}>{typeList[list.type]}</Col>
                                                 <Col span={3}>{list.spendTime}</Col>
-                                                <Col span={11}>
+                                                <Col span={12}>
                                                     {list.content}
                                                 </Col>
                                             </Row>
@@ -358,7 +373,7 @@ class DashBoard extends Component {
                                     您当前还没有填写任何信息
                                 </p>
                                 <div  style={this.state.paginationHiden}>
-                                    <Pagination pageSize={this.state.pageSize + 1}
+                                    <Pagination pageSize={this.state.pageSize}
                                                 current={this.state.current + 1}
                                                 total={this.state.pageSize * this.state.total}
                                                 showQuickJumper
@@ -411,10 +426,7 @@ class DashBoard extends Component {
                              callbackContent={this.callbackVal}/>
                 <EditDialog visible={this.state.editState}
                             backEditClick={this.backEditClick}
-
-
-
-                />
+                                            />
 
             </div>
 

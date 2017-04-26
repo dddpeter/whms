@@ -13,7 +13,6 @@ import { browserHistory } from 'react-router';
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
-
 class Login extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
