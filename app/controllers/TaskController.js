@@ -66,6 +66,36 @@ module.exports = function (app, authChecker) {
             })
 
     });
+    var saveOrUpdate =function(task){
+        let uid = loginUser.uid;
+        if(task.id){
+            return Task
+                .findOne({ where: {id:task.id,uid:uid }})
+                .then(function(obj) {
+                if(obj) { // update
+                    return obj.update(task);
+                }
+                else { // insert
+                    return Task.create(task);
+                }
+            })
+        }
+        else{
+            return Task.create(task);
+        }
+    }
+    app.post('/api/task',authChecker,function (req, res, next) {
+        var task = req.body;
+        saveOrUpdate(task).then(
+            function(){
+                res.json({result:true,data:task});
+            },
+            function(){
+                res.writeHead(200,
+                    {"Content-Type": "application/json; charset=utf8"});
+                res.end(JSON.stringify({result: false, 'error': 'Task add or update fail'}));
+            });
+    });
     app.delete('/api/tasks/:taskId', authChecker, function (req, res, next) {
         var taskId = req.params.taskId;
         var loginUser = req.session.loginUser;
