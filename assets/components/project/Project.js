@@ -135,11 +135,12 @@ class Project extends Component {
             <Select defaultValue="Active"  >
       <Option value="active">Active</Option>
       <Option value="paused">Paused</Option>
+      <Option value="close">Close</Option>
     </Select>
             </div>
             <div className="add-input2">Project Name:<Input  /></div>
             <div className="add-input3">Team member:<Input  /></div>
-            <div className="add-input4">Brief:<Input  className="big-input"/></div>
+            <div className="add-input4">Brief:<Input className='big-input' type="textarea" placeholder="Autosize height with minimum and maximum number of lines" autosize={{ minRows: 4, maxRows: 8 }} /></div>
 </div>
         </Modal>
       </div></div>}>

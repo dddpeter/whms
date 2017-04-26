@@ -28,7 +28,7 @@ class Pop extends Component{
             <div className="edit-div" ><span>Status:{this.state.status}</span>
             <Popover
                 content={<div><p><a onClick={this.statusChange} >Active</a></p>
-                <p> <a onClick={this.statusChange}>Paused</a></p></div>
+                <p> <a onClick={this.statusChange}>Paused</a></p><p><a onClick={this.statusChange}>Close</a></p></div>
         }
                 title="Title"
                 trigger="click"
