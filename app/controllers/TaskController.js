@@ -19,15 +19,25 @@ module.exports = function (app, authChecker) {
             .query(`select t.id,t."issueDate",t.type,uid,(select p."projectName" from t_project p WHERE  p.pid=t.pid) projectName,
             t."spendTime",t.status,t.content 
                 from t_task t where t.uid='${uid}' order by "issueDate" desc,pid
-                limit ${pageSize} offset ${pageNum}`)
+                limit ${pageSize} offset ${pageNum * pageSize}`)
             .then(function (projects) {
                 sequelize
                     .query(`select ceil(count(*)/(${pageSize}+0.00)) 
                         from t_task t where t.uid='${uid}' `)
                     .then(function (total) {
                         res.json({result: true, current: pageNum, total: total[0][0].ceil, 'tasks': projects[0]});
-                    });
-            });
+                    }
+                        ,function(){
+                            res.writeHead(500,
+                                {"Content-Type": "application/json; charset=utf8"});
+                            res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+                        });
+            }
+                ,function(){
+                    res.writeHead(500,
+                        {"Content-Type": "application/json; charset=utf8"});
+                    res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+                })
     });
     app.post('/api/tasks/:taskId', authChecker, function (req, res, next) {
         let taskId = req.params.taskId;
