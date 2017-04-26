@@ -8,6 +8,7 @@ const FormItem = Form.Item;
 import ePromise from 'es6-promise'
 ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
+import { browserHistory } from 'react-router';
 
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -34,7 +35,7 @@ class Login extends Component {
 
     }
     handleSubmit = (e) => {
-        var returnUrl = this.props.location.query.returnUrl;
+        var returnUrl = decodeURIComponent(browserHistory.getCurrentLocation().query.returnUrl);
         var that = this;
         e.preventDefault();
         this.setState({canSubmit:false});

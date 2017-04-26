@@ -22,12 +22,8 @@ const routerConfig = [
         ]
     },
     {
-        path: '/login',
+        path: '/login*',
         component: Login,
-    },
-    {
-        path: '/editDialog',
-        component: EditDialog,
     },
     {
         path: '*',
