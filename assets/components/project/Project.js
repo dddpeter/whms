@@ -4,23 +4,17 @@
 import React, {Component} from 'react';
 import MainCollapse from './MainCollapse.js';
 import {
-    InputNumber,
-    Collapse,
     Card,
     Icon,
-    Row,
-    Col,
-    Table,
-    Button,
     Modal,
     Pagination,
     Input,
-    Popover,
     Select,
     DatePicker
 } from 'antd';
+import {browserHistory} from 'react-router';
 import './project.scss';
-const {MonthPicker, RangePicker} = DatePicker;
+
 const Option = Select.Option;
 
 
@@ -35,18 +29,23 @@ function onChange(pageNumber) {
 }
 
 class Project extends Component {
-
-    state = {
-        visibleDownload: false,
-        visibleAdd: false,
-        visibleEdit: false,
-        status: '',
-        teamMember: 'zhengjj tasi',
-        duration: '12weeks',
-        visibleMemberEdit:false
+    static contextTypes = {
+        router: React.PropTypes.object.isRequired
+    };
+    constructor(props){
+        super(props)
+        this.state = {
+            visibleDownload: false,
+            visibleAdd: false,
+            visibleEdit: false,
+            status: '',
+            teamMember: 'zhengjj tasi',
+            duration: '12weeks',
+            visibleMemberEdit:false
+        }
     }
-    
-    
+
+
 
 
     showModalDownload = () => {
@@ -83,11 +82,37 @@ class Project extends Component {
             visibleAdd: false,
         });
     }
-
-
+//判断是否是登陆状态
+    checkLogin() {
+        let that = this;
+        console.log(that.context);
+        var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
+        fetch('/api/check/login', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            }
+            else {
+                return [];
+            }
+        }).then((data) => {
+            if (!data.result) {
+                that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
+            }
+        }).catch((error) => {
+            console.log('not logins', error)
+        })
+    }
+    componentWillMount(){
+        this.checkLogin();
+    }
     render() {
-
-
         return (
             <Card title={<span className="content-title-big">Projects</span>} className="projects-header" extra={<div className="icon-container">
             <Icon type="download" className='content-title-icon-big'  onClick={this.showModalDownload}/>
@@ -119,9 +144,9 @@ class Project extends Component {
         </Modal>
       </div></div>}>
 
-                
-                
-                
+
+
+
                 <div className="filter"><span>Filter</span><span className="project">Projects:</span>
                     <Select defaultValue="All" onChange={projectsSelect}>
                         <Option value="all">All</Option>
