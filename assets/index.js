@@ -9,6 +9,7 @@ import DashBoard from './components/dashboard/DashBoard.js';
 import Project from './components/project/Project.js';
 import NotFound from './components/NotFound.js'
 import Login from './components/login/Login'
+import EditDialog from './components/dashboard/EditDialog'
 
 const routerConfig = [
     {
@@ -23,6 +24,10 @@ const routerConfig = [
     {
         path: '/login',
         component: Login,
+    },
+    {
+        path: '/editDialog',
+        component: EditDialog,
     },
     {
         path: '*',

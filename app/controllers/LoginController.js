@@ -5,7 +5,7 @@ const ldap = require("ldapjs");
 const ENV = process.env.NODE_ENV || 'development';
 const config    = require(__dirname + '/../../config/config.json')[ENV];
 const User = require('../models/User');
-module.exports = function(app) {
+module.exports = function(app,authChecker) {
     var saveOrUpdate =function(user){
             return User
                 .findOne({ where: {uid:user.uid }})
@@ -63,10 +63,13 @@ module.exports = function(app) {
                     console.log('search status: ' + result.status);
                     //unbind操作，必须要做
                     client.unbind();
-                    console.log(resultObj);
+                    console.log(req.cookie);
                     if(resultObj.message === 'ok' && resultObj.user.userPassword){
                         let user = {uid:resultObj.user.uid,email:resultObj.user.mail};
                         req.session.loginUser = user;
+                        req.session.save(function (err) {
+
+                        });
                         saveOrUpdate(user);
                         res.end(JSON.stringify({result:true,uid:resultObj.user.uid}));
                     }
@@ -90,13 +93,27 @@ module.exports = function(app) {
         }});
 
     app.delete('/api/logout',function(req,res,next){
+        var  user = req.session.loginUser;
         req.session.destroy(function(err) {
             if(err){
                 res.json({result: false, error: 'logout fail'});
                 return;
             }
+            delete user;
             res.clearCookie('connect.sid');
-            res.redirect('/login');
+            res.end(res.json({result:true}));
         });
     });
+    app.get('/api/check/login',function(req,res,next){
+        if(req.session.loginUser){
+            res.json({result:true });
+        }
+        else{
+            res.json({result: false, error: 'not logins'});
+        }
+    });
+    app.get('/api/user',authChecker,function(req,res,next){
+        var user = req.session.loginUser;
+        res.json({result:true,user:user});
+    })
 }

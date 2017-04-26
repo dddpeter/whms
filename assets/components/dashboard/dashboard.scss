@@ -42,4 +42,34 @@
       width:70%;
     }
   }
+  .col-span{
+    margin-right:5px;
+  }
+  .selectOption{
+    float:right;
+    width:90px;
+  }
+  .pagination{
+    float:left;
+
+  }
+  .clear {
+    overflow: auto;
+    zoom: 1;
+  }
+  .pagination-tip{
+    color:#930784;
+    margin-left:15px;
+    line-height:27px;
+  }
+  .blankTip{
+    text-align:center;
+    font-size:14px;
+    padding:40px 0;
+  }
+  .icon-tip{
+    color:#930784;
+    margin-right:4px;
+  }
+
 }
