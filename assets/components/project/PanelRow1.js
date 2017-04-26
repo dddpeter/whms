@@ -8,33 +8,37 @@ import {InputNumber, Icon, Row, Col, Modal, Input,} from 'antd';
 class PanelRow1 extends Component{
 
     state = {
-        teamMember: 'zhengjj tasi',
+        teamMember: 'aaaaa',
+        midTeamMember:'aaaaa',
         duration1: 1,
         duration2: 1,
         duration3: 1,
+        midDuration1: 1,
+        midDuration2: 1,
+        midDuration3: 1,
         visible:false
     }
 
     changeDuration1=(event)=>{
         console.log(event.target.value)
         this.setState({
-            duration1:event.target.value
+            midDuration1:event.target.value
 
         })
     }
     changeDuration2=(event)=>{
         this.setState({
-            duration2:event.target.value
+            midDuration2:event.target.value
         })
     }
     changeDuration3=(event)=>{
         this.setState({
-            duration3:event.target.value
+            midDuration3:event.target.value
         })
     }
     changeMember=(event)=>{
         this.setState({
-            teamMember:event.target.value
+            midTeamMember:event.target.value
         })
     }
 
@@ -52,6 +56,10 @@ class PanelRow1 extends Component{
     modalOk=()=>{
         this.setState({
             visible: false,
+            duration1:this.state.midDuration1,
+            duration2:this.state.midDuration2,
+            duration3:this.state.midDuration3,
+            teamMember:this.state.midTeamMember
         });
     }
 
