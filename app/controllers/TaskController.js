@@ -19,15 +19,25 @@ module.exports = function (app, authChecker) {
             .query(`select t.id,t."issueDate",t.type,uid,(select p."projectName" from t_project p WHERE  p.pid=t.pid) projectName,
             t."spendTime",t.status,t.content 
                 from t_task t where t.uid='${uid}' order by "issueDate" desc,pid
-                limit ${pageSize} offset ${pageNum}`)
+                limit ${pageSize} offset ${pageNum * pageSize}`)
             .then(function (projects) {
                 sequelize
                     .query(`select ceil(count(*)/(${pageSize}+0.00)) 
                         from t_task t where t.uid='${uid}' `)
                     .then(function (total) {
                         res.json({result: true, current: pageNum, total: total[0][0].ceil, 'tasks': projects[0]});
-                    });
-            });
+                    }
+                        ,function(){
+                            res.writeHead(500,
+                                {"Content-Type": "application/json; charset=utf8"});
+                            res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+                        });
+            }
+                ,function(){
+                    res.writeHead(500,
+                        {"Content-Type": "application/json; charset=utf8"});
+                    res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+                })
     });
     app.post('/api/tasks/:taskId', authChecker, function (req, res, next) {
         let taskId = req.params.taskId;
@@ -55,6 +65,36 @@ module.exports = function (app, authChecker) {
                 }
             })
 
+    });
+    var saveOrUpdate =function(task){
+        let uid = loginUser.uid;
+        if(task.id){
+            return Task
+                .findOne({ where: {id:task.id,uid:uid }})
+                .then(function(obj) {
+                if(obj) { // update
+                    return obj.update(task);
+                }
+                else { // insert
+                    return Task.create(task);
+                }
+            })
+        }
+        else{
+            return Task.create(task);
+        }
+    }
+    app.post('/api/task',authChecker,function (req, res, next) {
+        var task = req.body;
+        saveOrUpdate(task).then(
+            function(){
+                res.json({result:true,data:task});
+            },
+            function(){
+                res.writeHead(200,
+                    {"Content-Type": "application/json; charset=utf8"});
+                res.end(JSON.stringify({result: false, 'error': 'Task add or update fail'}));
+            });
     });
     app.delete('/api/tasks/:taskId', authChecker, function (req, res, next) {
         var taskId = req.params.taskId;
