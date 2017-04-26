@@ -5,6 +5,7 @@ import React, { Component} from 'react';
 import CollapseTable from './CollapseTable.js';
 import MemberAndDuration from './MemberAndDuration.js'
 import {InputNumber, Icon, Row, Col, Modal, Input,} from 'antd';
+import moment from 'moment'
 class PanelRow1 extends Component{
 
     state = {
@@ -74,19 +75,19 @@ class PanelRow1 extends Component{
                             <span className="brief">Brief:</span>
                         </Row>
                         <Row className="brief-content">
-                            <span>青青互助项目</span>
+                            <span>{this.props.project.projectName}</span>
                         </Row>
                     </Col>
                     <Col span={8}>
                         <div>
                             <Row>
                                 <div>Create at:
-                                    <text>2016/12/01</text>
+                                    <text>{moment(this.props.project.createdAt).format('YYYY/MM/DD')}</text>
                                 </div>
                             </Row>
                             <Row>
                                 <div className="second-right">Last updates:
-                                    <text>2016/12/01</text>
+                                    <text>{moment(this.props.project.updatedAt).format('YYYY/MM/DD')}</text>
                                 </div>
                             </Row>
                             <Row>

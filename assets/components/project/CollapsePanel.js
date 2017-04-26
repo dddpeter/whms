@@ -23,7 +23,9 @@ const Panel = Collapse.Panel;
 
 class CollapsePanel extends Component{
 
-   
+   constructor(props){
+       super(props)
+   }
 
    
 
@@ -31,7 +33,7 @@ class CollapsePanel extends Component{
 
         return(
             
-                <PanelRow1 />
+                <PanelRow1 project={this.props.project}/>
          /*   <Panel header={<PanelHeader title="青青互助" extra={<div className="edit-div"><span>Status:{this.state.status}</span>
                     <Pop statusChange={this.statusChange}/>
 
