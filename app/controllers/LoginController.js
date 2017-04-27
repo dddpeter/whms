@@ -104,6 +104,24 @@ module.exports = function(app,authChecker) {
             res.end(res.json({result:true}));
         });
     });
+    app.get('/api/users',authChecker,function(){
+        User.findAll().then(
+            function (users) {
+                if(users){
+                    res.end(JSON.stringify({result: true,users:users}));
+                }
+                else{
+                    res.writeHead(200,
+                        {"Content-Type": "application/json; charset=utf8"});
+                    res.end(JSON.stringify({result: false, 'error': 'No users found'}));
+                }
+        },
+            function () {
+                res.writeHead(500,
+                    {"Content-Type": "application/json; charset=utf8"});
+                res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+            });
+    });
     app.get('/api/check/login',function(req,res,next){
         if(req.session.loginUser){
             res.json({result:true });
