@@ -19,7 +19,6 @@ class MemberAndDuration extends Component{
                 <Input placeholder="small size"  onChange={this.props.changeDuration1}/>weeks
                 <Input placeholder="small size"   onChange={this.props.changeDuration2}/>days
                 <Input placeholder="small size"  onChange={this.props.changeDuration3}/>hours
-
                 </div>
         <div className="addTeamMember">Team member:<Input  onChange={this.props.changeMember}/></div>
 
