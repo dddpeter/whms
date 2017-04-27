@@ -42,8 +42,6 @@ class Project extends Component {
             visibleAdd: false,
             visibleEdit: false,
             status: '',
-            teamMember: 'zhengjj tasi',
-            duration: '12weeks',
             visibleMemberEdit:false,
             projects:[{pid:'ALL',projectName:'所有'}]
         }
