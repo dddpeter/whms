@@ -42,6 +42,8 @@ class DashBoard extends Component {
             pageSize: 2,
             pageNum: 0,
             loading: false,
+            taskList:[],
+
         }
     }
     //修改饼图选择框的内容
@@ -89,14 +91,17 @@ class DashBoard extends Component {
     };
     //点击增加按钮后
     callbackVal=(task)=>{
-        console.log(task);
-        //增加项目
-        addTask= (taskId) => {
             let that = this;
-            fetch(`/api/tasks/${taskId}`, {
+            fetch(`/api/task`, {
                 method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
                 credentials:'same-origin',
+                body:JSON.stringify(task)
             }).then((response)=>{
+                console.log(response);
                 if (response.status === 200) {
                     return response.json();
                 } else {
@@ -104,13 +109,44 @@ class DashBoard extends Component {
                 }
             }).then((data) => {
                 if(data.result){
-                    that.getTasks(this.state.pageNum);
+                    that.getTasks();
+                }
+                else{
+                    console.log(data);
                 }
             }).catch(err => {
                 console.error(err);
             });
         };
-
+    //点击修改按钮后
+    callbackEdit=(task)=>{
+        console.log(task);
+        let that = this;
+        fetch(`/api/task`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials:'same-origin',
+            body:JSON.stringify(task)
+        }).then((response)=>{
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return {data: []};
+            }
+        }).then((data) => {
+            if(data.result){
+                that.getTasks();
+            }
+            else{
+                console.log(data);
+            }
+        }).catch(err => {
+            console.error(err);
+        });
     };
     //响应用户是否点击了关闭按钮
     onClickChanged = () => {
@@ -119,9 +155,10 @@ class DashBoard extends Component {
         });
     };
     //点击修改图标后弹出修改对话框
-    editChanged = () => {
+    editChanged = (e,task) => {
         this.setState({
             editState: true,
+            taskList:task,
         });
     };
 
@@ -133,7 +170,7 @@ class DashBoard extends Component {
     };
     handleOutClick = (e) => {
         e.preventDefault();
-        var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
+        let returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
         let that = this;
         fetch('/api/logout', {    //发送退出登录的请求
             method: 'DELETE',
@@ -152,6 +189,7 @@ class DashBoard extends Component {
                     })
                 }
             }).then(function (data) {
+
             that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
         }).catch((error) => {
             console.log('logout failed', error)
@@ -336,19 +374,19 @@ class DashBoard extends Component {
                             {
                                 this.state.dataList.map(function (list) {
                                     return (
-                                        <Card key={list.id} title={list.projectname} className="content-title-secondary"
+                                        <Card key={list.id} title={list.projectName} className="content-title-secondary"
                                               extra={
                                                   <span>
-                                                   <span onClick={this.editChanged}>
+                                                   <span onClick={(e,o) => this.editChanged(e,list)}>
                                                         <Icon className='content-title-icon-small'
                                                               type="edit"/>
                                                     </span>
+                                                      <span><Icon type="delete" className='content-title-icon-small'/></span>
                                                     <Popconfirm title="确认删除？"
                                                                 placement="right"
                                                                 okText="确认"
                                                                 cancelText="取消"
                                                                 onConfirm={() =>this.deleteTask(list.id)}>
-                                                       <a><Icon type="delete" className='content-title-icon-small'/></a>
                                                     </Popconfirm>
                                               </span>
                                               }
@@ -362,8 +400,17 @@ class DashBoard extends Component {
                                                     {list.content}
                                                 </Col>
                                             </Row>
+                                            <EditDialog visible={this.state.editState}
+                                                        taskList={list}
+                                                        backEditClick={this.backEditClick}
+                                                        callbackEdit={this.callbackEdit}
+                                            />
+
                                         </Card>
+
+
                                     );
+
                                 }.bind(this))
                             }
 
@@ -424,9 +471,8 @@ class DashBoard extends Component {
                              uidName={this.state.uid}
                              callbackClick={this.onClickChanged}
                              callbackContent={this.callbackVal}/>
-                <EditDialog visible={this.state.editState}
-                            backEditClick={this.backEditClick}
-                                            />
+
+
 
             </div>
 

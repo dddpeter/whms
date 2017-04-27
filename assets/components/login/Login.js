@@ -57,13 +57,12 @@ class Login extends Component {
                         that.setState({
                             errorTitle:true,
                             error:true});
-
                     }
                 })
                     .then(function(data){
                        var uid=data.uid;
                         if(data.result){
-                            if(returnUrl){
+                            if(returnUrl && returnUrl!='undefined'){
                                 that.context.router.push(returnUrl);
                             }
                             else{

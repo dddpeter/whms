@@ -18,16 +18,16 @@ const Option = Select.Option;
 
 const formItemLayout = {
     labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
+        xs: {span: 24},
+        sm: {span: 8},
     },
     wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
+        xs: {span: 24},
+        sm: {span: 16},
     },
 };
 const config = {
-    rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+    rules: [{type: 'object', required: true, message: 'Please select time!'}],
 };
 
 class ModalDialog extends React.Component {
@@ -37,28 +37,30 @@ class ModalDialog extends React.Component {
             visible: false,
             selectProject: '',
             projectList: [],
-            defaultProject:{pid:''},
-            dateStatus:'success',
-            dataHelp:'',
-            dataError:false,
-            contentStatus:'success',
-            contentHelp:'',
-            contentError:true,
-            task:{
-                issueDate:moment().format('YYYY-MM-DD'),
-                type:'DEVELOPMENT',
-                spendTime:1
+            defaultProject: {pid: ''},
+            dateStatus: 'success',
+            dataHelp: '',
+            dataError: false,
+            contentStatus: 'success',
+            contentHelp: '',
+            contentError: true,
+            task: {
+                issueDate: moment().format('YYYY-MM-DD'),
+                type: 'DEVELOPMENT',
+                spendTime: 1
             }
 
         };
     }
-    componentWillReceiveProps(props){
+
+    componentWillReceiveProps(props) {
         let task = this.state.task;
-        task.uid =  props.uidName;
+        task.uid = props.uidName;
         this.setState({
-            task:task
+            task: task
         });
     };
+
     //引入project接口
     getProjects = () => {
         let that = this;
@@ -79,11 +81,11 @@ class ModalDialog extends React.Component {
             .then(function (data) {
                 let task = that.state.task;
                 if (data.result) {
-                    task.pid=data.data[0].pid;
+                    task.pid = data.data[0].pid;
                     that.setState({
-                        defaultProject:data.data[0],
+                        defaultProject: data.data[0],
                         projectList: data.data,
-                        task:task
+                        task: task
                     })
 
                 }
@@ -101,62 +103,87 @@ class ModalDialog extends React.Component {
         this.props.callbackClick(this.state.visible);
     };
     //点击选择project
-    handleChangeProject=(value)=>{
+    handleChangeProject = (value) => {
         let task = this.state.task;
-        task.pid=value;
+        task.pid = value;
         this.setState({
-            task:task
+            task: task
         });
-        };
+    };
 
     //点击date后选择日期
     onChangeDate = (time) => {
         let task = this.state.task;
-        task.issueDate=time;
+        task.issueDate = time;
         this.setState({
-            task:task
+            task: task
         });
-        if(this.state.task.issueDate===''||this.state.task.issueDate===null){
+        if (this.state.task.issueDate === '' || this.state.task.issueDate === null) {
             this.setState({
-                dateStatus:'error',
-                dataHelp:'Please select the correct date',
-                dataError:true
+                dateStatus: 'error',
+                dataHelp: 'Please select the correct date',
+                dataError: true
             })
-        }else{
+        } else {
             this.setState({
-                dateStatus:'success',
-                dataHelp:'',
-                dataError:false
+                dateStatus: 'success',
+                dataHelp: '',
+                dataError: false
             })
         }
     };
+    //格式化日期并限制可选日期在本周内
+    disabledDate = (current) => {
+        if(current){
+            let now = new Date();
+            let myyear = now.getFullYear();
+            let mymonth = now.getMonth()+1;
+            let myweekday = now.getDate()-now.getDay()+1;
+            if(mymonth < 10){
+                mymonth = "0" + mymonth;
+            }
+            if(myweekday < 10){
+                myweekday = "0" + myweekday;
+            }
+            let fristDayWeek=moment(myyear+"-"+mymonth + "-" + myweekday, 'YYYY-MM-DD');
+            return fristDayWeek.valueOf() > current.valueOf() || current.valueOf() > Date.now();
+        }
+    };
     //type
-    handleChangeType=(event)=>{
-
+    handleChangeType = (value) => {
+        let task = this.state.task;
+        task.type = value;
+        this.setState({
+            task: task
+        });
     };
 
     //选择Duration
     onChangeDuration = (value) => {
-        console.log('changed', value);
+        let task = this.state.task;
+        task.spendTime = value;
+        this.setState({
+            task: task
+        });
     };
     //Description内容改变
     onChangeDescription = (e) => {
         let task = this.state.task;
-        task.content=e.target.value;
+        task.content = e.target.value;
         this.setState({
-            task:task
+            task: task
         });
-        if(this.state.task.issueDate===''||this.state.task.issueDate===null){
+        if (this.state.task.issueDate === '' || this.state.task.issueDate === null) {
             this.setState({
-                contentStatus:'error',
-                contentHelp:'Please enter a description on the content',
-                contentError:true
+                contentStatus: 'error',
+                contentHelp: 'Please enter a description on the content',
+                contentError: true
             })
-        }else{
+        } else {
             this.setState({
-                contentStatus:'success',
-                contentHelp:'',
-                contentError:false
+                contentStatus: 'success',
+                contentHelp: '',
+                contentError: false
             })
         }
     };
@@ -167,13 +194,13 @@ class ModalDialog extends React.Component {
         this.props.callbackContent(task);
         this.handleCancel();
     };
-    componentDidMount(){
+
+    componentDidMount() {
         this.getProjects();
     }
 
 
     render() {
-
         return (
             <div>
                 <Modal
@@ -189,9 +216,8 @@ class ModalDialog extends React.Component {
                         >
                             <Select className='selectProject'
                                     defaultValue={this.state.defaultProject.pid}
-                                    ref="projectRef"
                                     style={{width: 120}}
-                                    onChange={(v)=>this.handleChangeProject(v)}>
+                                    onChange={(v) => this.handleChangeProject(v)}>
                                 {
                                     this.state.projectList.map(function (list) {
                                         return (
@@ -212,10 +238,12 @@ class ModalDialog extends React.Component {
                         <FormItem
                             {...formItemLayout}
                             label="Date:"
-                            validateStatus={this.state.dateStatus} help={this.state.dataHelp}
+                            validateStatus={this.state.dateStatus}
+                            help={this.state.dataHelp}
                         >
-                                <DatePicker defaultValue={moment(this.state.task.issueDate,'YYYY-MM-DD')}
-                                            onChange={this.onChangeDate}/>
+                            <DatePicker defaultValue={moment(this.state.task.issueDate, 'YYYY-MM-DD')}
+                                        disabledDate={this.disabledDate}
+                                        onChange={this.onChangeDate}/>
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
@@ -229,15 +257,13 @@ class ModalDialog extends React.Component {
                                 <Option value="MAINTAIN">运维</Option>
                                 <Option value="TEAM">团队</Option>
                                 <Option value="ADMIN">管理</Option>
-
-
                             </Select>
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
                             label="Duration"
                         >
-                            <InputNumber min={1}  defaultValue={this.state.task.spendTime}
+                            <InputNumber min={1} defaultValue={this.state.task.spendTime}
                                          onChange={this.onChangeDuration}/>(单位：h)
 
                         </FormItem>
