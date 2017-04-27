@@ -18,7 +18,7 @@ module.exports = function (app, authChecker) {
         sequelize
             .query(`select t.id,t."issueDate",t.type,uid,(select p."projectName" from t_project p WHERE  p.pid=t.pid) projectName,
             t."spendTime",t.status,t.content 
-                from t_task t where t.uid='${uid}' order by "issueDate" desc,pid
+                from t_task t where t.uid='${uid}' order by t."updatedAt" desc,t.pid
                 limit ${pageSize} offset ${pageNum * pageSize}`)
             .then(function (projects) {
                 sequelize
@@ -67,6 +67,7 @@ module.exports = function (app, authChecker) {
 
     });
     var saveOrUpdate =function(task){
+        var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         if(task.id){
             return Task
