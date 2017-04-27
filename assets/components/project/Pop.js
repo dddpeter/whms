@@ -2,8 +2,12 @@
  * Created by admin on 2017/4/25.
  */
 import React, {Component} from 'react';
-import {Icon, Popover,} from 'antd';
+import {Icon, Popover,message} from 'antd';
 
+message.config({
+    top: 80,
+    duration: 2,
+});
 class Pop extends Component{
 
     constructor(props){
@@ -23,10 +27,39 @@ class Pop extends Component{
         this.setState({visibleStatuspop});
     }
     statusChange=(e,status)=>{
+        var that =this;
         this.setState({
-            status:status,
             visibleStatuspop: false
         });
+        fetch(`/api/project/${this.props.project.pid}`,
+            {
+                method:'POST',
+                credentials:'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({status:status})
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {data: []};
+                }
+            })
+            .then(function (data) {
+                if(data.result){
+                    message.success('修改成功');
+                    that.setState({
+                        status:status,
+                    });
+                }
+                else{
+                    message.error('修改失败');
+                }
+            });
     }
     stopPop=(e)=>{
         e.stopPropagation();
@@ -39,12 +72,12 @@ class Pop extends Component{
             <Popover
                 content={
                 <div>
-                <p><a onClick={(e,v)=>this.statusChange(e,'ACTIVE')} >Active</a></p>
-                <p> <a onClick={(e,v)=>this.statusChange(e,'PENDING')}>Pending</a></p>
-                <p><a onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</a></p>
+                <p><a className="project-status-link" onClick={(e,v)=>this.statusChange(e,'ACTIVE')} >Active</a></p>
+                <p> <a className="project-status-link"  onClick={(e,v)=>this.statusChange(e,'PENDING')}>Pending</a></p>
+                <p><a className="project-status-link"  onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</a></p>
                 </div>
         }
-                title="Title"
+                title="改变项目状态"
                 trigger="click"
                 visible={this.state.visibleStatuspop}
                 onVisibleChange={this.statusPopVisibleChange}

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import PanelRow1 from'./PanelRow1.js'
-import CollapsePanel from './CollapsePanel.js'
+import PanelContentTop from'./PanelContentTop.js'
+
 import {Collapse, Pagination} from 'antd';
 import ePromise from 'es6-promise'
 ePromise.polyfill();
@@ -69,7 +69,7 @@ class MainCollapse extends Component {
                     {this.state.projects.map((p)=> {
                         return (
                             <Panel header={<PanelHeader title={p.projectName} extra={<Pop project={p}/>}></PanelHeader>} key={p.pid}>
-                                <PanelRow1 project={p}/>
+                                <PanelContentTop project={p}/>
                             </Panel>
                         )
                     })}

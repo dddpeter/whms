@@ -1,4 +1,11 @@
 @import "../../sass/var";
+.project-status-link{
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);;
+}
+.project-status-link:hover{
+  color: $theme_color;
+}
 .content-title-big{
   color: $theme_color;
 }
@@ -136,10 +143,11 @@
             }
             > .rightExtra {
               > .edit-div {
-
+                text-align: center;
                 > .edit-icon {
                   padding-right: 15px;
                   font-size: 14px;
+
                   color: $theme_color;
                   margin: 4px
                 }
@@ -205,11 +213,20 @@
       }
     }
     >.addContent{
+      >.addTeamMember{
+        margin-left: 20px;
+        >.ant-select{
+          width:60%;
+          margin-left:16px;
+        }
+      }
       >.addDuration{
+        margin-left:20px;
         padding-left: 29px;
         padding-bottom: 20px;
         >.ant-input{
-          width: 35px;
+          width: 50px;
+          margin-right: 10px;
         }
       }
       display: flex;
