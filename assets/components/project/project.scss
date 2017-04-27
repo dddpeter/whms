@@ -1,4 +1,11 @@
 @import "../../sass/var";
+.project-status-link{
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);;
+}
+.project-status-link:hover{
+  color: $theme_color;
+}
 .content-title-big{
   color: $theme_color;
 }
@@ -24,123 +31,128 @@
     }
   }
   >.ant-card-body {
-    > .pagination-box {
-      padding-top:25px;
-      display: flex;
-      justify-content: center;
-    > .ant-pagination {
-      > .ant-pagination-item-50 {
-        display: none;
-      }
-      > .ant-pagination-jump-next {
-        display: none;
+    >div{
+      > .pagination-box {
+        padding-top: 25px;
+        display: flex;
+        justify-content: center;
+        > .ant-pagination {
+          > .ant-pagination-item-50 {
+            display: none;
+          }
+          > .ant-pagination-jump-next {
+            display: none;
+          }
+        }
       }
     }
-  }
 
-    >.filter{
+
+    > .filter {
       padding-bottom: 25px;
-      >.status{
-        padding-left:30px;
-        padding-right:15px;
+      > .status {
+        padding-left: 30px;
+        padding-right: 15px;
       }
-      >.ant-select{
-        padding-right:40px;
+      > .ant-select {
+        padding-right: 40px;
         width: 120px;
       }
-      >.project{
-        padding-left:18px;
+      > .project {
+        padding-left: 18px;
         padding-right: 15px;
       }
     }
-    >.ant-collapse{
-      >.ant-collapse-item{
-        >.ant-collapse-content{
-          >.ant-collapse-content-box {
+    > div {
+    > .ant-collapse {
+      > .ant-collapse-item {
+        > .ant-collapse-content {
+          > .ant-collapse-content-box {
             > div {
 
-            > .ant-row {
+              > .ant-row {
 
-              > .table-row {
-                padding-top: 20px;
-
-              }
-              > .update {
-                padding-top: 15px;
-              }
-              > .ant-col-16 {
-                background-color: rgba(1, 1, 1, 0.5);
-                padding-top: 10px;
-                > .brief-content {
-                  > span {
-                    padding-left: 35px;
-                  }
-                }
-                > .ant-row {
-                  > .brief {
-                    padding-left: 20px;
-                  }
-                }
-                background: rgba(220, 220, 220, 0.4);
-                height: 155px;
-              }
-              > .ant-col-8 {
-                > div {
-                  padding-left: 50px;
+                > .table-row {
                   padding-top: 20px;
 
+                }
+                > .update {
+                  padding-top: 15px;
+                }
+                > .ant-col-16 {
+                  background-color: rgba(1, 1, 1, 0.5);
+                  padding-top: 10px;
+                  > .brief-content {
+                    > span {
+                      padding-left: 35px;
+                    }
+                  }
                   > .ant-row {
-
-                    > div {
-                      > text {
-                        padding-left: 10px;
-                      }
-                      > .anticon-edit {
-                        float: right;
-                        font-size: 14px;
-                        color: $theme_color;
-                        margin: 4px
-                      }
-
+                    > .brief {
+                      padding-left: 20px;
                     }
+                  }
+                  background: rgba(220, 220, 220, 0.4);
+                  height: 155px;
+                }
+                > .ant-col-8 {
+                  > div {
+                    padding-left: 50px;
+                    padding-top: 20px;
 
-                    > .second-right {
-                      padding-top: 15px;
-                    }
-                    > .third-right {
-                      padding-top: 15px;
-                      padding-bottom: 15px;
-                      >text{
-                        >span{
-                          padding-left: 2px;
-                          padding-right: 5px;
+                    > .ant-row {
+
+                      > div {
+                        > text {
+                          padding-left: 10px;
+                        }
+                        > .anticon-edit {
+                          float: right;
+                          font-size: 14px;
+                          color: $theme_color;
+                          margin: 4px
+                        }
+
+                      }
+
+                      > .second-right {
+                        padding-top: 15px;
+                      }
+                      > .third-right {
+                        padding-top: 15px;
+                        padding-bottom: 15px;
+                        > text {
+                          > span {
+                            padding-left: 2px;
+                            padding-right: 5px;
+                          }
                         }
                       }
                     }
                   }
                 }
-              }
 
+              }
             }
-          }
           }
         }
-        >.ant-collapse-header{
-          >.collapse-panel-title{
-            >.title{
-              padding-left:14px;
+        > .ant-collapse-header {
+          > .collapse-panel-title {
+            > .title {
+              padding-left: 14px;
             }
-            >.rightExtra{
-              >.edit-div{
-
-                >.edit-icon{
+            > .rightExtra {
+              > .edit-div {
+                text-align: center;
+                > .edit-icon {
                   padding-right: 15px;
-                  font-size:14px;
-                  color:$theme_color;
-                  margin:4px
+                  font-size: 14px;
+
+                  color: $theme_color;
+                  margin: 4px
                 }
-                >span{
-                  padding-right:20px;
+                > span {
+                  padding-right: 20px;
                 }
               }
             }
@@ -148,6 +160,7 @@
         }
       }
     }
+  }
   }
 }
 .ant-modal-content{
@@ -200,11 +213,20 @@
       }
     }
     >.addContent{
+      >.addTeamMember{
+        margin-left: 20px;
+        >.ant-select{
+          width:60%;
+          margin-left:16px;
+        }
+      }
       >.addDuration{
+        margin-left:20px;
         padding-left: 29px;
         padding-bottom: 20px;
         >.ant-input{
-          width: 35px;
+          width: 50px;
+          margin-right: 10px;
         }
       }
       display: flex;
@@ -223,6 +245,9 @@
       }
       >.add-input4{
         padding-left: 57px;
+        >.big-input{
+          margin-left: 16px;
+        }
       }
       >div{
         padding-top: 5px;

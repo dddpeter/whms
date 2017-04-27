@@ -104,7 +104,7 @@ module.exports = function(app,authChecker) {
             res.end(res.json({result:true}));
         });
     });
-    app.get('/api/users',authChecker,function(){
+    app.get('/api/users',authChecker,function(req,res,next){
         User.findAll().then(
             function (users) {
                 if(users){

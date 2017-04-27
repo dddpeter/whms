@@ -38,7 +38,7 @@ module.exports = function (app,authChecker) {
         if (pageSize === undefined || isNaN(pageSize)) {
             pageSize = 5;
         }
-        Project.findAll({ offset: pageSize*pageNum, limit: pageSize ,order:['updateAt','DESC']})
+        Project.findAll({ offset: pageSize*pageNum, limit: pageSize ,order:[['updatedAt','DESC']]})
             .then(function(projects){
                 var projects = projects;
                 sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_project`)

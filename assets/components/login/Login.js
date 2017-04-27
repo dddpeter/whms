@@ -34,6 +34,7 @@ class Login extends Component {
         this.props.form.validateFields();
 
     }
+    
     handleSubmit = (e) => {
         var returnUrl = decodeURIComponent(browserHistory.getCurrentLocation().query.returnUrl);
         var that = this;

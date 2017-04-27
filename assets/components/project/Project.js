@@ -2,6 +2,9 @@
  * Created by lin on 2017/4/19.
  */
 import React, {Component} from 'react';
+import ePromise from 'es6-promise'
+ePromise.polyfill();
+import fetch from 'isomorphic-fetch';
 import MainCollapse from './MainCollapse.js';
 import {
     Card,
@@ -41,7 +44,8 @@ class Project extends Component {
             status: '',
             teamMember: 'zhengjj tasi',
             duration: '12weeks',
-            visibleMemberEdit:false
+            visibleMemberEdit:false,
+            projects:[{pid:'ALL',projectName:'所有'}]
         }
     }
 
@@ -85,7 +89,6 @@ class Project extends Component {
 //判断是否是登陆状态
     checkLogin() {
         let that = this;
-        console.log(that.context);
         var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
         fetch('/api/check/login', {
             method: 'GET',
@@ -109,8 +112,38 @@ class Project extends Component {
             console.log('not logins', error)
         })
     }
+    renderFirstPage(){
+        let that = this;
+        let projects = this.state.projects;
+        fetch('/api/projects/all',
+            { credentials: 'same-origin'})
+            .then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+            else {
+               return {data:[]};
+            }
+            })
+            .then(function (data) {
+               if(data.result){
+                   let projectsAll = data.data;
+                   projectsAll.map(p =>{
+                       projects.push(p);
+                   });
+                   that.setState({
+                       projects:projects
+                   });
+               }
+        });
+        
+
+    }
     componentWillMount(){
         this.checkLogin();
+    }
+    componentDidMount(){
+        this.renderFirstPage();
     }
     render() {
         return (
@@ -135,11 +168,12 @@ class Project extends Component {
             <Select defaultValue="Active"  >
       <Option value="active">Active</Option>
       <Option value="paused">Paused</Option>
+      <Option value="close">Close</Option>
     </Select>
             </div>
             <div className="add-input2">Project Name:<Input  /></div>
             <div className="add-input3">Team member:<Input  /></div>
-            <div className="add-input4">Brief:<Input  className="big-input"/></div>
+            <div className="add-input4">Brief:<Input className='big-input' type="textarea" placeholder="Autosize height with minimum and maximum number of lines" autosize={{ minRows: 4, maxRows: 8 }} /></div>
 </div>
         </Modal>
       </div></div>}>
@@ -148,22 +182,21 @@ class Project extends Component {
 
 
                 <div className="filter"><span>Filter</span><span className="project">Projects:</span>
-                    <Select defaultValue="All" onChange={projectsSelect}>
-                        <Option value="all">All</Option>
-
+                    <Select defaultValue="ALL" onChange={projectsSelect}>
+                        {this.state.projects.map(
+                            (project) => { return <Option key={project.pid} value={project.pid}>{project.projectName}</Option> }
+                        )}
                     </Select>
                     <span className="status">Status:</span>
-                    <Select defaultValue="All" onChange={statusSelect}>
-                        <Option value="all">All</Option>
+                    <Select defaultValue="ALL" onChange={statusSelect}>
+                        <Option value="ALL">所有</Option>
+                        <Option value="ACTIVE">活动</Option>
+                        <Option value="PENDING">暂停</Option>
+                        <Option value="CLOSE">关闭</Option>
                     </Select>
                 </div>
                 <MainCollapse />
-
-
-
-
-                <div className="pagination-box"><Pagination showQuickJumper defaultCurrent={2} total={500}
-                                                            onChange={onChange} defaultCurrent={1} /></div>
+               
             </Card>
         )
     }
