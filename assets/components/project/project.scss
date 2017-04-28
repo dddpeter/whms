@@ -3,6 +3,34 @@
   font-size: 13px;
   color: rgba(0, 0, 0, 0.65);;
 }
+.pagination{
+  float: right;
+}
+.task-table{
+  .ant-table-pagination{
+    display: none!important;
+  }
+  .ant-table-column-sorter{
+    margin-left: 5px;
+
+    .anticon{
+      font-size: 14px!important;
+    }
+  }
+  margin-bottom: 16px;
+  table{
+    th{
+      background:#ddd;
+    }
+    th,td{
+      padding: 10px 8px!important;
+    }
+    tr:nth-child(even){
+      background: #efefef;
+    }
+  }
+
+}
 .project-status-link:hover{
   color: $theme_color;
 }
@@ -64,95 +92,96 @@
       }
     }
     > div {
-    > .ant-collapse {
-      > .ant-collapse-item {
-        > .ant-collapse-content {
-          > .ant-collapse-content-box {
-            > div {
+      > .ant-collapse {
+        > .ant-collapse-item {
+          > .ant-collapse-content {
+            > .ant-collapse-content-box {
+              > div {
 
-              > .ant-row {
+                > .ant-row {
 
-                > .table-row {
-                  padding-top: 20px;
-
-                }
-                > .update {
-                  padding-top: 15px;
-                }
-                > .ant-col-16 {
-                  background-color: rgba(1, 1, 1, 0.5);
-                  padding-top: 10px;
-                  > .brief-content {
-                    > span {
-                      padding-left: 35px;
-                    }
-                  }
-                  > .ant-row {
-                    > .brief {
-                      padding-left: 20px;
-                    }
-                  }
-                  background: rgba(220, 220, 220, 0.4);
-                  height: 155px;
-                }
-                > .ant-col-8 {
-                  > div {
-                    padding-left: 50px;
+                  > .table-row {
                     padding-top: 20px;
 
+                  }
+                  > .update {
+                    padding-top: 15px;
+                  }
+                  > .ant-col-16 {
+                    background-color: rgba(1, 1, 1, 0.5);
+                    padding-top: 10px;
+                    > .brief-content {
+                      > span {
+                        padding-left: 35px;
+                      }
+                    }
                     > .ant-row {
-
-                      > div {
-                        > text {
-                          padding-left: 10px;
-                        }
-                        > .anticon-edit {
-                          float: right;
-                          font-size: 14px;
-                          color: $theme_color;
-                          margin: 4px
-                        }
-
+                      > .brief {
+                        padding-left: 20px;
                       }
+                    }
+                    background: rgba(220, 220, 220, 0.4);
+                    height: 155px;
+                  }
+                  > .ant-col-8 {
+                    > div {
+                      padding-left: 50px;
+                      padding-top: 20px;
 
-                      > .second-right {
-                        padding-top: 15px;
-                      }
-                      > .third-right {
-                        padding-top: 15px;
-                        padding-bottom: 15px;
-                        > text {
-                          > span {
-                            padding-left: 2px;
-                            padding-right: 5px;
+                      > .ant-row {
+
+                        > div {
+                          > text {
+                            padding-left: 10px;
+                          }
+                          > .anticon-edit {
+                            float: right;
+                            font-size: 14px;
+                            color: $theme_color;
+                            margin: 4px
+                          }
+
+                        }
+
+                        > .second-right {
+                          padding-top: 15px;
+                        }
+                        > .third-right {
+                          padding-top: 15px;
+                          padding-bottom: 15px;
+                          > text {
+                            > span {
+                              padding-left: 2px;
+                              padding-right: 5px;
+                            }
                           }
                         }
                       }
                     }
                   }
-                }
 
+                }
               }
             }
           }
-        }
-        > .ant-collapse-header {
-          > .collapse-panel-title {
-            > .title {
-              padding-left: 14px;
-            }
-            > .rightExtra {
-              > .edit-div {
-                text-align: center;
-                > .edit-icon {
-                  padding-right: 15px;
-                  font-size: 14px;
+          > .ant-collapse-header {
+            > .collapse-panel-title {
+              > .title {
+                padding-left: 14px;
+              }
+              > .rightExtra {
+                > .edit-div {
+                  text-align: center;
+                  > .edit-icon {
+                    padding-right: 15px;
+                    font-size: 14px;
 
-                  color: $theme_color;
-                  margin: 4px
-                }
-                > span {
-                  padding-right: 20px;
+                    color: $theme_color;
+                    margin: 4px
+                  }
+                  > span {
+                    padding-right: 20px;
+                  }
                 }
               }
             }
@@ -161,12 +190,11 @@
       }
     }
   }
-  }
 }
 .ant-modal-content{
   >.ant-modal-header{
     border-bottom: 1px solid rgba(1,1,1,0);
-}
+  }
   >.ant-modal-footer{
     display: flex;
     justify-content: center;
@@ -270,7 +298,6 @@
   }
 }
 .ant-pagination-item-active{
-background-color: $theme_color;
+  background-color: $theme_color;
   border:1px solid rgba(1,1,1,0)
 }
-

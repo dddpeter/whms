@@ -16,7 +16,7 @@ function hasErrors(fieldsError) {
 class Login extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
-    }
+    };
     constructor(props){
         super(props);
         this.state={
@@ -55,7 +55,7 @@ class Login extends Component {
         this.props.form.validateFields();
 
     }
-    
+    //点击登陆按钮
     handleSubmit = (e) => {
         var returnUrl = decodeURIComponent(browserHistory.getCurrentLocation().query.returnUrl);
         var that = this;

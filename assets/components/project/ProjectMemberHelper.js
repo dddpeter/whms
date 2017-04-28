@@ -9,7 +9,7 @@ import ePromise from 'es6-promise'
 ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
 
-class MemberAndDuration extends Component {
+class ProjectMemberHelper extends Component {
 
     constructor(props){
         super(props);
@@ -21,7 +21,7 @@ class MemberAndDuration extends Component {
     }
     getUser(){
         let that = this;
-        fetch(`/api/users`,
+        fetch(`/api/users?pid=${this.props.pid}`,
             {credentials: 'same-origin'})
             .then((response) => {
                 if (response.status === 200) {
@@ -76,4 +76,4 @@ class MemberAndDuration extends Component {
         )
     }
 }
-export default MemberAndDuration;
+export default ProjectMemberHelper;
