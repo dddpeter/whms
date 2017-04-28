@@ -4,7 +4,7 @@
 const sequelize = require('../utils/SequelizeConfig');
 const Task = require('../models/Task');
 module.exports = function (app, authChecker) {
-    app.get('/api/tasks', authChecker, function (req, res, next) {
+    app.get('/api/tasks', authChecker, (req, res, next) => {
         var pageNum = req.query.pageNum;
         var pageSize = req.query.pageSize;
         if (pageNum === undefined || isNaN(pageNum)) {
@@ -21,25 +21,25 @@ module.exports = function (app, authChecker) {
                 from t_task t where t.uid='${uid}' order by t."updatedAt" desc,t.pid
                 limit ${pageSize} offset ${pageNum * pageSize}`)
             .then(function (projects) {
-                sequelize
-                    .query(`select ceil(count(*)/(${pageSize}+0.00)) 
+                    sequelize
+                        .query(`select ceil(count(*)/(${pageSize}+0.00)) 
                         from t_task t where t.uid='${uid}' `)
-                    .then(function (total) {
-                        res.json({result: true, current: pageNum, total: total[0][0].ceil, 'tasks': projects[0]});
-                    }
-                        ,function(){
-                            res.writeHead(500,
-                                {"Content-Type": "application/json; charset=utf8"});
-                            res.end(JSON.stringify({result: false, 'error': 'Server error'}));
-                        });
-            }
-                ,function(){
+                        .then(function (total) {
+                                res.json({result: true, current: pageNum, total: total[0][0].ceil, 'tasks': projects[0]});
+                            }
+                            , function () {
+                                res.writeHead(500,
+                                    {"Content-Type": "application/json; charset=utf8"});
+                                res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+                            });
+                }
+                , function (e){
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
                 })
     });
-    app.post('/api/tasks/:taskId', authChecker, function (req, res, next) {
+    app.post('/api/tasks/:taskId', authChecker, (req, res, next) => {
         let taskId = req.params.taskId;
         let loginUser = req.session.loginUser;
         let uid = loginUser.uid;
@@ -48,10 +48,10 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                 if (obj) {
                     obj.update({data})
-                        .then(function () {
+                        .then(function (o) {
                                 res.end(JSON.stringify({result: true}));
                             },
-                            function () {
+                            function (e){
                                 res.writeHead(500,
                                     {"Content-Type": "application/json; charset=utf8"});
                                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -66,38 +66,38 @@ module.exports = function (app, authChecker) {
             })
 
     });
-    var saveOrUpdate =function(req,task){
+    var saveOrUpdate = function (req, task) {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
-        if(task.id){
+        if (task.id) {
             return Task
-                .findOne({ where: {id:task.id,uid:uid }})
-                .then(function(obj) {
-                if(obj) { // update
-                    return obj.update(task);
-                }
-                else { // insert
-                    return Task.create(task);
-                }
-            })
+                .findOne({where: {id: task.id, uid: uid}})
+                .then(function (obj) {
+                    if (obj) { // update
+                        return obj.update(task);
+                    }
+                    else { // insert
+                        return Task.create(task);
+                    }
+                })
         }
-        else{
+        else {
             return Task.create(task);
         }
     }
-    app.post('/api/task',authChecker,function (req, res, next) {
+    app.post('/api/task', authChecker, (req, res, next) => {
         var task = req.body;
-        saveOrUpdate(req,task).then(
-            function(){
-                res.json({result:true,data:task});
+        saveOrUpdate(req, task).then(
+            function (o) {
+                res.json({result: true, data: task});
             },
-            function(){
-                res.writeHead(200,
+            function (e){
+                res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
                 res.end(JSON.stringify({result: false, 'error': 'Task add or update fail'}));
             });
     });
-    app.delete('/api/tasks/:taskId', authChecker, function (req, res, next) {
+    app.delete('/api/tasks/:taskId', authChecker, (req, res, next) => {
         var taskId = req.params.taskId;
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
@@ -105,10 +105,10 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                 if (obj) {
                     obj.destroy({where: {uid: uid, id: taskId}})
-                        .then(function () {
+                        .then(function (o) {
                                 res.end(JSON.stringify({result: true}));
                             },
-                            function () {
+                            function (e){
                                 res.writeHead(500,
                                     {"Content-Type": "application/json; charset=utf8"});
                                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -122,7 +122,7 @@ module.exports = function (app, authChecker) {
                 }
             })
     });
-    app.get('/api/tasks/last/week', authChecker, function (req, res, next) {
+    app.get('/api/tasks/last/week', authChecker, (req, res, next) => {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
@@ -139,14 +139,14 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                     res.json({result: true, data: obj[0]});
                 },
-                function () {
+                function (e){
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
                 }
             );
     });
-    app.get('/api/tasks/last/month', authChecker, function (req, res, next) {
+    app.get('/api/tasks/last/month', authChecker, (req, res, next) => {
         let nowdays = new Date();
         let year = nowdays.getFullYear();
         let month = nowdays.getMonth();
@@ -157,9 +157,9 @@ module.exports = function (app, authChecker) {
         if (month < 10) {
             month = "0" + month;
         }
-        let firstDay = year + "-" + month + "-" + "01";//上个月的第一天
+        let firstDay = year + "-" + month + "-" + "01 00：00：00";//上个月的第一天
         let myDate = new Date(year, month, 0);
-        let lastDay = year + "-" + month + "-" + myDate.getDate();//上个月的最后一天
+        let lastDay = year + "-" + month + "-" + myDate.getDate()+" 23:59:59";//上个月的最后一天
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
@@ -176,7 +176,7 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                     res.json({result: true, data: obj[0]});
                 },
-                function () {
+                function (e){
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -185,7 +185,7 @@ module.exports = function (app, authChecker) {
 
     });
 
-    app.get('/api/tasks/this/week', authChecker, function (req, res, next) {
+    app.get('/api/tasks/this/week', authChecker, (req, res, next) => {
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
@@ -202,7 +202,7 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                     res.json({result: true, data: obj[0]});
                 },
-                function () {
+                function (e){
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
