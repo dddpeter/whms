@@ -5,9 +5,9 @@ import React, {Component} from 'react';
 import ePromise from 'es6-promise'
 ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
-import Pop from './Pop.js';
-import PanelHeader from './PanelHeader.js'
-import PanelContentTop from'./PanelContentTop.js'
+import ProjectStatusHelper from './ProjectStatusHelper.js';
+import ProjectHeader from './ProjectHeader.js'
+import ProjectContent from'./ProjectContent.js'
 import {
     Collapse,
     Card,
@@ -43,7 +43,7 @@ class Project extends Component {
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
-            pageSize: 2,
+            pageSize: 5,
             total: 1,
         }
     }
@@ -251,11 +251,11 @@ class Project extends Component {
                     </Select>
                 </div>
                 <div className="projectList">
-                    <Collapse onChange={this.onChange}>
+                    <Collapse onChange={this.onExpand}>
                         {this.state.projectList.map((p)=> {
                             return (
-                                <Panel header={<PanelHeader title={p.projectName} extra={<Pop project={p}/>}></PanelHeader>} key={p.pid}>
-                                    <PanelContentTop project={p}/>
+                                <Panel header={<ProjectHeader title={p.projectName} extra={<ProjectStatusHelper project={p}/>}></ProjectHeader>} key={p.pid}>
+                                    <ProjectContent project={p}/>
                                 </Panel>
                             )
                         })}

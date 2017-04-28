@@ -1,7 +1,7 @@
 
 import React, {Component} from 'react';
 
-class PanelHeader extends Component {
+class ProjectHeader extends Component {
     static defaultProps = {
         extra: '',
     };
@@ -23,4 +23,4 @@ class PanelHeader extends Component {
     }
 }
 
-export default PanelHeader;
+export default ProjectHeader;

@@ -8,7 +8,7 @@ message.config({
     top: 80,
     duration: 2,
 });
-class Pop extends Component{
+class ProjectStatusHelper extends Component{
 
     constructor(props){
         super(props);
@@ -88,4 +88,4 @@ class Pop extends Component{
         )
     }
 }
-export default Pop;
+export default ProjectStatusHelper;
