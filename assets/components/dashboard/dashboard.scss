@@ -17,11 +17,13 @@
     &-icon-big{
       font-size:16px;
       color:#930784;
+      cursor: pointer;
     }
     &-icon-small{
       font-size:14px;
       color:#930784;
       margin:1px 4px;
+      cursor: pointer;
     }
     &-secondary{
     margin-bottom:16px;
@@ -70,6 +72,15 @@
   .icon-tip{
     color:#930784;
     margin-right:4px;
+  }
+  .big-area{
+    width:18px;
+    height:18px;
+  }
+  .chartTip{
+    font-size:16px;
+    text-align: center;
+    background:red;
   }
 
 }
