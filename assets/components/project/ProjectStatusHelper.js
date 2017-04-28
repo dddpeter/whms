@@ -68,7 +68,7 @@ class ProjectStatusHelper extends Component{
     render(){
 
         return(
-            <div className="edit-div" ><span>Status:{this.state.status}</span>
+            <div className="edit-div" ><span>Status:<span className="project-status">{this.state.status}</span></span>
             <Popover
                 content={
                 <div>
@@ -77,6 +77,7 @@ class ProjectStatusHelper extends Component{
                 <p><a className="project-status-link"  onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</a></p>
                 </div>
         }
+                placement="topRight"
                 title="改变项目状态"
                 trigger="click"
                 visible={this.state.visibleStatuspop}

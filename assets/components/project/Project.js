@@ -43,7 +43,7 @@ class Project extends Component {
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
-            pageSize: 5,
+            pageSize: 10,
             total: 1,
         }
     }
@@ -234,7 +234,7 @@ class Project extends Component {
                   </div>}>
 
 
-                <div className="filter"><span>Filter</span><span className="project">Projects:</span>
+                <div className="filter"><span className="project">Filter Projects:</span>
                     <Select defaultValue="ALL" onSelect={this.projectsSelect}>
                         {this.state.projects.map(
                             (project) => {

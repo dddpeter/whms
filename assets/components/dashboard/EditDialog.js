@@ -59,6 +59,12 @@ class ModalDialog extends React.Component {
                 content:this.props.taskList.content
             },
         };
+
+    }
+    componentWillReceiveProps(props){
+        this.setState({
+            visible:props.visible
+        });
     }
     //点击date后选择日期
     onChangeDate = (time) => {
@@ -177,7 +183,7 @@ class ModalDialog extends React.Component {
             <div>
 
                 <Modal
-                    visible={this.props.visible}
+                    visible={this.state.visible}
                     maskClosable={true}
                     onCancel={this.handleCancel}
                     footer={null}

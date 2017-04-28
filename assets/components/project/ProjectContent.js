@@ -3,7 +3,7 @@
  */
 import React, { Component} from 'react';
 import ProjectMemberHelper from './ProjectMemberHelper.js'
-import {Icon, Row, Col, Pagination,Table,message} from 'antd';
+import {Icon, Row, Col, Pagination,Table,message,Select} from 'antd';
 import moment from 'moment'
 import ePromise from 'es6-promise'
 ePromise.polyfill();
@@ -46,11 +46,12 @@ class ProjectContent extends Component{
     constructor(props){
         super(props);
         this.state = {
-            teamMember: [],
+            teamMember: ['None'],
+            duration:0,
             visible:false,
             range:0,
             pageNum:0,
-            pageSize:5,
+            pageSize:10,
             total:1,
             taskList:[],
             pid:this.props.project.pid,
@@ -77,17 +78,19 @@ class ProjectContent extends Component{
         console.log(m);
         this.setState({
             visible: false,
-            teamMember:m
+            //teamMember:m
         });
     }
     selectRange= (v)=>{
+        console.log(v);
         this.setState({
             range:v
         });
+        this.getTasks(0,v);
     }
-    getTasks= (pageNum=0)=>{
+    getProjectProfile= ()=>{
         let that = this;
-        fetch(`/api/project/tasks/${this.state.pid}?range=${this.state.range}&pageNum=${pageNum}&pageSize=${this.state.pageSize}`, {
+        fetch(`/api/users/duration/${this.state.pid}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -98,11 +101,47 @@ class ProjectContent extends Component{
             if (response.status === 200) {
                 return response.json();
             } else {
-                message.info('获取后台数据失败');
+                return {};
             }
         }).then((data) => {
-            console.log(data);
-            if (data) {
+            if (data.result) {
+                let m = [];
+                data.users.map(u=>{
+                    m.push(u.uid);
+                });
+                if(m.length<1){
+                    m=['None'];
+                }
+                that.setState({
+                    teamMember: m,
+                    duration:Number(data.duration),
+                });
+            }
+            else{
+                message.info('获取后台数据失败');
+            }
+
+        });
+    }
+    getTasks= (pageNum=0,range=0)=>{
+        let that = this;
+        fetch(`/api/project/tasks/${this.state.pid}?range=${range}&pageNum=${pageNum}&pageSize=${this.state.pageSize}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+
+
+                return {}
+            }
+        }).then((data) => {
+            if (data.result) {
                 let list = [];
                 data.tasks.map((task,i)=>{
                     let date = task.issueDate;
@@ -123,20 +162,19 @@ class ProjectContent extends Component{
                     });
                 }
             } else {
-
-                return {data: []};
+                message.info('获取后台数据失败');
             }
         });
     }
     componentDidMount(){
         this.getTasks();
+        this.getProjectProfile();
     }
 
 
     render(){
         return(
             <div>
-
                 <Row>
                     <Col span={16}>
                         <Row>
@@ -149,24 +187,24 @@ class ProjectContent extends Component{
                     <Col span={8}>
                         <div>
                             <Row>
-                                <div>Create at:
+                                <div className="right-info"><span className="info-label">Create at:</span>
                                     <text>{moment(this.props.project.createdAt).format('YYYY/MM/DD')}</text>
                                 </div>
                             </Row>
                             <Row>
-                                <div className="second-right">Last updates:
+                                <div className="right-info second-right"><span className="info-label">Last updates:</span>
                                     <text>{moment(this.props.project.updatedAt).format('YYYY/MM/DD')}</text>
                                 </div>
                             </Row>
                             <Row>
-                                <div className="third-right">Duration:
-                                    <text>{this.state.duration3}<span>hours</span></text>
+                                <div className="third-right right-info"><span className="info-label">Duration:</span>
+                                    <text>{this.state.duration}<span> Hours</span></text>
                                 </div>
                             </Row>
                             <Row>
-                                <div>Team member:
+                                <div className="right-info"><span className="info-label">Team member:</span>
 
-                                    <text>{new Array(this.state.teamMember).join(',')}</text>
+                                    <text className="members">{new Array(this.state.teamMember).join(',')}</text>
                                     <Icon type="edit" onClick={this.showMemberEdit}></Icon>
                                     <ProjectMemberHelper project={this.props.project}
                                                          modalOk={(m)=>this.addMembers(m)}
@@ -180,12 +218,12 @@ class ProjectContent extends Component{
                 </Row>
                 <Row>
                     <div className="update" >Updated entries ：
-                        <select defaultValue={0} onSelect={(v) => this.selectRange(v)}>
-                            <option value={0}>This Week</option>
-                            <option value={1}>Last Week</option>
-                            <option value={2}>Last Month</option>
-                            <option value={3}>All</option>
-                        </select>
+                        <Select defaultValue={'0'} onSelect = {this.selectRange}>
+                            <Select.Option value={'0'}>This Week</Select.Option>
+                            <Select.Option value={'1'}>Last Week</Select.Option>
+                            <Select.Option value={'2'}>Last Month</Select.Option>
+                            <Select.Option value={'3'}>All Tasks</Select.Option>
+                        </Select>
                     </div>
                 </Row>
                 <Row>
