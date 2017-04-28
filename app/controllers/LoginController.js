@@ -5,6 +5,7 @@ const ldap = require("ldapjs");
 const ENV = process.env.NODE_ENV || 'development';
 const config    = require(__dirname + '/../../config/config.json')[ENV];
 const User = require('../models/User');
+const UserProject = require('../models/UserProject');
 module.exports = function(app,authChecker) {
     var saveOrUpdate =function(user){
             return User
@@ -105,6 +106,11 @@ module.exports = function(app,authChecker) {
         });
     });
     app.get('/api/users',authChecker,function(req,res,next){
+        var pid = req.query.pid;
+        var where ={};
+        if(pid){
+
+        }
         User.findAll().then(
             function (users) {
                 if(users){
