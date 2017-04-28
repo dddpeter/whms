@@ -29,10 +29,6 @@ class DashBoard extends Component {
         this.handleOutClick = this.handleOutClick.bind(this);
         this.state = {
             login: false,
-            styleError: {
-                fontSize: '12px',
-                display: 'none',
-            },
             blankTask: {
                 display: 'none',
             },//列表为空时默认显示
@@ -57,7 +53,6 @@ class DashBoard extends Component {
     changeSelect = (value) => {
         this.getStat(value);
     };
-
     renderChart(data) {
         var charts = new Highcharts.chart('summaryCharts', {
             chart: {
@@ -185,12 +180,7 @@ class DashBoard extends Component {
                 if (response.status === 200) {
                     return response.json();
                 } else {
-                    this.setState({
-                        styleError: {
-                            fontSize: '12px',
-                            display: 'block',
-                        }
-                    })
+                    message.error('网络错误');
                 }
             }).then(function (data) {
             that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
@@ -336,7 +326,6 @@ class DashBoard extends Component {
     checkLogin() {
         let that = this;
         var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
-
         fetch('/api/check/login', {
             method: 'GET',
             headers: {
@@ -450,7 +439,6 @@ class DashBoard extends Component {
                                         <Button className='button-purple' onClick={this.handleOutClick}>
                                             <Icon type="logout"/>Log out
                                         </Button>
-                                        <p style={this.state.styleError}>网络错误</p>
                                     </Col>
                                 </Row>
                             </div>

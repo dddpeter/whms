@@ -1,8 +1,4 @@
-import {
-   
-    Table,
-
-} from 'antd';
+import {Table,} from 'antd';
 import React, {Component} from 'react';
 const data = [{
     key: '1',

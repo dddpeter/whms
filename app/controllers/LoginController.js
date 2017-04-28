@@ -5,6 +5,7 @@ const ldap = require("ldapjs");
 const ENV = process.env.NODE_ENV || 'development';
 const config    = require(__dirname + '/../../config/config.json')[ENV];
 const User = require('../models/User');
+const UserProject = require('../models/UserProject');
 module.exports = function(app,authChecker) {
     var saveOrUpdate =function(user){
             return User
@@ -103,6 +104,29 @@ module.exports = function(app,authChecker) {
             res.clearCookie('connect.sid');
             res.end(res.json({result:true}));
         });
+    });
+    app.get('/api/users',authChecker,function(req,res,next){
+        var pid = req.query.pid;
+        var where ={};
+        if(pid){
+
+        }
+        User.findAll().then(
+            function (users) {
+                if(users){
+                    res.end(JSON.stringify({result: true,users:users}));
+                }
+                else{
+                    res.writeHead(200,
+                        {"Content-Type": "application/json; charset=utf8"});
+                    res.end(JSON.stringify({result: false, 'error': 'No users found'}));
+                }
+        },
+            function () {
+                res.writeHead(500,
+                    {"Content-Type": "application/json; charset=utf8"});
+                res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+            });
     });
     app.get('/api/check/login',function(req,res,next){
         if(req.session.loginUser){

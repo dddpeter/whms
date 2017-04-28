@@ -4,62 +4,77 @@
 const sequelize = require('../utils/SequelizeConfig');
 const Task = require('../models/Task');
 const Project = require('../models/Project');
-module.exports = function (app,authChecker) {
-    app.get('/api/user/projects',authChecker,function(req,res,next){
+module.exports = function (app, authChecker) {
+    app.get('/api/user/projects', authChecker, function (req, res, next) {
         let loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize.query(`select up.pid,p."projectName" from t_user_project up left join t_project p on ( up.pid = p.pid) where up.uid='${uid}'`)
-            .then(function(data){
+            .then(function (data) {
 
-                res.json({result: true,data: data[0]});
-            },function(){
+                res.json({result: true, data: data[0]});
+            }, function () {
                 res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
             });
     });
-    app.get('/api/projects/all',authChecker,function(req,res,next){
+    app.get('/api/projects/all', authChecker, function (req, res, next) {
         Project.findAll()
-            .then(function(data){
-                res.json({result: true,data: data});
-            },function(){
+            .then(function (data) {
+                res.json({result: true, data: data});
+            }, function () {
                 res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
             });
     });
 
-    app.get('/api/projects',authChecker,function(req,res,next){
+    app.get('/api/projects', authChecker, function (req, res, next) {
         var pageNum = req.query.pageNum;
         var pageSize = req.query.pageSize;
+        var pid = req.query.pid;
+        var projectStatus = req.query.projectStatus;
+        var where = {};
+        var whereString ='where 1=1'
+        if (pid && pid != 'ALL') {
+            where.pid = pid;
+            whereString += ` and pid='${pid}'`;
+        }
+        if (projectStatus && projectStatus != 'ALL') {
+            where.status = projectStatus;
+            whereString += ` and status='${projectStatus}'`;
+        }
+
         if (pageNum === undefined || isNaN(pageNum)) {
             pageNum = 0;
         }
         if (pageSize === undefined || isNaN(pageSize)) {
             pageSize = 5;
         }
-        Project.findAll({ offset: pageSize*pageNum, limit: pageSize })
-            .then(function(projects){
+        Project.findAll({where: where, offset: pageSize * pageNum, limit: pageSize, order: [['updatedAt', 'DESC']]})
+            .then(function (projects) {
                 var projects = projects;
-                sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_project`)
+                sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_project ${whereString}`)
                     .then(function (total) {
-                    res.json({result: true,
-                        current: pageNum,
-                        total: total[0][0].ceil,
-                        'projects': projects});
-                }
-                ,function(){
+                            res.json({
+                                result: true,
+                                current: pageNum,
+                                total: total[0][0].ceil,
+                                'projects': projects
+                            });
+                        }
+                        , function () {
                             res.writeHead(500,
                                 {"Content-Type": "application/json; charset=utf8"});
                             res.end(JSON.stringify({result: false, 'error': 'Server error'}));
-                });
-            },function(){
+                        });
+            }, function () {
                 res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
             });
     });
-    app.post('/api/project/:pid',authChecker,function(req,res,next){
+    app.post('/api/project/:pid', authChecker, function (req, res, next) {
         let data = req.body;
         var pid = req.params.pid;
         Project.findOne({where: {pid: pid}})
@@ -85,7 +100,7 @@ module.exports = function (app,authChecker) {
 
     });
 
-    app.get('/api/project/tasks/:pid',authChecker,function(req,res,next){
+    app.get('/api/project/tasks/:pid', authChecker, function (req, res, next) {
         var pageNum = req.query.pageNum;
         var pageSize = req.query.pageSize;
         var pid = req.params.pid;
@@ -95,22 +110,24 @@ module.exports = function (app,authChecker) {
         if (pageSize === undefined || isNaN(pageSize)) {
             pageSize = 5;
         }
-        Task.findAll({ pid:pid,offset: pageSize*pageNum, limit: pageSize })
-            .then(function(tasks){
+        Task.findAll({pid: pid, offset: pageSize * pageNum, limit: pageSize})
+            .then(function (tasks) {
                 var tasks = tasks;
                 sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_task where pid='${pid}'`)
                     .then(function (total) {
-                            res.json({result: true,
+                            res.json({
+                                result: true,
                                 current: pageNum,
                                 total: total[0][0].ceil,
-                                tasks: tasks});
+                                tasks: tasks
+                            });
                         }
-                        ,function(){
+                        , function () {
                             res.writeHead(500,
                                 {"Content-Type": "application/json; charset=utf8"});
                             res.end(JSON.stringify({result: false, 'error': 'Server error'}));
                         });
-            },function(){
+            }, function () {
                 res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
