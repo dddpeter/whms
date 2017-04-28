@@ -12,7 +12,9 @@ const Project = sequelize.define('proejct', {
         },
         projectName: {
             type: Sequelize.DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
+
         },
         type:{
             type:Sequelize.DataTypes.ENUM,

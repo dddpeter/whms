@@ -11,7 +11,8 @@ const User = sequelize.define('user', {
     },
 
     email:{
-        type: Sequelize.DataTypes.STRING
+        type: Sequelize.DataTypes.STRING,
+        unique: true
     },
     role:{
         type:Sequelize.DataTypes.ENUM,

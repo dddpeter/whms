@@ -9,6 +9,7 @@ const sequelize =
         {
             host: config.host,
             dialect: config.dialect,
+            timezone:'+08:00',
             pool: {
                 max: 10,
                 min: 0,

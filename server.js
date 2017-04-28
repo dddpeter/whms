@@ -10,6 +10,7 @@ var favicon = require('serve-favicon')
 const app = express();
 const PORT = process.env.PORT || 3005;
 const ENV = process.env.NODE_ENV || 'development';
+process.env.TZ = 'Asia/Shanghai';
 require('./app/Models');
 app.set('trust proxy', 1) // trust first proxy
 app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')))
@@ -18,7 +19,7 @@ app.use(session({
     store: new FileStore(),
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge:1000*60*30,httpOnly:false,secure: false }
+    cookie: {maxAge: 1000 * 60 * 30, httpOnly: false, secure: false}
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -29,14 +30,14 @@ app.use(cookieParser());
 
 // Serve static assets
 let staticPath = 'build/dev';
-if(ENV ==='production'){
+if (ENV === 'production') {
     app.use(compression());
     staticPath = 'build/prod';
 }
-else{
+else {
     require('./webpackdev.server')(app);
 }
-function authChecker(req, res, next) {
+var authChecker = (req, res, next) => {
     if (req.session.loginUser) {
         next();
     } else {
@@ -44,9 +45,9 @@ function authChecker(req, res, next) {
         res.end(JSON.stringify({result: false, 'error': 'need login'}));
     }
 }
-require('./app/controllers/ProjectController')(app,authChecker);
-require('./app/controllers/TaskController')(app,authChecker);
-require('./app/controllers/LoginController')(app,authChecker);
+require('./app/controllers/ProjectController')(app, authChecker);
+require('./app/controllers/TaskController')(app, authChecker);
+require('./app/controllers/LoginController')(app, authChecker);
 
 app.use(express.static(path.resolve(__dirname, '.', staticPath)));
 app.use(express.query());
