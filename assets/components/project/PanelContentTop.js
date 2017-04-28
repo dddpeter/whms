@@ -9,24 +9,11 @@ import moment from 'moment'
 class PanelContentTop extends Component{
 
     state = {
-        teamMember: 'aaaaa',
-        midTeamMember:'aaaaa',
-        duration3: 1,
-        midDuration3: 1,
+        teamMember: [],
         visible:false
     }
 
 
-    changeDuration3=(event)=>{
-        this.setState({
-            midDuration3:event.target.value
-        })
-    }
-    changeMember=(event)=>{
-        this.setState({
-            midTeamMember:event.target.value
-        })
-    }
 
     showMemberEdit = () => {
 
@@ -39,11 +26,11 @@ class PanelContentTop extends Component{
             visible: false,
         });
     }
-    modalOk=()=>{
+    addMembers=(m)=>{
+        console.log(m);
         this.setState({
             visible: false,
-            duration3:this.state.midDuration3,
-            teamMember:this.state.midTeamMember
+            teamMember:m
         });
     }
 
@@ -80,9 +67,13 @@ class PanelContentTop extends Component{
                             </Row>
                             <Row>
                                 <div>Team member:
-                                    <text>{this.state.teamMember}</text>
+
+                                            <text>{new Array(this.state.teamMember).join(',')}</text>
                                     <Icon type="edit" onClick={this.showMemberEdit}></Icon>
-                                    <MemberAndDuration modalOk={this.modalOk} closeModal={this.closeModal} modalVisible={this.state.visible}/>
+                                    <MemberAndDuration project={this.props.project}
+                                                       modalOk={(m)=>this.addMembers(m)}
+                                                       closeModal={this.closeModal}
+                                                       modalVisible={this.state.visible}/>
                                 </div>
                             </Row>
                         </div>
