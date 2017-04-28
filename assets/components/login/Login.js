@@ -45,8 +45,10 @@ class Login extends Component {
                 message.info('已经登陆');
                 that.context.router.push({pathname:'/'});
             }
+
         }).catch((error) => {
-            console.log('not logins', error)
+            message.error('检查登录状态失败');
+            console.log('检查登录状态失败', error)
         })
     }
     componentDidMount() {
@@ -82,8 +84,11 @@ class Login extends Component {
                     .then(function(data){
                        var uid=data.uid;
                         if(data.result){
+                            message.info('登录成功');
                             if(returnUrl && returnUrl!='undefined'){
+
                                 that.context.router.push(returnUrl);
+
                             }
                             else{
                                 that.context.router.push({pathname:'/',state:{uid:uid}});

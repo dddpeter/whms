@@ -42,10 +42,11 @@ class DashBoard extends Component {
             dataList: [],
             current: 0,
             total: 1,
-            pageSize: 5,
+            pageSize: 10,
             pageNum: 0,
             loading: false,
             taskList: [],
+            editState:false
         };
     }
 
@@ -113,9 +114,10 @@ class DashBoard extends Component {
                 that.getTasks();
             }
             else {
-                console.log(data);
+                message.error('添加失败');
             }
         }).catch(err => {
+            message.error('添加失败');
             console.error(err);
         });
     };
@@ -141,9 +143,10 @@ class DashBoard extends Component {
                 that.getTasks();
             }
             else {
-                console.log(data);
+                message.error('编辑任务失败');
             }
         }).catch(err => {
+            message.error('编辑任务失败');
             console.error(err);
         });
     };
@@ -180,11 +183,12 @@ class DashBoard extends Component {
                 if (response.status === 200) {
                     return response.json();
                 } else {
-                    message.error('网络错误');
+                    message.error('登出失败');
                 }
             }).then(function (data) {
             that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
         }).catch((error) => {
+            message.error('登出失败');
             console.log('logout failed', error)
         })
     };
@@ -400,11 +404,6 @@ class DashBoard extends Component {
                                                     {list.content}
                                                 </Col>
                                             </Row>
-                                            <EditDialog visible={this.state.editState}
-                                                        taskList={list}
-                                                        backEditClick={this.backEditClick}
-                                                        callbackEdit={this.callbackEdit}
-                                            />
                                         </Card>
                                     );
 
@@ -450,6 +449,7 @@ class DashBoard extends Component {
                                 placeholder="this week"
                                 optionFilterProp="children"
                                 onChange={this.changeSelect}
+                                defaultValue={"0"}
                                 filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             >
                                 <Option value='0'>This week</Option>
@@ -465,6 +465,11 @@ class DashBoard extends Component {
                              uidName={this.state.uid}
                              callbackClick={this.onClickChanged}
                              callbackContent={this.callbackVal}/>
+                <EditDialog visible={this.state.editState}
+                            taskList={this.state.taskList}
+                            backEditClick={this.backEditClick}
+                            callbackEdit={this.callbackEdit}
+                />
             </div>
         );
     }

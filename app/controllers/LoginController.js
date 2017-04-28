@@ -107,22 +107,49 @@ module.exports = function (app, authChecker) {
             res.end(res.json({result: true}));
         });
     });
-    app.get('/api/users', authChecker, (req, res, next) => {
+    app.get('/api/users/duration/:pid', authChecker, (req, res, next) => {
+        let pid = req.params.pid;
+        sequelize.query(`select sum("spendTime") duration from t_task where pid='${pid}'`, {type: sequelize.QueryTypes.SELECT}).then((duration) => {
+                sequelize.query(`select  distinct uid from t_user_project where pid='${pid}'`, {type: sequelize.QueryTypes.SELECT}).then((uids) => {
+                        res.json({result:true,duration:duration[0].duration,users:uids});
+                    },
+                    error => {
+                        console.log(error);
+                        res.writeHead(500,
+                            {"Content-Type": "application/json; charset=utf8"});
+                        res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+                    }
+                );
+
+        },
+            error => {
+                console.log(error);
+                res.writeHead(500,
+                    {"Content-Type": "application/json; charset=utf8"});
+                res.end(JSON.stringify({result: false, 'error': 'Server error'}));
+            }
+        );
+    });
+    app.get('/api/users/pid', authChecker, (req, res, next) => {
         var pid = req.query.pid;
         var where = 'where 1=1';
         if (pid) {
             where += ` and pid='${pid}'`;
             sequelize.query(`select  distinct uid from t_user_project ${where}`, {type: sequelize.QueryTypes.SELECT}).then((uidList) => {
                     let uidArray = [];
+                    let whereUser = {};
                     uidList.map((uid, i) => {
                         uidArray[i] = uid.uid;
                     });
-                    User.findAll({
-                        where: {
+                    if(uidArray.length>0){
+                        whereUser = {
                             uid: {
                                 $notIn: uidArray
                             }
-                        }
+                        };
+                    }
+                    User.findAll({
+                        where: whereUser
                     }).then(
                         (users) => {
                             if (users) {

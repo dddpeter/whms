@@ -21,7 +21,7 @@ class ProjectMemberHelper extends Component {
     }
     getUser(){
         let that = this;
-        fetch(`/api/users?pid=${this.props.pid}`,
+        fetch(`/api/users/pid?pid=${this.props.pid}`,
             {credentials: 'same-origin'})
             .then((response) => {
                 if (response.status === 200) {
