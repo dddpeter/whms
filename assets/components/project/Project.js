@@ -5,49 +5,58 @@ import React, {Component} from 'react';
 import ePromise from 'es6-promise'
 ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
-import MainCollapse from './MainCollapse.js';
+import Pop from './Pop.js';
+import PanelHeader from './PanelHeader.js'
+import PanelContentTop from'./PanelContentTop.js'
 import {
+    Collapse,
     Card,
     Icon,
     Modal,
-    Pagination,
     Input,
     Select,
-    DatePicker
+    DatePicker,
+    Pagination
 } from 'antd';
+const Panel = Collapse.Panel;
 import {browserHistory} from 'react-router';
 import './project.scss';
 
 const Option = Select.Option;
 
 
-function projectsSelect(value) {
-    console.log(`selected ${value}`);
-}
-function statusSelect(value) {
-    console.log(`selected ${value}`);
-}
-function onChange(pageNumber) {
-    console.log('Page: ', pageNumber);
-}
-
 class Project extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
     };
-    constructor(props){
+
+    constructor(props) {
         super(props)
         this.state = {
             visibleDownload: false,
             visibleAdd: false,
             visibleEdit: false,
             status: '',
-            visibleMemberEdit:false,
-            projects:[{pid:'ALL',projectName:'所有'}]
+            visibleMemberEdit: false,
+            projects: [{pid: 'ALL', projectName: '所有'}],
+            projectList:[],
+            pid: 'ALL',
+            projectStatus: 'ALL',
+            pageNum: 0,
+            pageSize: 2,
+            total: 1,
         }
     }
 
+    projectsSelect = (value) => {
+        let status = this.state.projectStatus;
+        this.renderProjectList(0,status,value);
+    }
 
+    statusSelect = (value) => {
+        let pid =this.state.pid;
+        this.renderProjectList(0,value,pid);
+    }
 
 
     showModalDownload = () => {
@@ -110,91 +119,159 @@ class Project extends Component {
             console.log('not logins', error)
         })
     }
-    renderFirstPage(){
+
+    renderFirstPage() {
         let that = this;
         let projects = this.state.projects;
         fetch('/api/projects/all',
-            { credentials: 'same-origin'})
+            {credentials: 'same-origin'})
             .then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
-            else {
-               return {data:[]};
-            }
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {data: []};
+                }
             })
             .then(function (data) {
-               if(data.result){
-                   let projectsAll = data.data;
-                   projectsAll.map(p =>{
-                       projects.push(p);
-                   });
-                   that.setState({
-                       projects:projects
-                   });
-               }
-        });
-        
+                if (data.result) {
+                    let projectsAll = data.data;
+                    projectsAll.map(p => {
+                        projects.push(p);
+                    });
+                    that.setState({
+                        projects: projects
+                    });
+                }
+            });
+
 
     }
-    componentWillMount(){
+    renderProjectList(i=0,status='ALL',pid='ALL') {
+        let that =this;
+        if(i==undefined){
+            i = this.state.pageNum;
+        }
+        let url =
+        fetch(`/api/projects?pageSize=${this.state.pageSize}&pageNum=${i}&projectStatus=${status}&pid=${pid}`,
+            {credentials: 'same-origin'})
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {data: []};
+                }
+            })
+            .then(function (data) {
+
+                if (data.result) {
+                    that.setState({
+                        projectStatus: status,
+                        pid: pid,
+                        projectList:data.projects,
+                        total: Number(data.total),
+                        pageNum:Number(data.current)
+                    });
+                    console.log(that.state);
+                }
+                else{
+                    that.setState({
+                        projectStatus: status,
+                        pid: pid
+                    });
+                }
+            });
+
+    }
+
+    componentWillMount() {
         this.checkLogin();
     }
-    componentDidMount(){
+
+    componentDidMount() {
         this.renderFirstPage();
+        this.renderProjectList();
     }
+
     render() {
         return (
-            <Card title={<span className="content-title-big">Projects</span>} className="projects-header" extra={<div className="icon-container">
-            <Icon type="download" className='content-title-icon-big'  onClick={this.showModalDownload}/>
-            <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/><div>
-        <Modal title="Report Export" visible={this.state.visibleDownload}
-          onOk={this.handleOkDownload} onCancel={this.handleCancelDownload}>
-            <div>
-            <div className="report-input1">Projects:<Input  /></div>
-            <div className="report-input2">period:
-            <Select defaultValue="Custom"  >
-      <Option value="Custom">Custom</Option>
-    </Select>
-    From<DatePicker onChange={onChange} />To<DatePicker onChange={onChange} />
-    </div>
-</div>
-        </Modal>
-        <Modal title="" visible={this.state.visibleAdd} onOk={this.handleOkAdd} onCancel={this.handleCancelAdd}>
-          <div className="addContent">
-            <div className="add-input1">Status:
-            <Select defaultValue="Active"  >
-      <Option value="active">Active</Option>
-      <Option value="paused">Paused</Option>
-      <Option value="close">Close</Option>
-    </Select>
-            </div>
-            <div className="add-input2">Project Name:<Input  /></div>
-            <div className="add-input3">Team member:<Input  /></div>
-            <div className="add-input4">Brief:<Input className='big-input' type="textarea" placeholder="Autosize height with minimum and maximum number of lines" autosize={{ minRows: 4, maxRows: 8 }} /></div>
-</div>
-        </Modal>
-      </div></div>}>
-
-
+            <Card title={<span className="content-title-big">Projects</span>} className="projects-header"
+                  extra={<div className="icon-container">
+                      <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
+                      <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/>
+                      <div>
+                          <Modal title="Report Export" visible={this.state.visibleDownload}
+                                 onOk={this.handleOkDownload} onCancel={this.handleCancelDownload}>
+                              <div>
+                                  <div className="report-input1">Projects:<Input  /></div>
+                                  <div className="report-input2">period:
+                                      <Select defaultValue="Custom">
+                                          <Option value="Custom">Custom</Option>
+                                      </Select>
+                                      From<DatePicker  />To<DatePicker />
+                                  </div>
+                              </div>
+                          </Modal>
+                          <Modal title="" visible={this.state.visibleAdd} onOk={this.handleOkAdd}
+                                 onCancel={this.handleCancelAdd}>
+                              <div className="addContent">
+                                  <div className="add-input1">Status:
+                                      <Select defaultValue="Active">
+                                          <Option value="active">Active</Option>
+                                          <Option value="paused">Paused</Option>
+                                          <Option value="close">Close</Option>
+                                      </Select>
+                                  </div>
+                                  <div className="add-input2">Project Name:<Input  /></div>
+                                  <div className="add-input3">Team member:<Input  /></div>
+                                  <div className="add-input4">Brief:<Input className='big-input' type="textarea"
+                                                                           placeholder="Autosize height with minimum and maximum number of lines"
+                                                                           autosize={{minRows: 4, maxRows: 8}}/></div>
+                              </div>
+                          </Modal>
+                      </div>
+                  </div>}>
 
 
                 <div className="filter"><span>Filter</span><span className="project">Projects:</span>
-                    <Select defaultValue="ALL" onChange={projectsSelect}>
+                    <Select defaultValue="ALL" onSelect={this.projectsSelect}>
                         {this.state.projects.map(
-                            (project) => { return <Option key={project.pid} value={project.pid}>{project.projectName}</Option> }
+                            (project) => {
+                                return <Option key={project.pid} value={project.pid}>{project.projectName}</Option>
+                            }
                         )}
                     </Select>
                     <span className="status">Status:</span>
-                    <Select defaultValue="ALL" onChange={statusSelect}>
+                    <Select defaultValue="ALL" onSelect={this.statusSelect}>
                         <Option value="ALL">所有</Option>
                         <Option value="ACTIVE">活动</Option>
                         <Option value="PENDING">暂停</Option>
                         <Option value="CLOSE">关闭</Option>
                     </Select>
                 </div>
-                <MainCollapse />
-               
+                <div className="projectList">
+                    <Collapse onChange={this.onChange}>
+                        {this.state.projectList.map((p)=> {
+                            return (
+                                <Panel header={<PanelHeader title={p.projectName} extra={<Pop project={p}/>}></PanelHeader>} key={p.pid}>
+                                    <PanelContentTop project={p}/>
+                                </Panel>
+                            )
+                        })}
+
+                    </Collapse>
+                    <div className="pagination-box">
+                        <Pagination showQuickJumper
+                                    pageSize={this.state.pageSize}
+                                    current={this.state.pageNum+1}
+                                    total={this.state.total * this.state.pageSize}
+                                    defaultCurrent={1}
+                                    onChange={(i)=>this.renderProjectList(i-1,this.state.projectStatus,this.state.pid)}
+                        />
+                    </div>
+                </div>
+
             </Card>
         )
     }
