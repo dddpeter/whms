@@ -114,11 +114,11 @@ class ModalDialog extends React.Component {
     //点击date后选择日期
     onChangeDate = (time) => {
         let task = this.state.task;
-        task.issueDate = time;
+        task.issueDate = moment(time).format('YYYY-MM-DD');
         this.setState({
             task: task
         });
-        if (this.state.task.issueDate === '' || this.state.task.issueDate === null) {
+        if (this.state.task.issueDate === 'Invalid date') {
             this.setState({
                 dateStatus: 'error',
                 dataHelp: 'Please select the correct date',
@@ -165,6 +165,19 @@ class ModalDialog extends React.Component {
         this.setState({
             task: task
         });
+        if (this.state.task.spendTime === '' || this.state.task.spendTime === null) {
+            this.setState({
+                durationStatus: 'error',
+                durationHelp: 'Duration cannot be empty',
+                durationError: true
+            })
+        } else {
+            this.setState({
+                durationStatus: 'success',
+                durationHelp: '',
+                durationError: false
+            })
+        }
     };
     //Description内容改变
     onChangeDescription = (e) => {
@@ -173,7 +186,7 @@ class ModalDialog extends React.Component {
         this.setState({
             task: task
         });
-        if (this.state.task.issueDate === '' || this.state.task.issueDate === null) {
+        if (this.state.task.content === '' || this.state.task.content === null) {
             this.setState({
                 contentStatus: 'error',
                 contentHelp: 'Please enter a description on the content',
@@ -205,8 +218,8 @@ class ModalDialog extends React.Component {
             <div>
                 <Modal
                     visible={this.props.visible}
-                    closable={false}
                     maskClosable={true}
+                    onCancel={this.handleCancel}
                     footer={null}
                 >
                     <Form className="modal-dialog">
@@ -262,6 +275,8 @@ class ModalDialog extends React.Component {
                         <FormItem
                             {...formItemLayout}
                             label="Duration"
+                            validateStatus={this.state.durationStatus}
+                            help={this.state.durationHelp}
                         >
                             <InputNumber min={1} defaultValue={this.state.task.spendTime}
                                          onChange={this.onChangeDuration}/>(单位：h)
@@ -279,7 +294,7 @@ class ModalDialog extends React.Component {
                         <div className="dialog-footer">
                             <Button key="add" className="dialog-footer-button" size="large"
                                     onClick={this.onAdd}
-                                    disabled={this.state.contentError || this.state.dataError}
+                                    disabled={this.state.contentError || this.state.dataError|| this.state.durationError}
                             >
                                 Add
                             </Button>

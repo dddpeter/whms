@@ -47,7 +47,10 @@ class ModalDialog extends React.Component {
             dataError: false,
             contentStatus: 'success',
             contentHelp: '',
-            contentError: true,
+            contentError: false,
+            durationStatus: 'success',
+            durationHelp: '',
+            durationError: false,
             task: {
                 id:this.props.taskList.id,
                 issueDate: moment(this.props.taskList.issueDate).format('YYYY-MM-DD'),
@@ -55,21 +58,16 @@ class ModalDialog extends React.Component {
                 spendTime:this.props.taskList.spendTime,
                 content:this.props.taskList.content
             },
-
-
         };
     }
-
-    //点击选择project
-
     //点击date后选择日期
     onChangeDate = (time) => {
         let task = this.state.task;
-        task.issueDate = time.format('YYYY-MM-DD');
+        task.issueDate = moment(time).format('YYYY-MM-DD');
         this.setState({
             task: task
         });
-        if (this.state.task.issueDate === '' || this.state.task.issueDate === null) {
+        if (this.state.task.issueDate === 'Invalid date') {
             this.setState({
                 dateStatus: 'error',
                 dataHelp: 'Please select the correct date',
@@ -98,6 +96,19 @@ class ModalDialog extends React.Component {
         this.setState({
             task: task
         });
+        if (this.state.task.spendTime === '' || this.state.task.spendTime === null) {
+            this.setState({
+                durationStatus: 'error',
+                durationHelp: 'Duration cannot be empty',
+                durationError: true
+            })
+        } else {
+            this.setState({
+                durationStatus: 'success',
+                durationHelp: '',
+                durationError: false
+            })
+        }
     };
     //Description内容改变
     onChangeDescription = (e) => {
@@ -106,7 +117,7 @@ class ModalDialog extends React.Component {
         this.setState({
             task: task
         });
-        if (this.state.task.issueDate === '' || this.state.task.issueDate === null) {
+        if (this.state.task.content === '' || this.state.task.content === null) {
             this.setState({
                 contentStatus: 'error',
                 contentHelp: 'Please enter a description on the content',
@@ -133,7 +144,6 @@ class ModalDialog extends React.Component {
         let task = this.state.task;
         this.props.callbackEdit(task);
         this.handleCancel();
-
     };
     //格式化日期并限制可选日期在本周内
     disabledDate = (current) => {
@@ -213,10 +223,13 @@ class ModalDialog extends React.Component {
                         <FormItem
                             {...formItemLayout}
                             label="Duration"
+                            validateStatus={this.state.durationStatus}
+                            help={this.state.durationHelp}
                         >
-                            <InputNumber min={1} max={7}
+                            <InputNumber min={1}
                                          defaultValue={this.props.taskList.spendTime}
-                                         onChange={this.onChangeDuration}/>
+                                         onChange={this.onChangeDuration}
+                            />(单位：h)
 
                         </FormItem>
                         <FormItem
@@ -236,6 +249,7 @@ class ModalDialog extends React.Component {
                                     className="dialog-footer-button"
                                     size="large"
                                     onClick={this.onEdit}
+                                    disabled={this.state.contentError || this.state.dataError|| this.state.durationError}
 
                             >Ok</Button>
                             <Button key="cancel"

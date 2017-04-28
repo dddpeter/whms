@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import './login.scss'
-import { Form,Card, Icon, Input, Button,Tooltip} from 'antd';
+import { Form,Card, Icon, Input, Button,Tooltip,message} from 'antd';
 const FormItem = Form.Item;
 import ePromise from 'es6-promise'
 ePromise.polyfill();
@@ -21,15 +21,37 @@ class Login extends Component {
         super(props);
         this.state={
             canSubmit:true,
-            error:false,
-            errorTitle:false,
-
-
         };
     }
-
+    //判断是否是登陆状态
+    checkLogin() {
+        let that = this;
+        fetch('/api/check/login', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            }
+            else {
+                return [];
+            }
+        }).then((data) => {
+            if (data.result) {
+                message.info('已经登陆');
+                that.context.router.push({pathname:'/'});
+            }
+        }).catch((error) => {
+            console.log('not logins', error)
+        })
+    }
     componentDidMount() {
         // To disabled submit button at the beginning.
+        this.checkLogin();
         this.props.form.validateFields();
 
     }
@@ -42,7 +64,6 @@ class Login extends Component {
             if (!err) {
                 fetch('/api/login',{
                     method:'POST',
-                    credentials:'same-origin',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -54,9 +75,7 @@ class Login extends Component {
                         return response.json();
                     }else{
                         that.setState({canSubmit:true});
-                        that.setState({
-                            errorTitle:true,
-                            error:true});
+                       return {}
                     }
                 })
                     .then(function(data){
@@ -70,8 +89,8 @@ class Login extends Component {
                             }
                         }
                         else{
-                            that.setState({canSubmit:true,
-                                error:true});
+                            that.setState({canSubmit:true});
+                            message.error('登录失败');
                         }
 
                     });
@@ -79,15 +98,6 @@ class Login extends Component {
         });
     };
   //网络错误提示框显示的时间限制
-    visibleChange=()=>{
-        setTimeout(()=>{
-            this.setState({
-                error:false
-            })
-        }, 2000)
-    };
-
-
     render() {
         const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
         const userNameError = isFieldTouched('userName') && getFieldError('userName');
@@ -121,10 +131,7 @@ class Login extends Component {
                                 )}
                             </FormItem>
                             <FormItem>
-                                <Tooltip placement="topLeft" title={(this.errorTitle)?"网络错误":"用户名/密码错误"}
-                                         visible={this.state.error}
-                                         style={{width:'100%'}}
-                                         onVisibleChange={this.visibleChange}>
+
                                     <Button
                                         style={{width:'100%'}}
                                         className='login-content-form-submit'
@@ -133,7 +140,6 @@ class Login extends Component {
                                     >
                                         Log in
                                     </Button>
-                                </Tooltip>
                             </FormItem>
                         </Form>
                     </Card>

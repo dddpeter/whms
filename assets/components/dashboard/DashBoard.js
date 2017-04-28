@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Card, Row, Col, Icon, Button, Popconfirm, Pagination, Select,Alert} from 'antd';
-import {Link} from 'react-router'
+import {Card, Row, Col, Icon, Button, Popconfirm, Pagination, Select,message} from 'antd';
+const Option = Select.Option;
 import  Highcharts from 'highcharts'
 import ModalDialog from './ModalDialog'
 import ePromise from 'es6-promise'
@@ -8,12 +8,18 @@ ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
 import './dashboard.scss'
 import EditDialog from './EditDialog';
-import { browserHistory } from 'react-router';
-const typeList={'DEVELOPMENT':'开发','TEST':'测试','REQUIREMENT':'需求','MAINTAIN':'运维','TEAM':'团队','ADMIN':'管理'};
+import {browserHistory} from 'react-router';
+const typeList = {
+    'DEVELOPMENT': '开发',
+    'TEST': '测试',
+    'REQUIREMENT': '需求',
+    'MAINTAIN': '运维',
+    'TEAM': '团队',
+    'ADMIN': '管理'
+};
 
 
 class DashBoard extends Component {
-
     static contextTypes = {
         router: React.PropTypes.object.isRequired
     };
@@ -27,29 +33,30 @@ class DashBoard extends Component {
                 fontSize: '12px',
                 display: 'none',
             },
-            blankTask:{
-                display:'none',
+            blankTask: {
+                display: 'none',
             },//列表为空时默认显示
             paginationHiden: {
-                display:'inline-block',
+                display: 'inline-block',
             },
+            editAble: 'true',
             uid: '--',
             email: '--',
             data: [],
             dataList: [],
             current: 0,
             total: 1,
-            pageSize: 2,
+            pageSize: 5,
             pageNum: 0,
             loading: false,
-            taskList:[],
-
-        }
+            taskList: [],
+        };
     }
+
     //修改饼图选择框的内容
     changeSelect = (value) => {
         this.getStat(value);
-    }
+    };
 
     renderChart(data) {
         var charts = new Highcharts.chart('summaryCharts', {
@@ -90,37 +97,7 @@ class DashBoard extends Component {
         });
     };
     //点击增加按钮后
-    callbackVal=(task)=>{
-            let that = this;
-            fetch(`/api/task`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                credentials:'same-origin',
-                body:JSON.stringify(task)
-            }).then((response)=>{
-                console.log(response);
-                if (response.status === 200) {
-                    return response.json();
-                } else {
-                    return {data: []};
-                }
-            }).then((data) => {
-                if(data.result){
-                    that.getTasks();
-                }
-                else{
-                    console.log(data);
-                }
-            }).catch(err => {
-                console.error(err);
-            });
-        };
-    //点击修改按钮后
-    callbackEdit=(task)=>{
-        console.log(task);
+    callbackVal = (task) => {
         let that = this;
         fetch(`/api/task`, {
             method: 'POST',
@@ -128,20 +105,47 @@ class DashBoard extends Component {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            credentials:'same-origin',
-            body:JSON.stringify(task)
-        }).then((response)=>{
-            console.log(response);
+            credentials: 'same-origin',
+            body: JSON.stringify(task)
+        }).then((response) => {
             if (response.status === 200) {
                 return response.json();
             } else {
                 return {data: []};
             }
         }).then((data) => {
-            if(data.result){
+            if (data.result) {
                 that.getTasks();
             }
-            else{
+            else {
+                console.log(data);
+            }
+        }).catch(err => {
+            console.error(err);
+        });
+    };
+    //点击修改按钮后
+    callbackEdit = (task) => {
+        let that = this;
+        fetch(`/api/task`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(task)
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return {data: []};
+            }
+        }).then((data) => {
+            if (data.result) {
+                that.getTasks();
+            }
+            else {
                 console.log(data);
             }
         }).catch(err => {
@@ -155,19 +159,19 @@ class DashBoard extends Component {
         });
     };
     //点击修改图标后弹出修改对话框
-    editChanged = (e,task) => {
+    editChanged = (e, task) => {
         this.setState({
             editState: true,
-            taskList:task,
+            taskList: task,
         });
     };
-
     //修改页面用户是否点击了关闭按钮
     backEditClick = () => {
         this.setState({
             editState: false,
         });
     };
+    //点击退出
     handleOutClick = (e) => {
         e.preventDefault();
         let returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
@@ -189,7 +193,6 @@ class DashBoard extends Component {
                     })
                 }
             }).then(function (data) {
-
             that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
         }).catch((error) => {
             console.log('logout failed', error)
@@ -199,11 +202,11 @@ class DashBoard extends Component {
     //list
     showTotal = (total) => {
         return `Total ${total} items`;
-    }
-//调取工作统计接口
+    };
+//调取工作统计图标接口
     getStat(val) {
-        var that = this;
-        var url = '/api/tasks/this/week';
+        let that = this;
+        let url = '/api/tasks/this/week';
         if (val === 1) {
             url = '/api/tasks/last/week';
         }
@@ -235,7 +238,7 @@ class DashBoard extends Component {
 
 //调取姓名接口
     getName() {
-        var that = this;
+        let that = this;
         fetch('/api/user', {
             method: 'GET',
             headers: {
@@ -273,25 +276,27 @@ class DashBoard extends Component {
             if (response.status === 200) {
                 return response.json();
             } else {
-                //todo: 显示错误信息 网络错误
+                message.info('网络错误');
             }
         }).then((data) => {
+
             if (data) {
                 that.setState({
                     dataList: data.tasks,
                     total: Number(data.total)
                 });
-                if(Number(data.total)===0){
+                if (Number(data.total) === 0) {
                     this.setState({
                         paginationHiden: {
-                            display:'none',
+                            display: 'none',
                         },
-                        blankTask:{
-                            display:'block',
+                        blankTask: {
+                            display: 'block',
                         }
                     });
                 }
             } else {
+
                 return {data: []};
             }
         });
@@ -302,15 +307,15 @@ class DashBoard extends Component {
         let that = this;
         fetch(`/api/tasks/${taskId}`, {
             method: 'DELETE',
-            credentials:'same-origin',
-        }).then((response)=>{
+            credentials: 'same-origin',
+        }).then((response) => {
             if (response.status === 200) {
                 return response.json();
             } else {
                 return {data: []};
             }
         }).then((data) => {
-            if(data.result){
+            if (data.result) {
                 this.getTasks(this.state.pageNum);
             }
         }).catch(err => {
@@ -354,12 +359,14 @@ class DashBoard extends Component {
             console.log('not logins', error)
         })
     }
-
     componentDidMount() {
         this.checkLogin();
         this.getName();
         this.getStat(0);
         this.getTasks();
+    }
+    componentWillUnmount() {
+        // clearInterval();
     }
 
     render() {
@@ -374,21 +381,25 @@ class DashBoard extends Component {
                             {
                                 this.state.dataList.map(function (list) {
                                     return (
-                                        <Card key={list.id} title={list.projectName} className="content-title-secondary"
+                                        <Card key={list.id} title={list.projectname} className="content-title-secondary"
                                               extra={
-                                                  <span>
-                                                   <span onClick={(e,o) => this.editChanged(e,list)}>
-                                                        <Icon className='content-title-icon-small'
-                                                              type="edit"/>
-                                                    </span>
-                                                      <span><Icon type="delete" className='content-title-icon-small'/></span>
-                                                    <Popconfirm title="确认删除？"
-                                                                placement="right"
-                                                                okText="确认"
-                                                                cancelText="取消"
-                                                                onConfirm={() =>this.deleteTask(list.id)}>
-                                                    </Popconfirm>
-                                              </span>
+                                                  (list.status == 1)?(
+                                                      <span>
+                                                                  <span className='big-area'
+                                                                        onClick={(e, o) => this.editChanged(e, list)}>
+                                                          <Icon className='content-title-icon-small'
+                                                                type="edit"/></span>
+
+                                                          <Popconfirm title="确认删除？"
+                                                                      placement="right"
+                                                                      okText="确认"
+                                                                      cancelText="取消"
+                                                                      onConfirm={() => this.deleteTask(list.id)}>
+                                                          <span><Icon type="delete"
+                                                                      className='content-title-icon-small'/></span>
+                                                          </Popconfirm>
+                                                          </span>
+                                                  ) : (<span/>)
                                               }
                                               bodyStyle={{fontSize: '12px', background: 'rgba(220,220,220,0.2)'}}>
                                             <Row>
@@ -405,21 +416,17 @@ class DashBoard extends Component {
                                                         backEditClick={this.backEditClick}
                                                         callbackEdit={this.callbackEdit}
                                             />
-
                                         </Card>
-
-
                                     );
 
                                 }.bind(this))
                             }
-
                             <div className="clear">
                                 <p className="blankTip" style={this.state.blankTask}>
                                     <Icon type="info-circle-o" className="icon-tip"/>
                                     您当前还没有填写任何信息
                                 </p>
-                                <div  style={this.state.paginationHiden}>
+                                <div style={this.state.paginationHiden}>
                                     <Pagination pageSize={this.state.pageSize}
                                                 current={this.state.current + 1}
                                                 total={this.state.pageSize * this.state.total}
@@ -431,7 +438,6 @@ class DashBoard extends Component {
                                 </div>
                             </div>
                         </Card>
-
                     </Col>
                     <Col span={8}>
                         <Card className="right-content">
@@ -458,9 +464,9 @@ class DashBoard extends Component {
                                 onChange={this.changeSelect}
                                 filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             >
-                                <Option value={0}>This week</Option>
-                                <Option value={1}>Last week</Option>
-                                <Option value={2}>Last month</Option>
+                                <Option value='0'>This week</Option>
+                                <Option value='1'>Last week</Option>
+                                <Option value='2'>Last month</Option>
                             </Select>
                             <div id="summaryCharts" style={{height: '300px'}}>
                             </div>
@@ -471,13 +477,8 @@ class DashBoard extends Component {
                              uidName={this.state.uid}
                              callbackClick={this.onClickChanged}
                              callbackContent={this.callbackVal}/>
-
-
-
             </div>
-
         );
     }
 }
-
 export default DashBoard
