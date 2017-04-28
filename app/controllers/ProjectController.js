@@ -35,11 +35,14 @@ module.exports = function (app, authChecker) {
         var pid = req.query.pid;
         var projectStatus = req.query.projectStatus;
         var where = {};
+        var whereString ='where 1=1'
         if (pid && pid != 'ALL') {
             where.pid = pid;
+            whereString += ` and pid='${pid}'`;
         }
         if (projectStatus && projectStatus != 'ALL') {
             where.status = projectStatus;
+            whereString += ` and status='${projectStatus}'`;
         }
 
         if (pageNum === undefined || isNaN(pageNum)) {
@@ -51,7 +54,7 @@ module.exports = function (app, authChecker) {
         Project.findAll({where: where, offset: pageSize * pageNum, limit: pageSize, order: [['updatedAt', 'DESC']]})
             .then(function (projects) {
                 var projects = projects;
-                sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_project`)
+                sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_project ${whereString}`)
                     .then(function (total) {
                             res.json({
                                 result: true,

@@ -66,7 +66,7 @@ module.exports = function (app, authChecker) {
             })
 
     });
-    var saveOrUpdate =function(task){
+    var saveOrUpdate =function(req,task){
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         if(task.id){
@@ -87,7 +87,7 @@ module.exports = function (app, authChecker) {
     }
     app.post('/api/task',authChecker,function (req, res, next) {
         var task = req.body;
-        saveOrUpdate(task).then(
+        saveOrUpdate(req,task).then(
             function(){
                 res.json({result:true,data:task});
             },
