@@ -16,14 +16,13 @@ import {
     Input,
     Select,
     DatePicker,
-    Pagination
+    Pagination,
+    message
 } from 'antd';
 const Panel = Collapse.Panel;
 import {browserHistory} from 'react-router';
 import './project.scss';
-
 const Option = Select.Option;
-
 
 class Project extends Component {
     static contextTypes = {
@@ -31,7 +30,7 @@ class Project extends Component {
     };
 
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             visibleDownload: false,
             visibleAdd: false,
@@ -39,23 +38,25 @@ class Project extends Component {
             status: '',
             visibleMemberEdit: false,
             projects: [{pid: 'ALL', projectName: '所有'}],
-            projectList:[],
+            projectList: [],
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
             pageSize: 10,
             total: 1,
+            usersList:[],
+            projectList:[],
         }
     }
 
     projectsSelect = (value) => {
         let status = this.state.projectStatus;
-        this.renderProjectList(0,status,value);
+        this.renderProjectList(0, status, value);
     }
 
     statusSelect = (value) => {
-        let pid =this.state.pid;
-        this.renderProjectList(0,value,pid);
+        let pid = this.state.pid;
+        this.renderProjectList(0, value, pid);
     }
 
 
@@ -69,18 +70,71 @@ class Project extends Component {
         this.setState({
             visibleDownload: false,
         });
-    }
+    };
     handleCancelDownload = (e) => {
         console.log(e);
         this.setState({
             visibleDownload: false,
         });
-    }
+    };
+    // 点击弹出添加列表
     showModalAdd = () => {
+        let that = this;
+        //调取项目接口
+        fetch(`/api/projects`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                message.info('网络错误');
+            }
+        }).then((data) => {
+            if(data.result){
+                console.log('data');
+                console.log(data);
+                this.setState({
+                     projectList:data.projects,
+                })
+            }
+        }).catch(err => {
+            message.error('读取内容失败');
+            console.error(err);
+        });
+
+        //调取member
+        fetch(`/api/users/pid`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                message.info('网络错误');
+            }
+        }).then((data) => {
+            if(data.result){
+                this.setState({
+                    usersList:data.users,
+                })
+            }
+        }).catch(err => {
+            message.error('读取内容失败');
+            console.error(err);
+        });
         this.setState({
             visibleAdd: true,
         });
-    }
+    };
     handleOkAdd = (e) => {
         console.log(e);
         this.setState({
@@ -144,46 +198,52 @@ class Project extends Component {
                     });
                 }
             });
-
-
     }
-    renderProjectList(i=0,status='ALL',pid='ALL') {
-        let that =this;
-        if(i==undefined){
+
+    renderProjectList(i = 0, status = 'ALL', pid = 'ALL') {
+        let that = this;
+        if (i == undefined) {
             i = this.state.pageNum;
         }
         let url =
-        fetch(`/api/projects?pageSize=${this.state.pageSize}&pageNum=${i}&projectStatus=${status}&pid=${pid}`,
-            {credentials: 'same-origin'})
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                else {
-                    return {data: []};
-                }
-            })
-            .then(function (data) {
+            fetch(`/api/projects?pageSize=${this.state.pageSize}&pageNum=${i}&projectStatus=${status}&pid=${pid}`,
+                {credentials: 'same-origin'})
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    else {
+                        return {data: []};
+                    }
+                })
+                .then(function (data) {
 
-                if (data.result) {
-                    that.setState({
-                        projectStatus: status,
-                        pid: pid,
-                        projectList:data.projects,
-                        total: Number(data.total),
-                        pageNum:Number(data.current)
-                    });
-                    console.log(that.state);
-                }
-                else{
-                    that.setState({
-                        projectStatus: status,
-                        pid: pid
-                    });
-                }
-            });
+                    if (data.result) {
+                        that.setState({
+                            projectStatus: status,
+                            pid: pid,
+                            projectList: data.projects,
+                            total: Number(data.total),
+                            pageNum: Number(data.current)
+                        });
+                        console.log(that.state);
+                    }
+                    else {
+                        that.setState({
+                            projectStatus: status,
+                            pid: pid
+                        });
+                    }
+                });
 
-    }
+    };
+    //team number发生变化时
+    teamMemberChange=(value)=>{
+
+    };
+    projectChange=(value)=>{
+
+    };
 
     componentWillMount() {
         this.checkLogin();
@@ -223,8 +283,26 @@ class Project extends Component {
                                           <Option value="close">Close</Option>
                                       </Select>
                                   </div>
-                                  <div className="add-input2">Project Name:<Input  /></div>
-                                  <div className="add-input3">Team member:<Input  /></div>
+
+                                  <div className="add-input2">Project Name:
+
+                                  </div>
+                                  <div className="add-input3">Team member:
+                                      <Select
+                                          mode="tags"
+                                          className='team-member'
+                                          searchPlaceholder="标签模式"
+                                          onChange={this.teamMemberChange}
+                                      >
+                                          {
+                                              this.state.usersList.map(function(list){
+                                                  return(
+                                                      <Option key={list.uid}>{list.uid}</Option>
+                                                  )
+                                              })
+                                          }
+                                      </Select>
+                                  </div>
                                   <div className="add-input4">Brief:<Input className='big-input' type="textarea"
                                                                            placeholder="Autosize height with minimum and maximum number of lines"
                                                                            autosize={{minRows: 4, maxRows: 8}}/></div>
@@ -251,10 +329,14 @@ class Project extends Component {
                     </Select>
                 </div>
                 <div className="projectList">
-                    <Collapse onChange={this.onExpand}>
-                        {this.state.projectList.map((p)=> {
+                    <Collapse onChange={this.onExpand} className='collapseStyle'>
+                        {this.state.projectList.map((p) => {
                             return (
-                                <Panel header={<ProjectHeader title={p.projectName} extra={<ProjectStatusHelper project={p}/>}></ProjectHeader>} key={p.pid}>
+                                <Panel header={<ProjectHeader title={p.projectName}
+                                                           extra={<ProjectStatusHelper
+                                                               project={p}/>}></ProjectHeader>}
+                                    key={p.pid}
+                                >
                                     <ProjectContent project={p}/>
                                 </Panel>
                             )
@@ -264,10 +346,10 @@ class Project extends Component {
                     <div className="pagination-box">
                         <Pagination showQuickJumper
                                     pageSize={this.state.pageSize}
-                                    current={this.state.pageNum+1}
+                                    current={this.state.pageNum + 1}
                                     total={this.state.total * this.state.pageSize}
                                     defaultCurrent={1}
-                                    onChange={(i)=>this.renderProjectList(i-1,this.state.projectStatus,this.state.pid)}
+                                    onChange={(i) => this.renderProjectList(i - 1, this.state.projectStatus, this.state.pid)}
                         />
                     </div>
                 </div>

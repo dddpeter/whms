@@ -12,7 +12,6 @@ module.exports = function (app, authChecker) {
         let uid = loginUser.uid;
         sequelize.query(`select up.pid,p."projectName" from t_user_project up left join t_project p on ( up.pid = p.pid) where up.uid='${uid}'`)
             .then(function (data) {
-
                 res.json({result: true, data: data[0]});
             }, function (e) {
                 res.writeHead(500,

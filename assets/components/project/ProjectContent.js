@@ -202,9 +202,9 @@ class ProjectContent extends Component{
                                 </div>
                             </Row>
                             <Row>
-                                <div className="right-info"><span className="info-label">Team member:</span>
-
-                                    <text className="members">{new Array(this.state.teamMember).join(',')}</text>
+                                <div className="right-info">
+                                    <span className="info-label">Team member:</span>
+                                   <text className="members">{new Array(this.state.teamMember).join(',')}</text>
                                     <Icon type="edit" onClick={this.showMemberEdit}></Icon>
                                     <ProjectMemberHelper project={this.props.project}
                                                          modalOk={(m)=>this.addMembers(m)}

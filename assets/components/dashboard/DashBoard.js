@@ -55,35 +55,74 @@ class DashBoard extends Component {
         this.getStat(value);
     };
     renderChart(data) {
-        var charts = new Highcharts.chart('summaryCharts', {
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: ''
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false,
-                    },
-                    showInLegend: true
-                }
-            },
-            series: [{
-                name: 'Projects',
-                colorByPoint: true,
-                data: data
-            }]
-        });
+
+        if(data.length<1){
+            var charts = new Highcharts.chart('summaryCharts',{
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: 'No data Found'
+                },
+                tooltip: {
+                    pointFormat: '<b>{point.percentage:.2f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        showInLegend: true
+                    }
+                },
+                colors: ['#dcdcdc'],
+                series: [{
+                    type: 'pie',
+                    name: 'Projects',
+                    data: [{y:1,name:'No Data'}]
+                }]
+            });
+
+        }
+        else{
+            var charts = new Highcharts.chart('summaryCharts', {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: ''
+                },
+                tooltip: {
+                    pointFormat: '<b>{point.percentage:.2f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        showInLegend: true
+                    }
+                },
+                series: [{
+                    name: 'Projects',
+                    colorByPoint: true,
+                    data: data
+                }]
+            });
+
+        }
+
+
     }
 
     //点击add图标之后弹出对话框
