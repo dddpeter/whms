@@ -157,7 +157,7 @@ module.exports = function (app, authChecker) {
         if (month < 10) {
             month = "0" + month;
         }
-        let firstDay = year + "-" + month + "-" + "01 00：00：00";//上个月的第一天
+        let firstDay = year + "-" + month + "-" + "01 00:00:00";//上个月的第一天
         let myDate = new Date(year, month, 0);
         let lastDay = year + "-" + month + "-" + myDate.getDate()+" 23:59:59";//上个月的最后一天
         var loginUser = req.session.loginUser;

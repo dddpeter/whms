@@ -32,16 +32,22 @@ class App extends Component {
         });
         this.context.router.push('/'+e.key)
     }
+    gotoIndex(){
+        this.setState({
+            current: 'dashboard',
+        });
+        this.context.router.push('/dashboard')
+    }
     render() {
         return (
             <Layout>
                 <Header>
                     <div className="logo">
-                        <Link to="/" className="logo-img">
+                        <Link onClick={()=>this.gotoIndex()} className="logo-img">
                             <img  src="/images/whms-logo.png"/>
                         </Link>
 
-                        <Link to="/" className="sysName">
+                        <Link  onClick={()=>this.gotoIndex()} className="sysName">
                             <span>中青IT工时统计系统</span>
                         </Link>
                     </div>
