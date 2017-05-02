@@ -6,6 +6,12 @@ const Task = require('../models/Task');
 const Project = require('../models/Project');
 const UserProject = require('../models/UserProject');
 const moment = require('moment');
+Array.prototype.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
 module.exports = function (app, authChecker) {
     app.get('/api/user/projects', authChecker, (req, res, next) => {
         let loginUser = req.session.loginUser;
@@ -100,14 +106,13 @@ module.exports = function (app, authChecker) {
             })
 
     });
-    app.post('/api/project', (req, res, next) => {
+    app.post('/api/project', authChecker,(req, res, next) => {
         let project = req.body;
         let members = [];
         if(project.members && project.members.length>0){
             members = project.members;
             delete project.members;
         }
-
         Project.create(project).then((o)=>{
             let pid = o.dataValues.pid;
             let userProject =[];
@@ -135,6 +140,38 @@ module.exports = function (app, authChecker) {
             res.end(JSON.stringify({result: false, 'error': `Server error：${e.errors[0].message}`}));
         });
 
+
+    });
+    app.post('/api/project/member/:pid', authChecker,(req, res, next) => {
+        let pid = req.params.pid;
+        let members = req.body;
+        var membersWillAdd = [];
+        var result =[];
+        UserProject.findAll({where:{pid:pid,uid:members}}).then((up)=>{
+            up.map((u)=>{
+                members.remove(u.uid);
+                result.push(u.uid);
+            });
+                members.map((m,i)=>{
+               membersWillAdd[i] ={uid:m,pid:pid};
+           });
+
+            UserProject.bulkCreate(membersWillAdd).then(()=>{
+                    res.json({result: true,members:result});
+                },
+                (e)=>{
+                    res.writeHead(500,
+                        {"Content-Type": "application/json; charset=utf8"});
+                    res.end(JSON.stringify({result: false, 'error': `Project add user fail：${e.errors[0].message}`}));
+                });
+        },
+
+            (e)=>{
+                res.writeHead(500,
+                    {"Content-Type": "application/json; charset=utf8"});
+                res.end(JSON.stringify({result: false, 'error': `Project add user fail：${e.errors[0].message}`}));
+            }
+        );
 
     });
 
