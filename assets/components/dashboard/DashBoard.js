@@ -201,10 +201,10 @@ class DashBoard extends Component {
     getStat(val) {
         let that = this;
         let url = '/api/tasks/this/week';
-        if (val === 1) {
+        if (val === '1') {
             url = '/api/tasks/last/week';
         }
-        else if (val === 2) {
+        else if (val === '2') {
             url = '/api/tasks/last/month';
         }
 

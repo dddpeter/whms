@@ -41,6 +41,10 @@ body,.ant-card{
     >.logo-img{
       display: inline-block;
       float: left;
+      margin: 4px 15px;
+      >img{
+        height: 64 - 24px;
+      }
 
     }
     >.sysName{
@@ -75,8 +79,8 @@ body,.ant-card{
       color: white;
       background-color: $primary-half;
     }
-     > .ant-menu-item-selected {
-     // border-bottom: 2px solid white;
+    > .ant-menu-item-selected {
+      // border-bottom: 2px solid white;
       color: white;
       background-color: $primary-half;
     }
