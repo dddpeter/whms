@@ -137,7 +137,7 @@ module.exports = function (app, authChecker) {
             (e)=>{
             res.writeHead(500,
                 {"Content-Type": "application/json; charset=utf8"});
-            res.end(JSON.stringify({result: false, 'error': `Server error：${e.errors[0].message}`}));
+            res.end(JSON.stringify({result: false, 'error': `Server error：${e}`}));
         });
 
 

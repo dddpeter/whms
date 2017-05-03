@@ -1,7 +1,7 @@
 /**
  * Created by admin on 2017/4/25.
  */
-import {Modal, Input,} from 'antd';
+import {Modal, Button} from 'antd';
 import React, {Component} from 'react';
 import {Select,message, InputNumber} from 'antd';
 const Option = Select.Option;
@@ -16,7 +16,9 @@ class ProjectMemberHelper extends Component {
         this.state = {
             visibleMemberEdit: false,
             users:[],
-            members:[]
+            members:[],
+            addError:true,
+            modalVisible:false
         }
     }
     getUser(){
@@ -44,18 +46,37 @@ class ProjectMemberHelper extends Component {
 
     }
     selectMember(v){
-        this.setState({
-            members:v
-        });
+        if(v.length<1){
+            this.setState({
+                addError:true
+            })
+        }else{
+            this.setState({
+                members:v,
+                addError:false
+            });
+        }
+
 
     }
+    memberAdd=()=>{
+        this.memberAddCancel();
+    };
+    memberAddCancel=()=>{
+        this.setState({
+            modalVisible: false,
+        });
+
+    };
     componentDidMount(){
         this.getUser()
     }
     render() {
         return (
-            <Modal title="Add Project Member" visible={this.props.modalVisible}
-                   onOk={(m)=>this.props.modalOk(this.state.members)} onCancel={this.props.closeModal}>
+            <Modal title="Add Project Member" visible={this.state.modalVisible}
+                   maskClosable={true}
+                   onCancel={this.memberAdd}
+                   footer={null}>
                 <div className="addContent">
                     <div className="addTeamMember">Team member:
                         <Select
@@ -69,7 +90,13 @@ class ProjectMemberHelper extends Component {
                             }
                         </Select>
                     </div>
-
+                </div>
+                <div className="dialog-footer">
+                    <Button key="add" className="dialog-footer-button" size="large"
+                             disabled={this.state.addError}
+                            onClick={this.memberAdd}>Add</Button>
+                    <Button key="cancel" className="dialog-footer-button cancel" size="large"
+                            onClick={this.memberAddCancel}>Cancel</Button>
                 </div>
             </Modal>
 

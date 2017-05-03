@@ -45,7 +45,7 @@ class ModalDialog extends React.Component {
             contentHelp: '',
             contentError: true,
             task: {
-                issueDate: moment().format('YYYY-MM-DD'),
+                status: moment().format('YYYY-MM-DD'),
                 type: 'DEVELOPMENT',
                 spendTime: 1
             }

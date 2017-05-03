@@ -60,34 +60,30 @@ class ProjectContent extends Component{
             }
         }
     }
-
-
-
     showMemberEdit = () => {
-
         this.setState({
             visible: true,
         });
-    }
+    };
     closeModal =()=>{
         this.setState({
             visible: false,
         });
-    }
+    };
     addMembers=(m)=>{
         console.log(m);
         this.setState({
             visible: false,
             //teamMember:m
         });
-    }
+    };
     selectRange= (v)=>{
         console.log(v);
         this.setState({
             range:v
         });
         this.getTasks(0,v);
-    }
+    };
     getProjectProfile= ()=>{
         let that = this;
         fetch(`/api/users/duration/${this.state.pid}`, {
@@ -170,8 +166,6 @@ class ProjectContent extends Component{
         this.getTasks();
         this.getProjectProfile();
     }
-
-
     render(){
         return(
             <div>
@@ -207,8 +201,6 @@ class ProjectContent extends Component{
                                    <text className="members">{new Array(this.state.teamMember).join(',')}</text>
                                     <Icon type="edit" onClick={this.showMemberEdit}></Icon>
                                     <ProjectMemberHelper project={this.props.project}
-                                                         modalOk={(m)=>this.addMembers(m)}
-                                                         closeModal={this.closeModal}
                                                          pid={this.state.pid}
                                                          modalVisible={this.state.visible}/>
                                 </div>
