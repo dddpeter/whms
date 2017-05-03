@@ -20,6 +20,7 @@ import {
     message,
     Button
 } from 'antd';
+const {RangePicker} = DatePicker;
 const Panel = Collapse.Panel;
 import {browserHistory} from 'react-router';
 import './project.scss';
@@ -39,6 +40,8 @@ class Project extends Component {
             status: '',
             visibleMemberEdit: false,
             projects: [{pid: 'ALL', projectName: '所有'}],
+            projectsExport:[],
+            projectList:[],
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
@@ -283,7 +286,8 @@ class Project extends Component {
                         projects.push(p);
                     });
                     that.setState({
-                        projects: projects
+                        projects: projects,
+                        projectsExport:projectsAll
                     });
                 }
             });
@@ -294,18 +298,17 @@ class Project extends Component {
         if (i == undefined) {
             i = this.state.pageNum;
         }
-        let url =
-            fetch(`/api/projects?pageSize=${this.state.pageSize}&pageNum=${i}&projectStatus=${status}&pid=${pid}`,
-                {credentials: 'same-origin'})
-                .then((response) => {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    else {
-                        return {data: []};
-                    }
-                })
-                .then(function (data) {
+        fetch(`/api/projects?pageSize=${this.state.pageSize}&pageNum=${i}&projectStatus=${status}&pid=${pid}`,
+            {credentials: 'same-origin'})
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {data: []};
+                }
+            })
+            .then(function (data) {
 
                     if (data.result) {
                         that.setState({
@@ -344,15 +347,27 @@ class Project extends Component {
                       <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
                       <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/>
                       <div>
-                          <Modal title="Report Export" visible={this.state.visibleDownload}
+                          <Modal title="Report Export" className="" visible={this.state.visibleDownload}
                                  onOk={this.handleOkDownload} onCancel={this.handleCancelDownload}>
                               <div>
-                                  <div className="report-input1">Projects:<Input  /></div>
-                                  <div className="report-input2">period:
-                                      <Select defaultValue="Custom">
-                                          <Option value="Custom">Custom</Option>
+                                  <div className="report-input"><span className="label">Projects:</span>
+                                      <Select  className={'filter'} mode="multiple" style={{ width: 300 }} >
+                                          {this.state.projectsExport.map(p=>{
+                                              return <Option key={p.pid} value={p.pid}>{p.projectName}</Option>
+                                          })}
+
                                       </Select>
-                                      From<DatePicker/>To<DatePicker />
+                                  </div>
+                                  <div className="report-input"><span className="label">Period:</span>
+                                      <Select className={'filter'} defaultValue="0" style={{ width: 150 }}>
+                                          <Option value="0">This Week</Option>
+                                          <Option value="1">Last Week</Option>
+                                          <Option value="2">Custom</Option>
+                                      </Select>
+                                  </div>
+                                  <div className="report-input date-div">
+                                      <span className="label">Range:</span>
+                                      <RangePicker />
                                   </div>
                               </div>
                           </Modal>

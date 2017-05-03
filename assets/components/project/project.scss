@@ -3,6 +3,8 @@
   font-size: 14px;
   color: rgba(0, 0, 0, 0.65);
 }
+.filter{
+}
 .project-status-link:hover{
   a{
     color: $theme_color;
@@ -236,32 +238,13 @@
   >.ant-modal-body{
     border-bottom: 1px solid rgba(1,1,1,0);
     >div{
-      >.report-input1{
+      >.report-input{
         padding-left: 25px;
         padding-top: 5px;
         padding-bottom: 5px;
-        >input{
-          width:60%;
-          margin-left:15px
-        }
-      }
-      >.report-input2{
-        padding-left: 33px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        >.ant-calendar-picker{
-          >span{
-            >.ant-input{
-              width:110px;
-
-              margin-right: 7px;
-              margin-left:10px;
-            }
-          }
-        }
-        >.ant-select{
-          margin-left:15px;
-          margin-right:10px;
+        >.label{
+          display: inline-block;
+          width: 60px;
         }
       }
       .select-style{
