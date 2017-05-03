@@ -8,6 +8,7 @@ import fetch from 'isomorphic-fetch';
 import ProjectStatusHelper from './ProjectStatusHelper.js';
 import ProjectHeader from './ProjectHeader.js'
 import ProjectContent from'./ProjectContent.js'
+import ProjectAddHelper from './ProjectAddHelper.js'
 import {
     Collapse,
     Card,
@@ -52,13 +53,8 @@ class Project extends Component {
             memberError:true,
             briefError:true,
             isNameExists:false,
-            project: {
-                status: 'ACTIVE',
-                members: [],
-                uid: '',
-                brief:''
-            },
-            addProjectModel:<span></span>,
+            addProjectLayer:<span></span>,
+
         }
     }
     projectsSelect = (value) => {
@@ -105,11 +101,13 @@ class Project extends Component {
                 message.info('网络错误');
             }
         }).then((data) => {
-            if (data.result) {
-                this.setState({
-                    usersList: data.users,
-                })
-            }
+            that.setState({
+                addProjectLayer:<ProjectAddHelper project={that.props.project}
+                                                  usersList = {data.users}
+                                                    callbackMemberEdit={that.callbackMemberEdit}
+                                                    callbackCancle = { that.onAddMemberCancel }
+                />
+            });
         }).catch(err => {
             message.error('读取内容失败');
             console.error(err);
@@ -118,85 +116,7 @@ class Project extends Component {
             visibleAdd: true,
         });
     };
-    //status变化时
-    statusChange = (value) => {
-        let project = this.state.project;
-        project.status = value;
-        this.setState({
-            project: project
-        });
-    };
-    //输入project name
-    projectNameChange = (e) => {
-        let that=this;
-        let project = this.state.project;
-        var isNameExists = false;
-        project.projectName = e.target.value;
-        if(project.projectName.length<4){
-            this.setState({
-                projectError:true,
-                projectErrorTip:true,
-                isAble:true,
-            })
-        }else{
-            this.setState({
-                projectError:false,
-                projectErrorTip:false,
-                isAble:false,
-            })
-        }
-        this.state.projects.map(p=>{
-            if(p.projectName==project.projectName){
-                isNameExists = true;
-            }
-        });
-        if(!isNameExists){
-            this.setState({
-                project: project,
-                isNameExists: isNameExists
-            });
-        }
-        else{
-            this.setState({
-                isNameExists: isNameExists
-            });
-        }
-    };
-    //team member发生变化时
-    teamMemberChange = (value) => {
-        console.log(value);
-        let project = this.state.project;
-        project.members = value;
-        if(project.members.length<1){
-            this.setState({
-                memberError:true,
 
-            })
-        }else{
-            this.setState({
-                project: project,
-                memberError:false,
-
-            })
-        }
-    };
-    // brief发生变化时
-    briefChange= (e) => {
-        let project = this.state.project;
-        project.brief = e.target.value;
-        if(project.brief===''){
-            this.setState({
-                briefError:true,
-
-            })
-        }else{
-            this.setState({
-                project: project,
-                briefError:false,
-
-            })
-        }
-    };
     handleOkAdd = (project) => {
         console.log(project);
         let that = this;
@@ -344,85 +264,8 @@ class Project extends Component {
                       <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
                       <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/>
                       <div>
-                          <Modal title="Report Export" visible={this.state.visibleDownload}
-                                 onOk={this.handleOkDownload} onCancel={this.handleCancelDownload}>
-                              <div>
-                                  <div className="report-input1">Projects:<Input  /></div>
-                                  <div className="report-input2">period:
-                                      <Select defaultValue="Custom">
-                                          <Option value="Custom">Custom</Option>
-                                      </Select>
-                                      From<DatePicker/>To<DatePicker />
-                                  </div>
-                              </div>
-                          </Modal>
-                          <Modal title="Add Project"
-                                 visible={this.state.visibleAdd}
-                                 maskClosable={true}
-                                 onCancel={this.handleCancelAdd}
-                                 footer={null}>
-                              <div className="addContent">
-                                  <div className="add-input">
-                                      <span className="table-title">Status:</span>
-                                      <Select defaultValue="ACTIVE"
-                                              className='select-style'
-                                              onChange={this.statusChange}>
-                                          <Option value="ACTIVE">Active</Option>
-                                          <Option value="PENDING">Pending</Option>
-                                          <Option value="CLOSE">Close</Option>
-                                      </Select>
-                                  </div>
-                                  <div className="add-input">
-                                      <span className="table-title">Project Name:</span>
-                                      <Input placeholder="input projectName" style={{
-                                          border:this.state.isNameExists?'1px solid rgba(240,65,52,0.5)':''
-                                      }}
-                                             className='select-style'
-                                             onChange={(val)=>this.projectNameChange(val)}/>
-                                      <span className="error-tip" style={{display:this.state.projectError?'inline-block':'none'}}>*</span>
-                                      <div style={{ display:this.state.isNameExists?'block':'none',
-                                          margin:'5px 0 0 104px',color:'#f04134'}}>Project Name Exists!
-                                      </div>
-                                      <span style={{display:this.state.projectErrorTip?'inline-block':'none',
-                                          margin:'5px 0 0 104px',color:'#f04134'}}>不能少于四个字符</span>
-                                  </div>
-                                  <div className="add-input">
-                                      <span className="table-title">Team member:</span>
-                                      <Select
-                                          mode="tags"
-                                          className='select-style'
-                                          searchPlaceholder="标签模式"
-                                          placeholder="Please select"
-                                          onChange={this.teamMemberChange}
-                                      >
-                                          {
-                                              this.state.usersList.map(function (list) {
-                                                  return (
-                                                      <Option key={list.uid}>{list.uid}</Option>
-                                                  )
-                                              })
-                                          }
-                                      </Select>
-                                      <span className="error-tip" style={{display:this.state.memberError?'inline-block':'none'}}>*</span>
-                                  </div>
-                                  <div className="add-input">
-                                      <span className="table-title">Brief:</span>
-                                      <Input  className='select-style'
-                                              type="textarea"
-                                              autosize={{minRows: 4}}
-                                              onChange={this.briefChange}
-                                      />
-                                      <span className="error-tip" style={{display:this.state.briefError?'inline-block':'none'}}>*</span>
-                                  </div>
-                              </div>
-                              <div className="dialog-footer">
-                                  <Button key="add" className="dialog-footer-button" size="large"
-                                          disabled={this.state.projectError||this.state.memberError||this.state.briefError}
-                                          onClick={(project)=>this.handleOkAdd(this.state.project)}>Add</Button>
-                                  <Button key="cancel" className="dialog-footer-button cancel" size="large"
-                                          onClick={this.handleCancelAdd}>Cancel</Button>
-                              </div>
-                          </Modal>
+                         <ProjectAddHelper
+                         />
                       </div>
                   </div>}>
                 <div className="filter"><span className="project">Filter Projects:</span>
