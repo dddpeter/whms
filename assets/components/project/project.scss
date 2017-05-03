@@ -1,10 +1,13 @@
 @import "../../sass/var";
-.project-status-link{
+.project-status-link a{
   font-size: 14px;
   color: rgba(0, 0, 0, 0.65);
 }
 .project-status-link:hover{
-  color: $theme_color;
+  a{
+    color: $theme_color;
+    font-weight: 700;
+  }
 }
 .project-status{
   text-align: left;

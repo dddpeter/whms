@@ -48,6 +48,7 @@ class Project extends Component {
             projectList: [],
             firstProject: '',
             projectError:true,
+            projectErrorTip:false,
             memberError:true,
             briefError:true,
             isNameExists:false,
@@ -56,7 +57,8 @@ class Project extends Component {
                 members: [],
                 uid: '',
                 brief:''
-            }
+            },
+            addProjectModel:<span></span>,
         }
     }
     projectsSelect = (value) => {
@@ -133,11 +135,13 @@ class Project extends Component {
         if(project.projectName.length<4){
             this.setState({
                 projectError:true,
+                projectErrorTip:true,
                 isAble:true,
             })
         }else{
             this.setState({
                 projectError:false,
+                projectErrorTip:false,
                 isAble:false,
             })
         }
@@ -371,7 +375,7 @@ class Project extends Component {
                                   <div className="add-input">
                                       <span className="table-title">Project Name:</span>
                                       <Input placeholder="input projectName" style={{
-                                          border:this.state.isNameExists?'1px solid rgba(240,65,52,0.5)':'1px solid #d9d9d9'
+                                          border:this.state.isNameExists?'1px solid rgba(240,65,52,0.5)':''
                                       }}
                                              className='select-style'
                                              onChange={(val)=>this.projectNameChange(val)}/>
@@ -379,7 +383,7 @@ class Project extends Component {
                                       <div style={{ display:this.state.isNameExists?'block':'none',
                                           margin:'5px 0 0 104px',color:'#f04134'}}>Project Name Exists!
                                       </div>
-                                      <span style={{display:this.state.projectError?'inline-block':'none',
+                                      <span style={{display:this.state.projectErrorTip?'inline-block':'none',
                                           margin:'5px 0 0 104px',color:'#f04134'}}>不能少于四个字符</span>
                                   </div>
                                   <div className="add-input">
@@ -450,7 +454,6 @@ class Project extends Component {
                                 </Panel>
                             )
                         })}
-
                     </Collapse>
                     <div className="pagination-box">
                         <Pagination showQuickJumper

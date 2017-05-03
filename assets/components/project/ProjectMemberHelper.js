@@ -5,9 +5,6 @@ import {Modal, Button} from 'antd';
 import React, {Component} from 'react';
 import {Select,message, InputNumber} from 'antd';
 const Option = Select.Option;
-import ePromise from 'es6-promise'
-ePromise.polyfill();
-import fetch from 'isomorphic-fetch';
 
 class ProjectMemberHelper extends Component {
 
@@ -15,72 +12,53 @@ class ProjectMemberHelper extends Component {
         super(props);
         this.state = {
             visibleMemberEdit: false,
-            users:[],
+            users:this.props.users,
             members:[],
-            addError:true,
-            modalVisible:false
+            addError:true
         }
     }
-    getUser(){
-        let that = this;
-        fetch(`/api/users/pid?pid=${this.props.pid}`,
-            {credentials: 'same-origin'})
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                else {
-                    return {users: []};
-                }
-            })
-            .then(function (data) {
-                if (data.result) {
-                    that.setState({
-                        users:data.users
-                    });
-                }
-                else{
-                    message.error('获取用户列表失败，请刷新页面');
-                }
-            });
-
-    }
     selectMember(v){
+        this.setState({
+            members:v,
+        });
         if(v.length<1){
             this.setState({
                 addError:true
             })
         }else{
             this.setState({
-                members:v,
                 addError:false
             });
         }
+    }
+    memberAdd=(e)=>{
+        e.preventDefault();
+        let members = this.state.members;
+        this.props.callbackMemberEdit(members);
+    };
 
+    componentDidMount(){
 
     }
-    memberAdd=()=>{
-        this.memberAddCancel();
-    };
-    memberAddCancel=()=>{
+    componentWillReceiveProps(props){
         this.setState({
-            modalVisible: false,
+            users:props.users
         });
 
-    };
-    componentDidMount(){
-        this.getUser()
     }
+
     render() {
         return (
-            <Modal title="Add Project Member" visible={this.state.modalVisible}
+            <Modal title="Add Project Member" visible={true}
                    maskClosable={true}
-                   onCancel={this.memberAdd}
+                   onCancel={this.props.callbackCancle}
                    footer={null}>
                 <div className="addContent">
                     <div className="addTeamMember">Team member:
                         <Select
                             mode="multiple"
+                            allowClear={true}
+                            notFoundContent={'All user added'}
                             onChange={(v) => this.selectMember(v)}
                             searchPlaceholder="标签模式">
                             {
@@ -96,7 +74,7 @@ class ProjectMemberHelper extends Component {
                              disabled={this.state.addError}
                             onClick={this.memberAdd}>Add</Button>
                     <Button key="cancel" className="dialog-footer-button cancel" size="large"
-                            onClick={this.memberAddCancel}>Cancel</Button>
+                            onClick={this.props.callbackCancle}>Cancel</Button>
                 </div>
             </Modal>
 
