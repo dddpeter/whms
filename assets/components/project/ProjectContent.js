@@ -48,46 +48,48 @@ class ProjectContent extends Component{
         this.state = {
             teamMember: ['None'],
             duration:0,
-            visible:false,
             range:0,
             pageNum:0,
             pageSize:10,
             total:1,
             taskList:[],
             pid:this.props.project.pid,
+            addMemberLayer:<span></span>,
             paginationHiden: {
                 display: 'inline-block',
             }
         }
     }
 
-
-
     showMemberEdit = () => {
+        let that = this;
+        fetch(`/api/users/pid?pid=${this.state.pid}`,
+            {credentials: 'same-origin'})
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {users: []};
+                }
+            })
+            .then(function (data) {
 
-        this.setState({
-            visible: true,
-        });
-    }
-    closeModal =()=>{
-        this.setState({
-            visible: false,
-        });
-    }
-    addMembers=(m)=>{
-        console.log(m);
-        this.setState({
-            visible: false,
-            //teamMember:m
-        });
-    }
+                that.setState({
+                    addMemberLayer:<ProjectMemberHelper project={that.props.project}
+                                                        users = {data.users}
+                                                        callbackMemberEdit={that.callbackMemberEdit}
+                                                        callbackCancle = { that.onAddMemberCancel }
+                    />
+                });
+            });
+    };
     selectRange= (v)=>{
-        console.log(v);
         this.setState({
             range:v
         });
         this.getTasks(0,v);
-    }
+    };
     getProjectProfile= ()=>{
         let that = this;
         fetch(`/api/users/duration/${this.state.pid}`, {
@@ -120,9 +122,8 @@ class ProjectContent extends Component{
             else{
                 message.info('获取后台数据失败');
             }
-
         });
-    }
+    };
     getTasks= (pageNum=0,range=0)=>{
         let that = this;
         fetch(`/api/project/tasks/${this.state.pid}?range=${range}&pageNum=${pageNum}&pageSize=${this.state.pageSize}`, {
@@ -136,8 +137,6 @@ class ProjectContent extends Component{
             if (response.status === 200) {
                 return response.json();
             } else {
-
-
                 return {}
             }
         }).then((data) => {
@@ -165,13 +164,49 @@ class ProjectContent extends Component{
                 message.info('获取后台数据失败');
             }
         });
-    }
+    };
+    onAddMemberCancel=()=>{
+        this.setState({
+            addMemberLayer:<span></span>
+        });
+    };
+    //点击更新按钮
+    callbackMemberEdit=(members,pid)=>{
+            let that = this;
+            fetch(`/api/project/member/${this.state.pid}`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify(members)
+            }).then((response) => {
+                if (response.status === 200) {
+                    console.log('ok');
+                    return response.json();
+                } else {
+                    return {data: []};
+                }
+            }).then((data) => {
+                if (data.result) {
+                    that.getProjectProfile();
+                }
+                else {
+                    message.error('添加失败');
+                }
+            }).catch(err => {
+                message.error('添加失败');
+                console.error(err);
+            });
+        that.setState({
+            addMemberLayer:<span></span>
+        });
+        };
     componentDidMount(){
         this.getTasks();
         this.getProjectProfile();
     }
-
-
     render(){
         return(
             <div>
@@ -202,15 +237,12 @@ class ProjectContent extends Component{
                                 </div>
                             </Row>
                             <Row>
-                                <div className="right-info"><span className="info-label">Team member:</span>
-
-                                    <text className="members">{new Array(this.state.teamMember).join(',')}</text>
+                                <div className="right-info">
+                                    <span className="info-label">Team member:</span>
+                                   <text className="members">{new Array(this.state.teamMember).join(',')}</text>
                                     <Icon type="edit" onClick={this.showMemberEdit}></Icon>
-                                    <ProjectMemberHelper project={this.props.project}
-                                                         modalOk={(m)=>this.addMembers(m)}
-                                                         closeModal={this.closeModal}
-                                                         pid={this.state.pid}
-                                                         modalVisible={this.state.visible}/>
+                                    {this.state.addMemberLayer}
+                                   {/* */}
                                 </div>
                             </Row>
                         </div>

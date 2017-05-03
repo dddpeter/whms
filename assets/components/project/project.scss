@@ -1,12 +1,15 @@
 @import "../../sass/var";
-.project-status-link{
+.project-status-link a{
   font-size: 14px;
   color: rgba(0, 0, 0, 0.65);
 }
 .filter{
 }
 .project-status-link:hover{
-  color: $theme_color;
+  a{
+    color: $theme_color;
+    font-weight: 700;
+  }
 }
 .project-status{
   text-align: left;
@@ -244,6 +247,10 @@
           width: 60px;
         }
       }
+      .select-style{
+        width:60%;
+        margin-left:15px
+      }
     }
     >.addContent{
       >.addTeamMember{
@@ -264,23 +271,16 @@
       }
       display: flex;
       flex-direction: column;
-      >.add-input1{
+      >.add-input{
         padding-left: 50px;
         >.ant-select{
           margin-left:15px;
         }
       }
-      >.add-input2{
-        padding-left: 9px;
-      }
-      >.add-input3{
-        padding-left: 5px;
-      }
-      >.add-input4{
-        padding-left: 57px;
-        >.big-input{
-          margin-left: 16px;
-        }
+      .table-title{
+        display:inline-block;
+        width:80px;
+        text-align: right;
       }
       >div{
         padding-top: 5px;
@@ -302,7 +302,42 @@
     }
   }
 }
+.collapseStyle{
+  border:none;
+  position:relative;
+};
+.collapseStyle:before{
+  content: "";
+  position: absolute;
+  top: -50%;
+  bottom: -50%;
+  left: -50%;
+  right: -50%;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+  border:1px solid #dcdcdc;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
 .ant-pagination-item-active{
   background-color: $theme_color;
   border:1px solid rgba(1,1,1,0)
+}
+.error-tip{
+  font-size:16px;
+  color:#f04134;
+  margin-left:10px;
+}
+.dialog-footer{
+  text-align: center;
+  padding:20px 0;
+  &-button{
+    background:#930784;
+    min-width:75px;
+    color:white;
+  }
+  .cancel{
+    margin-left:25px;
+  }
 }
