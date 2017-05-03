@@ -397,11 +397,12 @@ class DashBoard extends Component {
         this.getStat(0);
         this.getTasks();
     }
-    componentWillUnmount() {
-        // clearInterval();
+    componentWillMount() {
+
     }
 
     render() {
+
         return (
             <div className="content">
                 <Row gutter={8}>
@@ -472,7 +473,7 @@ class DashBoard extends Component {
                                 <Row className="right-content-table">
                                     <Col><span className="col-span">Welcome!</span>{this.state.uid}</Col>
                                     <Col>{this.state.email}</Col>
-                                    <Col><a href="#">Change your password</a></Col>
+                                    <Col><a href={`http://auth.dev.s.unicc.com.cn/?login=${this.state.uid}`} target="about_blank" >Change your password</a></Col>
                                     <Col>
                                         <Button className='button-purple' onClick={this.handleOutClick}>
                                             <Icon type="logout"/>Log out

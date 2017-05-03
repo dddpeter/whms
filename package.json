@@ -63,6 +63,7 @@
     "cross-env": "^3.1.4",
     "es6-promise": "^4.1.0",
     "events": "^1.1.1",
+    "excel-export": "^0.5.1",
     "express": "^4.15.0",
     "express-session": "^1.15.2",
     "highcharts": "^5.0.10",

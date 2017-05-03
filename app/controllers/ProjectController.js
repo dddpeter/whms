@@ -12,7 +12,15 @@ Array.prototype.remove = function(val) {
         this.splice(index, 1);
     }
 };
+/**
+ *
+ * @param app
+ * @param authChecker
+ */
 module.exports = function (app, authChecker) {
+    /**
+     * 获取所有用户参与的所有项目
+     */
     app.get('/api/user/projects', authChecker, (req, res, next) => {
         let loginUser = req.session.loginUser;
         let uid = loginUser.uid;
@@ -25,6 +33,9 @@ module.exports = function (app, authChecker) {
                 res.end(JSON.stringify({result: false, 'error': `Server error：${e.errors[0].message}`}));
             });
     });
+    /**
+     * 获取所有项目
+     */
     app.get('/api/projects/all', authChecker, (req, res, next) => {
         Project.findAll()
             .then(function (data) {
@@ -35,7 +46,9 @@ module.exports = function (app, authChecker) {
                 res.end(JSON.stringify({result: false, 'error': `Server error：${e.errors[0].message}`}));
             });
     });
-
+    /**
+     * 项目列表分页
+     */
     app.get('/api/projects', authChecker, (req, res, next) => {
         var pageNum = req.query.pageNum;
         var pageSize = req.query.pageSize;
@@ -81,6 +94,9 @@ module.exports = function (app, authChecker) {
                 res.end(JSON.stringify({result: false, 'error': `Server error：${e.errors[0].message}`}));
             });
     });
+    /**
+     * 更新一个项目的信息
+     */
     app.post('/api/project/:pid', authChecker, (req, res, next) => {
         let data = req.body;
         var pid = req.params.pid;
@@ -106,6 +122,9 @@ module.exports = function (app, authChecker) {
             })
 
     });
+    /**
+     * 添加一个项目
+     */
     app.post('/api/project', authChecker,(req, res, next) => {
         let project = req.body;
         let members = [];
@@ -142,6 +161,9 @@ module.exports = function (app, authChecker) {
 
 
     });
+    /**
+     *添加项目成员
+     */
     app.post('/api/project/member/:pid', authChecker,(req, res, next) => {
         let pid = req.params.pid;
         let members = req.body;
@@ -174,7 +196,14 @@ module.exports = function (app, authChecker) {
         );
 
     });
-
+    /**
+     *获取项目下任务，带分页
+     * rang:
+     * 1 Last Week,
+     * 2 Last Month,
+     * 3 All,
+     * otherwise This Week
+     */
     app.get('/api/project/tasks/:pid', authChecker, (req, res, next) => {
         let pageNum = req.query.pageNum;
         let pageSize = req.query.pageSize;

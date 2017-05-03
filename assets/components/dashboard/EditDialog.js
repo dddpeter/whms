@@ -181,6 +181,7 @@ class ModalDialog extends React.Component {
                     maskClosable={true}
                     onCancel={this.handleCancel}
                     footer={null}
+                    title={'Edit Task'}
                 >
                     <Form className="modal-dialog">
                         <FormItem
