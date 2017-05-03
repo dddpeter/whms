@@ -72,9 +72,9 @@ class ProjectStatusHelper extends Component{
             <Popover
                 content={
                 <div>
-                <p><a className="project-status-link" onClick={(e,v)=>this.statusChange(e,'ACTIVE')} >Active</a></p>
-                <p> <a className="project-status-link"  onClick={(e,v)=>this.statusChange(e,'PENDING')}>Pending</a></p>
-                <p><a className="project-status-link"  onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</a></p>
+                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'ACTIVE')} >Active</a></p>
+                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'PENDING')}>Pending</a></p>
+                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</a></p>
                 </div>
         }
                 placement="topRight"

@@ -26,7 +26,6 @@ module.exports = function (app, authChecker) {
         let uid = loginUser.uid;
         sequelize.query(`select up.pid,p."projectName" from t_user_project up left join t_project p on ( up.pid = p.pid) where up.uid='${uid}'`)
             .then(function (data) {
-
                 res.json({result: true, data: data[0]});
             }, function (e) {
                 res.writeHead(500,
@@ -157,7 +156,7 @@ module.exports = function (app, authChecker) {
             (e)=>{
             res.writeHead(500,
                 {"Content-Type": "application/json; charset=utf8"});
-            res.end(JSON.stringify({result: false, 'error': `Server error：${e.errors[0].message}`}));
+            res.end(JSON.stringify({result: false, 'error': `Server error：${e}`}));
         });
 
 
