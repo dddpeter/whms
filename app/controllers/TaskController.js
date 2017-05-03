@@ -3,6 +3,7 @@
  */
 const sequelize = require('../utils/SequelizeConfig');
 const Task = require('../models/Task');
+const nodeExcel = require('excel-export');
 module.exports = function (app, authChecker) {
     app.get('/api/tasks', authChecker, (req, res, next) => {
         var pageNum = req.query.pageNum;
@@ -208,6 +209,38 @@ module.exports = function (app, authChecker) {
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
                 }
             );
+    });
+    app.get('/api/tasks/export',authChecker,(req,res,next)=>{
+        var conf ={};
+        conf.name='test';
+        conf.stylesXmlFile = __dirname+"/styles.xml";
+        conf.cols = [
+            {
+                caption:'项目',
+                type:'string'},
+            {
+            caption:'用户',
+            type:'string'},
+            {
+                caption:'类型',
+                type:'string',
+                width:30
+            },
+            {
+                caption:'时间',
+                type:'string'},
+            ];
+        conf.rows = [
+            ['青青互助','lijd','DEVELOPMENT','2017/02/15']
+        ];
+        var configs=[];
+        configs[0] = conf;
+        conf.name = 'test1';
+        configs[1] = conf;
+        var result = nodeExcel.execute(configs);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+        res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
+        res.end(result, 'binary');
     });
 
 }

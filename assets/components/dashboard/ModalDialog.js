@@ -220,6 +220,7 @@ class ModalDialog extends React.Component {
                     visible={this.props.visible}
                     maskClosable={true}
                     onCancel={this.handleCancel}
+                    title="Add Task"
                     footer={null}
                 >
                     <Form className="modal-dialog">
