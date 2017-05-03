@@ -21,6 +21,7 @@ import {
     message,
     Button
 } from 'antd';
+const {RangePicker} = DatePicker;
 const Panel = Collapse.Panel;
 import {browserHistory} from 'react-router';
 import './project.scss';
@@ -40,6 +41,8 @@ class Project extends Component {
             status: '',
             visibleMemberEdit: false,
             projects: [{pid: 'ALL', projectName: '所有'}],
+            projectsExport:[],
+            projectList:[],
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
@@ -203,7 +206,8 @@ class Project extends Component {
                         projects.push(p);
                     });
                     that.setState({
-                        projects: projects
+                        projects: projects,
+                        projectsExport:projectsAll
                     });
                 }
             });
@@ -214,18 +218,17 @@ class Project extends Component {
         if (i == undefined) {
             i = this.state.pageNum;
         }
-        let url =
-            fetch(`/api/projects?pageSize=${this.state.pageSize}&pageNum=${i}&projectStatus=${status}&pid=${pid}`,
-                {credentials: 'same-origin'})
-                .then((response) => {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    else {
-                        return {data: []};
-                    }
-                })
-                .then(function (data) {
+        fetch(`/api/projects?pageSize=${this.state.pageSize}&pageNum=${i}&projectStatus=${status}&pid=${pid}`,
+            {credentials: 'same-origin'})
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {data: []};
+                }
+            })
+            .then(function (data) {
 
                     if (data.result) {
                         that.setState({
@@ -264,8 +267,6 @@ class Project extends Component {
                       <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
                       <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/>
                       <div>
-                         <ProjectAddHelper
-                         />
                       </div>
                   </div>}>
                 <div className="filter"><span className="project">Filter Projects:</span>
