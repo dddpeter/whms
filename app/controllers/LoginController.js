@@ -7,7 +7,17 @@ const config = require(__dirname + '/../../config/config.json')[ENV];
 const User = require('../models/User');
 const UserProject = require('../models/UserProject');
 const sequelize = require('../utils/SequelizeConfig');
+/**
+ *
+ * @param app
+ * @param authChecker
+ */
 module.exports = function (app, authChecker) {
+    /**
+     *
+     * @param user
+     * 更新或者添加用户
+     */
     var saveOrUpdate = function (user) {
         return User
             .findOne({where: {uid: user.uid}})
@@ -20,6 +30,15 @@ module.exports = function (app, authChecker) {
                 }
             })
     }
+    /**
+     *
+     * @param uid
+     * @param password
+     * @param req
+     * @param res
+     * @param next
+     * Ldap 登录方法
+     */
     var ladpLogin = function (uid, password, req, res, next) {
         let client = ldap.createClient({
             url: config.ldap.url
@@ -85,6 +104,9 @@ module.exports = function (app, authChecker) {
                 });
             });
     };
+    /**
+     * 用户登录
+     */
     app.post('/api/login', (req, res, next) => {
         var data = req.body;
         if (data.uid && data.password) {
@@ -94,7 +116,9 @@ module.exports = function (app, authChecker) {
             res.end(JSON.stringify({result: false, error: "uid or password is miss"}));
         }
     });
-
+    /**
+     * 用户登出
+     */
     app.delete('/api/logout', (req, res, next) => {
         var user = req.session.loginUser;
         req.session.destroy(function (err) {
@@ -107,6 +131,9 @@ module.exports = function (app, authChecker) {
             res.end(res.json({result: true}));
         });
     });
+    /**
+     * 项目用户和时长统计
+     */
     app.get('/api/users/duration/:pid', authChecker, (req, res, next) => {
         let pid = req.params.pid;
         sequelize.query(`select sum("spendTime") duration from t_task where pid='${pid}'`, {type: sequelize.QueryTypes.SELECT}).then((duration) => {

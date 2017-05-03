@@ -7,6 +7,25 @@ body,.ant-card{
   overflow: auto;
   zoom: 1;
 }
+.ant-modal-content {
+  >.ant-modal-close{
+    color: white;
+    font-size: 16px;
+    font-weight:700;
+    &:hover{
+      color: white;
+    }
+  }
+  > .ant-modal-header {
+    background: $theme_color;
+    >.ant-modal-title{
+      color: white;
+      font-size: 16px;
+      font-weight:700;
+    }
+
+  }
+}
 .ant-card-head{
   height: 30px!important;
   line-height: 30px!important;
