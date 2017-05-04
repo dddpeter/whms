@@ -38,18 +38,19 @@ class Project extends Component {
             status: '',
             visibleMemberEdit: false,
             projects: [{pid: 'ALL', projectName: '所有'}],
-            projectsExport:[],
-            projectList:[],
+            projectsExport: [],
+            projectList: [],
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
             pageSize: 10,
             total: 1,
-            addProjectLayer:<span></span>,
-            exportProjectLayer:<span></span>,
-            dateDisable:true,
+            addProjectLayer: <span></span>,
+            exportProjectLayer: <span></span>,
+            dateDisable: true,
         }
     }
+
     projectsSelect = (value) => {
         let status = this.state.projectStatus;
         this.renderProjectList(0, status, value);
@@ -59,6 +60,7 @@ class Project extends Component {
         let pid = this.state.pid;
         this.renderProjectList(0, value, pid);
     };
+
     renderFirstPage() {
         let that = this;
         let projects = this.state.projects;
@@ -80,32 +82,36 @@ class Project extends Component {
                     });
                     that.setState({
                         projects: projects,
-                        projectsExport:projectsAll
+                        projectsExport: projectsAll
                     });
                 }
             });
     }
+
     //点击弹出下载窗口
     showModalDownload = () => {
-            this.setState({
-                exportProjectLayer:<ProjectExport projectsList = {this.state.projectsExport}
-                                                  callbackExport={this.callbackExport}
-                                                  callbackExportCancle = {this.callbackExportCancle }
-                />
-            });
-    };
-    callbackExport=()=>{
-
-
-
         this.setState({
-            exportProjectLayer:<span></span>
+            exportProjectLayer: <ProjectExport projectExportList={this.props.projectExportList}
+                                               projectsList={this.state.projectsExport}
+                                               callbackExport={this.callbackExport}
+                                               callbackExportCancle={this.callbackExportCancle }
+            />
+        });
+    };
+    callbackExport = (projectExportList) => {
+        let pids = projectExportList.pids;
+        let pidQueryString = 'pids[]='+pids.join('&pids[]=');
+        let url = `/api/tasks/export?start=${projectExportList.start}&end=${projectExportList.end}&${pidQueryString}`;
+        console.log(url);
+        window.open(url);
+        this.setState({
+            exportProjectLayer: <span></span>
         });
 
     };
-    callbackExportCancle=()=>{
+    callbackExportCancle = () => {
         this.setState({
-            exportProjectLayer:<span></span>
+            exportProjectLayer: <span></span>
         });
 
     };
@@ -128,11 +134,11 @@ class Project extends Component {
             }
         }).then((data) => {
             that.setState({
-                addProjectLayer:<ProjectAddHelper project={that.props.project}
-                                                  usersList = {data.users}
-                                                  projects={this.state.projects}
-                                                  callbackAddEdit={that.callbackAddEdit}
-                                                    callbackAddCancel = {that.callbackAddCancel }
+                addProjectLayer: <ProjectAddHelper project={that.props.project}
+                                                   usersList={data.users}
+                                                   projects={this.state.projects}
+                                                   callbackAddEdit={that.callbackAddEdit}
+                                                   callbackAddCancel={that.callbackAddCancel }
                 />
             });
         }).catch(err => {
@@ -144,9 +150,9 @@ class Project extends Component {
         });
     };
     //关闭添加弹框
-    callbackAddCancel=()=>{
+    callbackAddCancel = () => {
         this.setState({
-            addProjectLayer:<span></span>
+            addProjectLayer: <span></span>
         });
     };
 
@@ -180,7 +186,7 @@ class Project extends Component {
             console.error(err);
         });
         this.setState({
-            addProjectLayer:<span></span>
+            addProjectLayer: <span></span>
         });
     };
 //判断是否是登陆状态
@@ -211,7 +217,6 @@ class Project extends Component {
     }
 
 
-
     renderProjectList(i = 0, status = 'ALL', pid = 'ALL') {
         let that = this;
         if (i == undefined) {
@@ -229,25 +234,26 @@ class Project extends Component {
             })
             .then(function (data) {
 
-                    if (data.result) {
-                        that.setState({
-                            projectStatus: status,
-                            pid: pid,
-                            projectList: data.projects,
-                            total: Number(data.total),
-                            pageNum: Number(data.current)
-                        });
-                        console.log(that.state);
-                    }
-                    else {
-                        that.setState({
-                            projectStatus: status,
-                            pid: pid
-                        });
-                    }
-                });
+                if (data.result) {
+                    that.setState({
+                        projectStatus: status,
+                        pid: pid,
+                        projectList: data.projects,
+                        total: Number(data.total),
+                        pageNum: Number(data.current)
+                    });
+                    console.log(that.state);
+                }
+                else {
+                    that.setState({
+                        projectStatus: status,
+                        pid: pid
+                    });
+                }
+            });
 
     };
+
     componentWillMount() {
         this.checkLogin();
     }

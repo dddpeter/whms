@@ -29,16 +29,13 @@ class ProjectExport extends Component {
             pickerVisible: false,
             exportError:true,
             projectExportList:{
-                pid:'',
+                pids:'',
                 start: first,
                 end: last,
             }
         };
     }
-    handleOkDownload = (e) => {
-        e.preventDefault();
-        this.props.callbackExport();
-    };
+
     periodTime = (v) => {
         if (v === '0') {
             this.setState({
@@ -84,7 +81,7 @@ class ProjectExport extends Component {
     //project选择发生变化时
     selectProjectsChange=(value)=>{
         let  projectExportList=this.state.projectExportList;
-        projectExportList.pid=value;
+        projectExportList.pids=value;
         if(value===''){
             this.setState({
                 exportError:true,
@@ -106,11 +103,16 @@ class ProjectExport extends Component {
             projectExportList:projectExportList,
         })
     };
+
     componentWillReceiveProps(props) {
         this.setState({
             projectsList: props.projectsList
         });
-    }
+    };
+    handleOkDownload = (e) => {
+        e.preventDefault();
+        this.props.callbackExport(this.state.projectExportList);
+    };
     render() {
         return (
             <div>
