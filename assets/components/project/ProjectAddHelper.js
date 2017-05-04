@@ -1,7 +1,4 @@
 import React, {Component} from 'react';
-import ePromise from 'es6-promise'
-ePromise.polyfill();
-import fetch from 'isomorphic-fetch';
 import {
     Modal,
     Input,
@@ -22,13 +19,20 @@ class ProjectAddHelper extends Component{
                 members: [],
                 uid: '',
                 brief:''
-            }
+            },
+            usersList: this.props.usersList,
+            projectError:true,
+            projectErrorTip:false,
+            memberError:true,
+            briefError:true,
+            isNameExists:false,
+            projects:this.props.projects
         }
     }
     handleProjectAdd=(e)=>{
         e.preventDefault();
-        let members = this.state.members;
-        this.props.callbackADDEdit(members);
+        let project = this.state.project;
+        this.props.callbackAddEdit(project);
     };
     //status变化时
     statusChange = (value) => {
@@ -42,7 +46,7 @@ class ProjectAddHelper extends Component{
     projectNameChange = (e) => {
         let that=this;
         let project = this.state.project;
-        var isNameExists = false;
+        let isNameExists = false;
         project.projectName = e.target.value;
         if(project.projectName.length<4){
             this.setState({
@@ -76,7 +80,6 @@ class ProjectAddHelper extends Component{
     };
     //team member发生变化时
     teamMemberChange = (value) => {
-        console.log(value);
         let project = this.state.project;
         project.members = value;
         if(project.members.length<1){
@@ -88,7 +91,6 @@ class ProjectAddHelper extends Component{
             this.setState({
                 project: project,
                 memberError:false,
-
             })
         }
     };
@@ -109,6 +111,12 @@ class ProjectAddHelper extends Component{
             })
         }
     };
+    componentWillReceiveProps(props){
+        this.setState({
+            usersList:props.usersList
+        });
+
+    }
 
     render(){
 
@@ -117,7 +125,7 @@ class ProjectAddHelper extends Component{
                 <Modal title="Add Project"
                        visible={true}
                        maskClosable={true}
-                       onCancel={this.callbackAddCancle}
+                       onCancel={this.props.callbackAddCancel}
                        footer={null}>
                     <div className="addContent">
                         <div className="add-input">
@@ -176,9 +184,9 @@ class ProjectAddHelper extends Component{
                     <div className="dialog-footer">
                         <Button key="add" className="dialog-footer-button" size="large"
                                 disabled={this.state.projectError||this.state.memberError||this.state.briefError}
-                                onClick={(project)=>this.handleProjectAdd(this.state.project)}>Add</Button>
+                                onClick={this.handleProjectAdd}>Add</Button>
                         <Button key="cancel" className="dialog-footer-button cancel" size="large"
-                                onClick={this.props.callbackAddCancle}>Cancel</Button>
+                                onClick={this.props.callbackAddCancel}>Cancel</Button>
                     </div>
                 </Modal>
 

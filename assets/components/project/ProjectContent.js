@@ -242,7 +242,6 @@ class ProjectContent extends Component{
                                    <text className="members">{new Array(this.state.teamMember).join(',')}</text>
                                     <Icon type="edit" onClick={this.showMemberEdit}></Icon>
                                     {this.state.addMemberLayer}
-                                   {/* */}
                                 </div>
                             </Row>
                         </div>

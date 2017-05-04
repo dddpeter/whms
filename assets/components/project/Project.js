@@ -9,19 +9,17 @@ import ProjectStatusHelper from './ProjectStatusHelper.js';
 import ProjectHeader from './ProjectHeader.js'
 import ProjectContent from'./ProjectContent.js'
 import ProjectAddHelper from './ProjectAddHelper.js'
+import ProjectExport from './ProjectExport.js'
 import {
     Collapse,
     Card,
     Icon,
-    Modal,
-    Input,
     Select,
     DatePicker,
     Pagination,
     message,
     Button
 } from 'antd';
-const {RangePicker} = DatePicker;
 const Panel = Collapse.Panel;
 import {browserHistory} from 'react-router';
 import './project.scss';
@@ -35,7 +33,6 @@ class Project extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            visibleDownload: false,
             visibleAdd: false,
             visibleEdit: false,
             status: '',
@@ -48,16 +45,9 @@ class Project extends Component {
             pageNum: 0,
             pageSize: 10,
             total: 1,
-            usersList: [],
-            projectList: [],
-            firstProject: '',
-            projectError:true,
-            projectErrorTip:false,
-            memberError:true,
-            briefError:true,
-            isNameExists:false,
             addProjectLayer:<span></span>,
-
+            exportProjectLayer:<span></span>,
+            dateDisable:true,
         }
     }
     projectsSelect = (value) => {
@@ -69,22 +59,55 @@ class Project extends Component {
         let pid = this.state.pid;
         this.renderProjectList(0, value, pid);
     };
+    renderFirstPage() {
+        let that = this;
+        let projects = this.state.projects;
+        fetch('/api/projects/all',
+            {credentials: 'same-origin'})
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {data: []};
+                }
+            })
+            .then(function (data) {
+                if (data.result) {
+                    let projectsAll = data.data;
+                    projectsAll.map(p => {
+                        projects.push(p);
+                    });
+                    that.setState({
+                        projects: projects,
+                        projectsExport:projectsAll
+                    });
+                }
+            });
+    }
+    //点击弹出下载窗口
     showModalDownload = () => {
-        this.setState({
-            visibleDownload: true,
-        });
+            this.setState({
+                exportProjectLayer:<ProjectExport projectsList = {this.state.projectsExport}
+                                                  callbackExport={this.callbackExport}
+                                                  callbackExportCancle = {this.callbackExportCancle }
+                />
+            });
     };
-    handleOkDownload = (e) => {
-        console.log(e);
+    callbackExport=()=>{
+
+
+
         this.setState({
-            visibleDownload: false,
+            exportProjectLayer:<span></span>
         });
+
     };
-    handleCancelDownload = (e) => {
-        console.log(e);
+    callbackExportCancle=()=>{
         this.setState({
-            visibleDownload: false,
+            exportProjectLayer:<span></span>
         });
+
     };
     // 点击弹出添加列表
     showModalAdd = () => {
@@ -107,8 +130,9 @@ class Project extends Component {
             that.setState({
                 addProjectLayer:<ProjectAddHelper project={that.props.project}
                                                   usersList = {data.users}
-                                                    callbackMemberEdit={that.callbackMemberEdit}
-                                                    callbackCancle = { that.onAddMemberCancel }
+                                                  projects={this.state.projects}
+                                                  callbackAddEdit={that.callbackAddEdit}
+                                                    callbackAddCancel = {that.callbackAddCancel }
                 />
             });
         }).catch(err => {
@@ -119,9 +143,14 @@ class Project extends Component {
             visibleAdd: true,
         });
     };
+    //关闭添加弹框
+    callbackAddCancel=()=>{
+        this.setState({
+            addProjectLayer:<span></span>
+        });
+    };
 
-    handleOkAdd = (project) => {
-        console.log(project);
+    callbackAddEdit = (project) => {
         let that = this;
         fetch(`/api/project`, {
             method: 'POST',
@@ -150,15 +179,10 @@ class Project extends Component {
             message.error('添加失败');
             console.error(err);
         });
-        this.handleCancelAdd();
-    };
-    handleCancelAdd = () => {
-
         this.setState({
-            visibleAdd: false,
+            addProjectLayer:<span></span>
         });
     };
-
 //判断是否是登陆状态
     checkLogin() {
         let that = this;
@@ -186,32 +210,7 @@ class Project extends Component {
         })
     }
 
-    renderFirstPage() {
-        let that = this;
-        let projects = this.state.projects;
-        fetch('/api/projects/all',
-            {credentials: 'same-origin'})
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                else {
-                    return {data: []};
-                }
-            })
-            .then(function (data) {
-                if (data.result) {
-                    let projectsAll = data.data;
-                    projectsAll.map(p => {
-                        projects.push(p);
-                    });
-                    that.setState({
-                        projects: projects,
-                        projectsExport:projectsAll
-                    });
-                }
-            });
-    }
+
 
     renderProjectList(i = 0, status = 'ALL', pid = 'ALL') {
         let that = this;
@@ -249,8 +248,6 @@ class Project extends Component {
                 });
 
     };
-
-
     componentWillMount() {
         this.checkLogin();
     }
@@ -267,6 +264,8 @@ class Project extends Component {
                       <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
                       <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/>
                       <div>
+                          {this.state.exportProjectLayer}
+                          {this.state.addProjectLayer}
                       </div>
                   </div>}>
                 <div className="filter"><span className="project">Filter Projects:</span>
