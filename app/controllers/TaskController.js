@@ -4,6 +4,7 @@
 const sequelize = require('../utils/SequelizeConfig');
 const Task = require('../models/Task');
 const nodeExcel = require('excel-export');
+const moment = require('moment');
 module.exports = function (app, authChecker) {
     app.get('/api/tasks', authChecker, (req, res, next) => {
         var pageNum = req.query.pageNum;
@@ -34,7 +35,7 @@ module.exports = function (app, authChecker) {
                                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
                             });
                 }
-                , function (e){
+                , function (e) {
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -52,7 +53,7 @@ module.exports = function (app, authChecker) {
                         .then(function (o) {
                                 res.end(JSON.stringify({result: true}));
                             },
-                            function (e){
+                            function (e) {
                                 res.writeHead(500,
                                     {"Content-Type": "application/json; charset=utf8"});
                                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -92,7 +93,7 @@ module.exports = function (app, authChecker) {
             function (o) {
                 res.json({result: true, data: task});
             },
-            function (e){
+            function (e) {
                 res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
                 res.end(JSON.stringify({result: false, 'error': 'Task add or update fail'}));
@@ -109,7 +110,7 @@ module.exports = function (app, authChecker) {
                         .then(function (o) {
                                 res.end(JSON.stringify({result: true}));
                             },
-                            function (e){
+                            function (e) {
                                 res.writeHead(500,
                                     {"Content-Type": "application/json; charset=utf8"});
                                 res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -140,7 +141,7 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                     res.json({result: true, data: obj[0]});
                 },
-                function (e){
+                function (e) {
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -160,7 +161,7 @@ module.exports = function (app, authChecker) {
         }
         let firstDay = year + "-" + month + "-" + "01 00:00:00";//上个月的第一天
         let myDate = new Date(year, month, 0);
-        let lastDay = year + "-" + month + "-" + myDate.getDate()+" 23:59:59";//上个月的最后一天
+        let lastDay = year + "-" + month + "-" + myDate.getDate() + " 23:59:59";//上个月的最后一天
         var loginUser = req.session.loginUser;
         let uid = loginUser.uid;
         sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
@@ -177,7 +178,7 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                     res.json({result: true, data: obj[0]});
                 },
-                function (e){
+                function (e) {
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
@@ -203,44 +204,87 @@ module.exports = function (app, authChecker) {
             .then(function (obj) {
                     res.json({result: true, data: obj[0]});
                 },
-                function (e){
+                function (e) {
                     res.writeHead(500,
                         {"Content-Type": "application/json; charset=utf8"});
                     res.end(JSON.stringify({result: false, 'error': 'Server error'}));
                 }
             );
     });
-    app.get('/api/tasks/export',authChecker,(req,res,next)=>{
-        var conf ={};
-        conf.name='test';
-        conf.stylesXmlFile = __dirname+"/styles.xml";
+    app.get('/api/tasks/export', authChecker,(req, res, next) => {
+        var start = req.query.start;
+        var end = req.query.end;
+        var pids =req.query.pids;
+        var where ='1=1 and ';
+        if (start == undefined) {
+            let curr = moment();
+            let day = curr.format('d');
+            start = curr.add(0 - day, 'days').add(-100, 'days').format('YYYY-MM-DD');
+        }
+        if (end == undefined) {
+            let curr = moment();
+            let day = curr.format('d');
+            let first = curr.add(0 - day, 'days').add(1, 'days').format('YYYY-MM-DD');
+            end = moment(first, 'YYYY-MM-DD').add(6, 'days').format('YYYY-MM-DD');
+        }
+        if(pids.length>0){
+            let  temp ='';
+            pids.map((pid,i)=>{
+                pids[i] = `'${pid}'`;
+            });
+            where += `t.pid in (${pids.join(',')})`;
+        }
+        var conf = {};
+        var configs = [];
+        conf.name = 'test';
+        conf.stylesXmlFile = __dirname + "/styles.xml";
         conf.cols = [
             {
-                caption:'项目',
-                type:'string'},
+                caption: '项目',
+                type: 'string'
+            },
+
             {
-            caption:'用户',
-            type:'string'},
-            {
-                caption:'类型',
-                type:'string',
-                width:30
+                caption: '内容',
+                type: 'string',
+                width: 30
             },
             {
-                caption:'时间',
-                type:'string'},
-            ];
-        conf.rows = [
-            ['青青互助','lijd','DEVELOPMENT','2017/02/15']
+                caption: '类型',
+                type: 'string',
+                width: 20
+            },
+            {
+                caption: '用户',
+                type: 'string'
+
+            },
+            {
+                caption: '时间',
+                type: 'string',
+                width: 20
+            },
         ];
-        var configs=[];
-        configs[0] = conf;
-        conf.name = 'test1';
-        configs[1] = conf;
-        var result = nodeExcel.execute(configs);
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-        res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
-        res.end(result, 'binary');
+        sequelize.query(`select p."projectName",t.content,t."type",t.uid,to_char(t."issueDate",'YYYY/MM/DD') from t_task t left join t_project p on (p.pid=t.pid) 
+        where ${ where} and t."issueDate" between '${start}' and '${end}'`, {type: sequelize.QueryTypes.SELECT})
+            .then((data) => {
+                let rows = [];
+                data.map((d, i) => {
+                    let row = [];
+                    let j = 0;
+                    for (var key in d) {
+                        row[j] = d[key];
+                        j++;
+                    }
+                    rows[i] = row;
+                });
+                conf.rows = rows;
+                configs.push(conf);
+                let result = nodeExcel.execute(configs);
+                res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+                res.setHeader("Content-Disposition", `attachment; filename=Report(${start}_${end}).xlsx`);
+                res.end(result, 'binary');
+            });
     });
 
 }

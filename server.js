@@ -4,12 +4,14 @@ const path = require('path');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-var FileStore = require('session-file-store')(session);
-var cookieParser = require('cookie-parser');
-var favicon = require('serve-favicon')
+const FileStore = require('session-file-store')(session);
+const cookieParser = require('cookie-parser');
+const favicon = require('serve-favicon');
+const schedule = require('./app/utils/TaskStatusScheduler');
 const app = express();
 const PORT = process.env.PORT || 3005;
 const ENV = process.env.NODE_ENV || 'development';
+
 process.env.TZ = 'Asia/Shanghai';
 require('./app/Models');
 app.set('trust proxy', 1) // trust first proxy
@@ -19,7 +21,7 @@ app.use(session({
     store: new FileStore(),
     resave: true,
     saveUninitialized: true,
-    cookie: {maxAge: 1000 * 60 * 30, httpOnly: false, secure: false}
+    cookie: {maxAge: 1000 * 60 * 30, httpOnly: true, secure: false}
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -56,6 +58,7 @@ app.use(express.query());
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '.', staticPath, 'index.html'));
 });
+schedule.scheduleUpdateTaskStatus();
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}!`);
 });
