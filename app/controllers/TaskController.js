@@ -219,7 +219,7 @@ module.exports = function (app, authChecker) {
         if (start == undefined) {
             let curr = moment();
             let day = curr.format('d');
-            start = curr.add(0 - day, 'days').add(-100, 'days').format('YYYY-MM-DD');
+            start = curr.add(0 - day, 'days').add(1, 'days').format('YYYY-MM-DD');
         }
         if (end == undefined) {
             let curr = moment();
