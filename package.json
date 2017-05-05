@@ -7,8 +7,10 @@
     "test": "ava",
     "build": "webpack",
     "prestart": "webpack",
-    "ppredev": "webpack --config webpack.config.dev.js",
+    "preqa":"webpack",
+    "predev": "webpack --config webpack.config.dev.js",
     "dev": "cross-env NODE_ENV=development node  --harmony  server.js",
+    "qa":"cross-env NODE_ENV=qa node  --harmony  server.js",
     "start": "cross-env NODE_ENV=production node  --harmony server.js"
   },
   "repository": {

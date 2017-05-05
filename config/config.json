@@ -11,6 +11,18 @@
       "dc":["unicc","com","cn"]
     }
   },
+    "qa": {
+      "username": "tsqa",
+      "password": "f2b6607d8",
+      "database": "timesheet-qa",
+      "host": "10.3.2.28",
+      "dialect": "postgres",
+      "ldap":{
+        "url":"ldap://auth.dev.s.unicc.com.cn:389",
+        "ou":"it",
+        "dc":["unicc","com","cn"]
+      }
+    },
   "production": {
     "username": "whmser",
     "password": "whmser",

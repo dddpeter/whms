@@ -11,6 +11,8 @@ const schedule = require('./app/utils/TaskStatusScheduler');
 const app = express();
 const PORT = process.env.PORT || 3005;
 const ENV = process.env.NODE_ENV || 'development';
+const model = require('./app/Models');
+
 
 process.env.TZ = 'Asia/Shanghai';
 require('./app/Models');
@@ -33,6 +35,10 @@ app.use(cookieParser());
 // Serve static assets
 let staticPath = 'build/dev';
 if (ENV === 'production') {
+    app.use(compression());
+    staticPath = 'build/prod';
+}
+else if (ENV === 'qa') {
     app.use(compression());
     staticPath = 'build/prod';
 }
