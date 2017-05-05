@@ -11,8 +11,7 @@ module.exports = {
     entry: {
         "scripts/app":[
             __dirname + "/assets/index.js",
-        ],
-        "scripts/vendor": ["react", 'react-dom', 'react-router'],
+        ]
     },
     output: {
         path: __dirname + "/build/prod", //打包后的文件存放的地方
@@ -55,10 +54,6 @@ module.exports = {
             template: './assets/html/index.html'
         }),
         new webpack.BannerPlugin("CopyRight @ UNICC Frontend"),
-        new webpack.optimize.CommonsChunkPlugin({
-            names: ['scripts/vendor', '/scripts/manifest'],
-            minChunks: Infinity
-        }),
        // new CleanWebpackPlugin(['public']),
         new webpack.optimize.UglifyJsPlugin(
             {
