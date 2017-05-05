@@ -57,7 +57,14 @@ class ModalDialog extends React.Component {
     }
     componentWillReceiveProps(props){
         this.setState({
-            visible:props.visible
+            visible:props.visible,
+            task: {
+                id:props.taskList.id,
+                issueDate: moment(props.taskList.issueDate).format('YYYY-MM-DD'),
+                type:props.taskList.type,
+                spendTime:props.taskList.spendTime,
+                content:props.taskList.content
+            },
         });
     }
     //点击date后选择日期
@@ -142,6 +149,7 @@ class ModalDialog extends React.Component {
     onEdit=(e)=>{
         e.preventDefault();
         let task = this.state.task;
+        console.log(task);
         this.props.callbackEdit(task);
         this.handleCancel();
     };

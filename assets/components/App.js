@@ -62,7 +62,7 @@ class App extends Component {
                 <Layout>
                     <Content>{this.props.children}</Content>
                 </Layout>
-                <Footer>CopyRight @2017 Create By UNICC Developer</Footer>
+                <Footer>Copyright @2017 Create By UNICC Developer</Footer>
             </Layout>
         );
     }

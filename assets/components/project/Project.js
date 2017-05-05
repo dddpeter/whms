@@ -8,19 +8,16 @@ import fetch from 'isomorphic-fetch';
 import ProjectStatusHelper from './ProjectStatusHelper.js';
 import ProjectHeader from './ProjectHeader.js'
 import ProjectContent from'./ProjectContent.js'
+import ProjectAddHelper from './ProjectAddHelper.js'
+import ProjectExport from './ProjectExport.js'
 import {
     Collapse,
     Card,
     Icon,
-    Modal,
-    Input,
     Select,
-    DatePicker,
     Pagination,
     message,
-    Button
 } from 'antd';
-const {RangePicker} = DatePicker;
 const Panel = Collapse.Panel;
 import {browserHistory} from 'react-router';
 import './project.scss';
@@ -34,36 +31,24 @@ class Project extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            visibleDownload: false,
             visibleAdd: false,
             visibleEdit: false,
             status: '',
             visibleMemberEdit: false,
             projects: [{pid: 'ALL', projectName: '所有'}],
-            projectsExport:[],
-            projectList:[],
+            projectsExport: [],
+            projectList: [],
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
             pageSize: 10,
             total: 1,
-            usersList: [],
-            projectList: [],
-            firstProject: '',
-            projectError:true,
-            projectErrorTip:false,
-            memberError:true,
-            briefError:true,
-            isNameExists:false,
-            project: {
-                status: 'ACTIVE',
-                members: [],
-                uid: '',
-                brief:''
-            },
-            addProjectModel:<span></span>,
+            addProjectLayer: <span></span>,
+            exportProjectLayer: <span></span>,
+            dateDisable: true,
         }
     }
+
     projectsSelect = (value) => {
         let status = this.state.projectStatus;
         this.renderProjectList(0, status, value);
@@ -73,22 +58,58 @@ class Project extends Component {
         let pid = this.state.pid;
         this.renderProjectList(0, value, pid);
     };
+
+    renderFirstPage() {
+        let that = this;
+        let projects = this.state.projects;
+        fetch('/api/projects/all',
+            {credentials: 'same-origin'})
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else {
+                    return {data: []};
+                }
+            })
+            .then(function (data) {
+                if (data.result) {
+                    let projectsAll = data.data;
+                    projectsAll.map(p => {
+                        projects.push(p);
+                    });
+                    that.setState({
+                        projects: projects,
+                        projectsExport: projectsAll
+                    });
+                }
+            });
+    }
+
+    //点击弹出下载窗口
     showModalDownload = () => {
         this.setState({
-            visibleDownload: true,
+            exportProjectLayer: <ProjectExport projectExportList={this.props.projectExportList}
+                                               projectsList={this.state.projectsExport}
+                                               callbackExport={this.callbackExport}
+                                               callbackExportCancle={this.callbackExportCancle }
+            />
         });
     };
-    handleOkDownload = (e) => {
-        console.log(e);
+    callbackExport = (projectExportList) => {
+        let pids = projectExportList.pids;
+        let pidQueryString = 'pids[]='+pids.join('&pids[]=');
+        let url = `/api/tasks/export?start=${projectExportList.start}&end=${projectExportList.end}&${pidQueryString}`;
+        window.open(url);
         this.setState({
-            visibleDownload: false,
+            exportProjectLayer: <span></span>
         });
     };
-    handleCancelDownload = (e) => {
-        console.log(e);
+    callbackExportCancle = () => {
         this.setState({
-            visibleDownload: false,
+            exportProjectLayer: <span></span>
         });
+
     };
     // 点击弹出添加列表
     showModalAdd = () => {
@@ -108,11 +129,14 @@ class Project extends Component {
                 message.info('网络错误');
             }
         }).then((data) => {
-            if (data.result) {
-                this.setState({
-                    usersList: data.users,
-                })
-            }
+            that.setState({
+                addProjectLayer: <ProjectAddHelper project={that.props.project}
+                                                   usersList={data.users}
+                                                   projects={this.state.projects}
+                                                   callbackAddEdit={that.callbackAddEdit}
+                                                   callbackAddCancel={that.callbackAddCancel }
+                />
+            });
         }).catch(err => {
             message.error('读取内容失败');
             console.error(err);
@@ -121,87 +145,14 @@ class Project extends Component {
             visibleAdd: true,
         });
     };
-    //status变化时
-    statusChange = (value) => {
-        let project = this.state.project;
-        project.status = value;
+    //关闭添加弹框
+    callbackAddCancel = () => {
         this.setState({
-            project: project
+            addProjectLayer: <span></span>
         });
     };
-    //输入project name
-    projectNameChange = (e) => {
-        let that=this;
-        let project = this.state.project;
-        var isNameExists = false;
-        project.projectName = e.target.value;
-        if(project.projectName.length<4){
-            this.setState({
-                projectError:true,
-                projectErrorTip:true,
-                isAble:true,
-            })
-        }else{
-            this.setState({
-                projectError:false,
-                projectErrorTip:false,
-                isAble:false,
-            })
-        }
-        this.state.projects.map(p=>{
-            if(p.projectName==project.projectName){
-                isNameExists = true;
-            }
-        });
-        if(!isNameExists){
-            this.setState({
-                project: project,
-                isNameExists: isNameExists
-            });
-        }
-        else{
-            this.setState({
-                isNameExists: isNameExists
-            });
-        }
-    };
-    //team member发生变化时
-    teamMemberChange = (value) => {
-        console.log(value);
-        let project = this.state.project;
-        project.members = value;
-        if(project.members.length<1){
-            this.setState({
-                memberError:true,
 
-            })
-        }else{
-            this.setState({
-                project: project,
-                memberError:false,
-
-            })
-        }
-    };
-    // brief发生变化时
-    briefChange= (e) => {
-        let project = this.state.project;
-        project.brief = e.target.value;
-        if(project.brief===''){
-            this.setState({
-                briefError:true,
-
-            })
-        }else{
-            this.setState({
-                project: project,
-                briefError:false,
-
-            })
-        }
-    };
-    handleOkAdd = (project) => {
-        console.log(project);
+    callbackAddEdit = (project) => {
         let that = this;
         fetch(`/api/project`, {
             method: 'POST',
@@ -230,15 +181,10 @@ class Project extends Component {
             message.error('添加失败');
             console.error(err);
         });
-        this.handleCancelAdd();
-    };
-    handleCancelAdd = () => {
-
         this.setState({
-            visibleAdd: false,
+            addProjectLayer: <span></span>
         });
     };
-
 //判断是否是登陆状态
     checkLogin() {
         let that = this;
@@ -266,32 +212,6 @@ class Project extends Component {
         })
     }
 
-    renderFirstPage() {
-        let that = this;
-        let projects = this.state.projects;
-        fetch('/api/projects/all',
-            {credentials: 'same-origin'})
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                else {
-                    return {data: []};
-                }
-            })
-            .then(function (data) {
-                if (data.result) {
-                    let projectsAll = data.data;
-                    projectsAll.map(p => {
-                        projects.push(p);
-                    });
-                    that.setState({
-                        projects: projects,
-                        projectsExport:projectsAll
-                    });
-                }
-            });
-    }
 
     renderProjectList(i = 0, status = 'ALL', pid = 'ALL') {
         let that = this;
@@ -310,26 +230,24 @@ class Project extends Component {
             })
             .then(function (data) {
 
-                    if (data.result) {
-                        that.setState({
-                            projectStatus: status,
-                            pid: pid,
-                            projectList: data.projects,
-                            total: Number(data.total),
-                            pageNum: Number(data.current)
-                        });
-                        console.log(that.state);
-                    }
-                    else {
-                        that.setState({
-                            projectStatus: status,
-                            pid: pid
-                        });
-                    }
-                });
+                if (data.result) {
+                    that.setState({
+                        projectStatus: status,
+                        pid: pid,
+                        projectList: data.projects,
+                        total: Number(data.total),
+                        pageNum: Number(data.current)
+                    });
+                }
+                else {
+                    that.setState({
+                        projectStatus: status,
+                        pid: pid
+                    });
+                }
+            });
 
     };
-
 
     componentWillMount() {
         this.checkLogin();
@@ -347,97 +265,8 @@ class Project extends Component {
                       <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
                       <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/>
                       <div>
-                          <Modal title="Report Export" className="" visible={this.state.visibleDownload}
-                                 onOk={this.handleOkDownload} onCancel={this.handleCancelDownload}>
-                              <div>
-                                  <div className="report-input"><span className="label">Projects:</span>
-                                      <Select  className={'filter'} mode="multiple" style={{ width: 300 }} >
-                                          {this.state.projectsExport.map(p=>{
-                                              return <Option key={p.pid} value={p.pid}>{p.projectName}</Option>
-                                          })}
-
-                                      </Select>
-                                  </div>
-                                  <div className="report-input"><span className="label">Period:</span>
-                                      <Select className={'filter'} defaultValue="0" style={{ width: 150 }}>
-                                          <Option value="0">This Week</Option>
-                                          <Option value="1">Last Week</Option>
-                                          <Option value="2">Custom</Option>
-                                      </Select>
-                                  </div>
-                                  <div className="report-input date-div">
-                                      <span className="label">Range:</span>
-                                      <RangePicker />
-                                  </div>
-                              </div>
-                          </Modal>
-                          <Modal title="Add Project"
-                                 visible={this.state.visibleAdd}
-                                 maskClosable={true}
-                                 onCancel={this.handleCancelAdd}
-                                 footer={null}>
-                              <div className="addContent">
-                                  <div className="add-input">
-                                      <span className="table-title">Status:</span>
-                                      <Select defaultValue="ACTIVE"
-                                              className='select-style'
-                                              onChange={this.statusChange}>
-                                          <Option value="ACTIVE">Active</Option>
-                                          <Option value="PENDING">Pending</Option>
-                                          <Option value="CLOSE">Close</Option>
-                                      </Select>
-                                  </div>
-                                  <div className="add-input">
-                                      <span className="table-title">Project Name:</span>
-                                      <Input placeholder="input projectName" style={{
-                                          border:this.state.isNameExists?'1px solid rgba(240,65,52,0.5)':''
-                                      }}
-                                             className='select-style'
-                                             onChange={(val)=>this.projectNameChange(val)}/>
-                                      <span className="error-tip" style={{display:this.state.projectError?'inline-block':'none'}}>*</span>
-                                      <div style={{ display:this.state.isNameExists?'block':'none',
-                                          margin:'5px 0 0 104px',color:'#f04134'}}>Project Name Exists!
-                                      </div>
-                                      <span style={{display:this.state.projectErrorTip?'inline-block':'none',
-                                          margin:'5px 0 0 104px',color:'#f04134'}}>不能少于四个字符</span>
-                                  </div>
-                                  <div className="add-input">
-                                      <span className="table-title">Team member:</span>
-                                      <Select
-                                          mode="tags"
-                                          className='select-style'
-                                          searchPlaceholder="标签模式"
-                                          placeholder="Please select"
-                                          onChange={this.teamMemberChange}
-                                      >
-                                          {
-                                              this.state.usersList.map(function (list) {
-                                                  return (
-                                                      <Option key={list.uid}>{list.uid}</Option>
-                                                  )
-                                              })
-                                          }
-                                      </Select>
-                                      <span className="error-tip" style={{display:this.state.memberError?'inline-block':'none'}}>*</span>
-                                  </div>
-                                  <div className="add-input">
-                                      <span className="table-title">Brief:</span>
-                                      <Input  className='select-style'
-                                              type="textarea"
-                                              autosize={{minRows: 4}}
-                                              onChange={this.briefChange}
-                                      />
-                                      <span className="error-tip" style={{display:this.state.briefError?'inline-block':'none'}}>*</span>
-                                  </div>
-                              </div>
-                              <div className="dialog-footer">
-                                  <Button key="add" className="dialog-footer-button" size="large"
-                                          disabled={this.state.projectError||this.state.memberError||this.state.briefError}
-                                          onClick={(project)=>this.handleOkAdd(this.state.project)}>Add</Button>
-                                  <Button key="cancel" className="dialog-footer-button cancel" size="large"
-                                          onClick={this.handleCancelAdd}>Cancel</Button>
-                              </div>
-                          </Modal>
+                          {this.state.exportProjectLayer}
+                          {this.state.addProjectLayer}
                       </div>
                   </div>}>
                 <div className="filter"><span className="project">Filter Projects:</span>

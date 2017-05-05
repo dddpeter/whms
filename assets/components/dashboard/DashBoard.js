@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Row, Col, Icon, Button, Popconfirm, Pagination, Select,message} from 'antd';
+import {Card, Row, Col, Icon, Button, Popconfirm, Pagination, Select, message} from 'antd';
 const Option = Select.Option;
 import  Highcharts from 'highcharts'
 import ModalDialog from './ModalDialog'
@@ -46,7 +46,8 @@ class DashBoard extends Component {
             pageNum: 0,
             loading: false,
             taskList: [],
-            editState:false
+            editState: false,
+            addModalLayer: <span></span>,
         };
     }
 
@@ -54,10 +55,11 @@ class DashBoard extends Component {
     changeSelect = (value) => {
         this.getStat(value);
     };
+
     renderChart(data) {
 
-        if(data.length<1){
-            var charts = new Highcharts.chart('summaryCharts',{
+        if (data.length < 1) {
+            var charts = new Highcharts.chart('summaryCharts', {
                 chart: {
                     plotBackgroundColor: null,
                     plotBorderWidth: null,
@@ -84,12 +86,12 @@ class DashBoard extends Component {
                 series: [{
                     type: 'pie',
                     name: 'Projects',
-                    data: [{y:1,name:'No Data'}]
+                    data: [{y: 1, name: 'No Data'}]
                 }]
             });
 
         }
-        else{
+        else {
             var charts = new Highcharts.chart('summaryCharts', {
                 chart: {
                     plotBackgroundColor: null,
@@ -127,12 +129,40 @@ class DashBoard extends Component {
 
     //点击add图标之后弹出对话框
     clickPlus = () => {
+        let that = this;
+        fetch(`/api/projects/all`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(function (response) {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return {data: []};
+            }
+        })
+            .then((data)=>{
+                this.setState({
+                    addModalLayer: <ModalDialog callbackContent={that.callbackContent}
+                                                callbackAddCancel={that.callbackAddCancel}
+                                                projectList={data.data}
+                                                uidName={that.state.uid}
+                                                task={that.props.task}
+                    />
+                });
+
+            });
+    };
+    callbackAddCancel = () => {
         this.setState({
-            visibleState: true,
-        });
+            addModalLayer: <span></span>
+        })
     };
     //点击增加按钮后
-    callbackVal = (task) => {
+    callbackContent = (task) => {
         let that = this;
         fetch(`/api/task`, {
             method: 'POST',
@@ -149,8 +179,11 @@ class DashBoard extends Component {
                 return {data: []};
             }
         }).then((data) => {
+
             if (data.result) {
+                message.success('添加成功');
                 that.getTasks();
+                that.getStat(0);
             }
             else {
                 message.error('添加失败');
@@ -159,6 +192,9 @@ class DashBoard extends Component {
             message.error('添加失败');
             console.error(err);
         });
+        this.setState({
+            addModalLayer: <span></span>
+        })
     };
     //点击修改按钮后
     callbackEdit = (task) => {
@@ -179,7 +215,9 @@ class DashBoard extends Component {
             }
         }).then((data) => {
             if (data.result) {
+                message.success('修改成功');
                 that.getTasks();
+                that.getStat(0);
             }
             else {
                 message.error('编辑任务失败');
@@ -350,6 +388,8 @@ class DashBoard extends Component {
         }).then((data) => {
             if (data.result) {
                 this.getTasks(this.state.pageNum);
+                that.getStat(0);
+                message.success('删除成功');
             }
         }).catch(err => {
             console.error(err);
@@ -391,16 +431,13 @@ class DashBoard extends Component {
             console.log('not logins', error)
         })
     }
+
     componentDidMount() {
         this.checkLogin();
         this.getName();
         this.getStat(0);
         this.getTasks();
     }
-    componentWillMount() {
-
-    }
-
     render() {
 
         return (
@@ -411,12 +448,14 @@ class DashBoard extends Component {
                               extra={<Icon className='content-title-icon-big'
                                            type="plus-circle" onClick={this.clickPlus}
                               />}>
+                            <div> {this.state.addModalLayer}</div>
+
                             {
                                 this.state.dataList.map(function (list) {
                                     return (
                                         <Card key={list.id} title={list.projectname} className="content-title-secondary"
                                               extra={
-                                                  (list.status == 1)?(
+                                                  (list.status == 1) ? (
                                                       <span>
                                                                   <span className='big-area'
                                                                         onClick={(e, o) => this.editChanged(e, list)}>
@@ -473,7 +512,8 @@ class DashBoard extends Component {
                                 <Row className="right-content-table">
                                     <Col><span className="col-span">Welcome!</span>{this.state.uid}</Col>
                                     <Col>{this.state.email}</Col>
-                                    <Col><a href={`http://auth.dev.s.unicc.com.cn/?login=${this.state.uid}`} target="about_blank" >Change your password</a></Col>
+                                    <Col><a href={`http://auth.dev.s.unicc.com.cn/?login=${this.state.uid}`}
+                                            target="about_blank">Change your password</a></Col>
                                     <Col>
                                         <Button className='button-purple' onClick={this.handleOutClick}>
                                             <Icon type="logout"/>Log out
@@ -501,10 +541,6 @@ class DashBoard extends Component {
                         </Card>
                     </Col>
                 </Row>
-                <ModalDialog visible={this.state.visibleState}
-                             uidName={this.state.uid}
-                             callbackClick={this.onClickChanged}
-                             callbackContent={this.callbackVal}/>
                 <EditDialog visible={this.state.editState}
                             taskList={this.state.taskList}
                             backEditClick={this.backEditClick}
