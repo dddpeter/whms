@@ -76,6 +76,7 @@ module.exports = function (app, authChecker) {
                 .findOne({where: {id: task.id, uid: uid}})
                 .then(function (obj) {
                     if (obj) { // update
+                        console.log(obj);
                         return obj.update(task);
                     }
                     else { // insert
@@ -89,6 +90,7 @@ module.exports = function (app, authChecker) {
     }
     app.post('/api/task', authChecker, (req, res, next) => {
         var task = req.body;
+        console.log(task);
         saveOrUpdate(req, task).then(
             function (o) {
                 res.json({result: true, data: task});
@@ -96,7 +98,7 @@ module.exports = function (app, authChecker) {
             function (e) {
                 res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
-                res.end(JSON.stringify({result: false, 'error': 'Task add or update fail'}));
+                res.end(JSON.stringify({result: false, 'error': 'Task add or update fail:'+e.message}));
             });
     });
     app.delete('/api/tasks/:taskId', authChecker, (req, res, next) => {
@@ -132,7 +134,7 @@ module.exports = function (app, authChecker) {
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-6
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+1
-        AND uid='lijd')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
+        AND uid='${uid}')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
         FROM t_task t
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-6
@@ -169,7 +171,7 @@ module.exports = function (app, authChecker) {
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         '${firstDay}'
         AND '${lastDay}'
-        AND uid='lijd')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
+        AND uid='${uid}')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
         FROM t_task t
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         '${firstDay}'
@@ -195,7 +197,7 @@ module.exports = function (app, authChecker) {
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+7
-        AND uid='lijd')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
+        AND uid='${uid}')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
         FROM t_task t
         WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER
@@ -268,6 +270,7 @@ module.exports = function (app, authChecker) {
         sequelize.query(`select p."projectName",t.content,t."type",t.uid,to_char(t."issueDate",'YYYY/MM/DD') from t_task t left join t_project p on (p.pid=t.pid) 
         where ${ where} and t."issueDate" between '${start}' and '${end}'`, {type: sequelize.QueryTypes.SELECT})
             .then((data) => {
+            console.log(data);
                 let rows = [];
                 data.map((d, i) => {
                     let row = [];

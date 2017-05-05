@@ -15,10 +15,8 @@ import {
     Card,
     Icon,
     Select,
-    DatePicker,
     Pagination,
     message,
-    Button
 } from 'antd';
 const Panel = Collapse.Panel;
 import {browserHistory} from 'react-router';
@@ -102,12 +100,10 @@ class Project extends Component {
         let pids = projectExportList.pids;
         let pidQueryString = 'pids[]='+pids.join('&pids[]=');
         let url = `/api/tasks/export?start=${projectExportList.start}&end=${projectExportList.end}&${pidQueryString}`;
-        console.log(url);
         window.open(url);
         this.setState({
             exportProjectLayer: <span></span>
         });
-
     };
     callbackExportCancle = () => {
         this.setState({
@@ -242,7 +238,6 @@ class Project extends Component {
                         total: Number(data.total),
                         pageNum: Number(data.current)
                     });
-                    console.log(that.state);
                 }
                 else {
                     that.setState({

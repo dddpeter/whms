@@ -8,6 +8,14 @@ import moment from 'moment'
 import ePromise from 'es6-promise'
 ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
+const typeList = {
+    'DEVELOPMENT': '开发',
+    'TEST': '测试',
+    'REQUIREMENT': '需求',
+    'MAINTAIN': '运维',
+    'TEAM': '团队',
+    'ADMIN': '管理'
+};
 
 const columns=[
     {
@@ -144,8 +152,10 @@ class ProjectContent extends Component{
                 let list = [];
                 data.tasks.map((task,i)=>{
                     let date = task.issueDate;
+                    let typeRestart=typeList[task.type];
                     date =moment(date).format('YYYY/MM/DD HH:mm:ss');
                     task.issueDate =date;
+                    task.type=typeRestart;
                     list[i] = task;
                 });
                 that.setState({
@@ -183,13 +193,13 @@ class ProjectContent extends Component{
                 body: JSON.stringify(members)
             }).then((response) => {
                 if (response.status === 200) {
-                    console.log('ok');
                     return response.json();
                 } else {
                     return {data: []};
                 }
             }).then((data) => {
                 if (data.result) {
+                    message.success('添加成功');
                     that.getProjectProfile();
                 }
                 else {
@@ -249,7 +259,7 @@ class ProjectContent extends Component{
                 </Row>
                 <Row>
                     <div className="update" >Updated entries ：
-                        <Select defaultValue={'0'} onSelect = {this.selectRange}>
+                        <Select defaultValue={'0'} onSelect = {this.selectRange} style={{width:'90px'}}>
                             <Select.Option value={'0'}>This Week</Select.Option>
                             <Select.Option value={'1'}>Last Week</Select.Option>
                             <Select.Option value={'2'}>Last Month</Select.Option>
@@ -259,7 +269,10 @@ class ProjectContent extends Component{
                 </Row>
                 <Row>
                     <div className="table-row">
-                        <Table columns={columns} bordered  rowKey="id" className='task-table'  dataSource={this.state.taskList}></Table>
+                        <Table columns={columns} bordered  rowKey="id" className='task-table'
+                               dataSource={this.state.taskList}>
+
+                        </Table>
                         <Pagination pageSize={this.state.pageSize}
                                     current={this.state.pageNum + 1}
                                     total={this.state.pageSize * this.state.total}

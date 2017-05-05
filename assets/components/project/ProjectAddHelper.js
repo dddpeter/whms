@@ -155,11 +155,12 @@ class ProjectAddHelper extends Component{
                         <div className="add-input">
                             <span className="table-title">Team member:</span>
                             <Select
-                                mode="tags"
+                                mode="multiple"
                                 className='select-style'
                                 searchPlaceholder="标签模式"
                                 placeholder="Please select"
                                 onChange={this.teamMemberChange}
+
                             >
                                 {
                                     this.state.usersList.map(function (list) {

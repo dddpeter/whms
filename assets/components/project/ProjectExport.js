@@ -3,7 +3,7 @@ import {
     Modal,
     Select,
     DatePicker,
-    Button
+    Button,
 } from 'antd';
 import moment from 'moment';
 const RangePicker = DatePicker.RangePicker;
@@ -16,9 +16,12 @@ let last = moment(first, 'YYYY-MM-DD').add(6, 'days').format('YYYY-MM-DD');
 
 
 class ProjectExport extends Component {
-
     constructor(props) {
         super(props);
+        let list =[];
+        props.projectsList.map((p,i)=>{
+            list[i] = p.pid;
+        });
         this.state = {
             projectsList: this.props.projectsList,
             start: first,
@@ -27,62 +30,54 @@ class ProjectExport extends Component {
             endTime: moment(new Date()).format('YYYY-MM-DD'),
             dataVisible: true,
             pickerVisible: false,
-            exportError:true,
+            exportError:false,
             projectExportList:{
-                pids:'',
+                pids:list,
                 start: first,
                 end: last,
-            }
+            },
+            pidList:list,
         };
     }
-
     periodTime = (v) => {
+        let projectExportList=this.state.projectExportList;
         if (v === '0') {
+            projectExportList.start=first;
+            projectExportList.end=last;
             this.setState({
+                projectExportList:projectExportList,
                 start: first,
                 end: last,
                 dataVisible: true,
                 pickerVisible: false,
             })
-
         } else if (v === '1') {
+            projectExportList.start= moment(first, 'YYYY-MM-DD').add(-7, 'days').format('YYYY-MM-DD');
+            projectExportList.end=moment(first, 'YYYY-MM-DD').add(-7, 'days').add(6, 'days').format('YYYY-MM-DD');
             this.setState({
                 start: moment(first, 'YYYY-MM-DD').add(-7, 'days').format('YYYY-MM-DD'),
                 end: moment(first, 'YYYY-MM-DD').add(-7, 'days').add(6, 'days').format('YYYY-MM-DD'),
+                projectExportList:projectExportList,
                 dataVisible: true,
                 pickerVisible: false,
             })
         } else {
+            projectExportList.start= first;
+            projectExportList.end=moment(new Date()).format('YYYY-MM-DD');
             this.setState({
                 start: first,
                 end: moment(new Date()).format('YYYY-MM-DD'),
+                projectExportList:projectExportList,
                 dataVisible: false,
                 pickerVisible: true,
             })
-        }
-    };
-    //不可点击时间
-    disabledDate = (current) => {
-        if(current){
-            let now = new Date();
-            let myyear = now.getFullYear();
-            let mymonth = now.getMonth()+1;
-            let myweekday = now.getDate()-now.getDay()+1;
-            if(mymonth < 10){
-                mymonth = "0" + mymonth;
-            }
-            if(myweekday < 10){
-                myweekday = "0" + myweekday;
-            }
-            let fristDayWeek=moment(myyear+"-"+mymonth + "-" + myweekday, 'YYYY-MM-DD');
-            return fristDayWeek.valueOf() > current.valueOf() || current.valueOf() > Date.now();
         }
     };
     //project选择发生变化时
     selectProjectsChange=(value)=>{
         let  projectExportList=this.state.projectExportList;
         projectExportList.pids=value;
-        if(value===''){
+        if(value.length){
             this.setState({
                 exportError:true,
             })
@@ -91,19 +86,17 @@ class ProjectExport extends Component {
                 projectExportList:projectExportList,
                 exportError:false,
             })
-
         }
-
     };
+    //时间变化时
     onDateChange=(dates)=>{
         let  projectExportList=this.state.projectExportList;
-        projectExportList.start=dates[0];
-        projectExportList.end=dates[1];
+        projectExportList.start=dates[0].format('YYYY-MM-DD');
+        projectExportList.end=dates[1].format('YYYY-MM-DD');
         this.setState({
             projectExportList:projectExportList,
         })
     };
-
     componentWillReceiveProps(props) {
         this.setState({
             projectsList: props.projectsList
@@ -126,6 +119,7 @@ class ProjectExport extends Component {
                                     mode="multiple"
                                     style={{width: 300}}
                                     onChange={this.selectProjectsChange}
+                                    defaultValue={this.state.pidList}
                             >
                                 {this.state.projectsList.map(p => {
                                     return <Option key={p.pid} value={p.pid}>{p.projectName}</Option>
@@ -150,12 +144,11 @@ class ProjectExport extends Component {
                                 style={{display:this.state.pickerVisible?'inline-block':'none'}}
                                 defaultValue={[moment(this.state.startTime), moment(this.state.endTime)]}
                                 onChange={this.onDateChange}
-                                disabledDate={this.disabledDate}
                             />
                         </div>
                     </div>
                     <div className="dialog-footer">
-                        <Button key="add" className="dialog-footer-button" size="large"
+                        <Button key="export" className="dialog-footer-button" size="large"
                                 disabled={this.state.exportError}
                                 onClick={this.handleOkDownload}>Export</Button>
                         <Button key="cancel" className="dialog-footer-button cancel" size="large"

@@ -34,9 +34,7 @@ class ModalDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            visible: false,
             selectProject: '',
-            projectList: [],
             defaultProject: {pid: ''},
             dateStatus: 'success',
             dataHelp: '',
@@ -44,64 +42,19 @@ class ModalDialog extends React.Component {
             contentStatus: 'success',
             contentHelp: '',
             contentError: true,
+            projectList: this.props.projectList,
             task: {
-                status: moment().format('YYYY-MM-DD'),
+                pid: this.props.projectList[0].pid,
+                uid: this.props.uidName,
+                status: 1,
                 type: 'DEVELOPMENT',
-                spendTime: 1
-            }
-
+                spendTime: 1,
+                issueDate: moment().format('YYYY-MM-DD HH:mm:ss')
+            },
         };
     }
 
-    componentWillReceiveProps(props) {
-        let task = this.state.task;
-        task.uid = props.uidName;
-        this.setState({
-            task: task
-        });
-    };
 
-    //引入project接口
-    getProjects = () => {
-        let that = this;
-        fetch(`/api/user/projects`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'same-origin'
-        }).then(function (response) {
-            if (response.status === 200) {
-                return response.json();
-            } else {
-                return {data: []};
-            }
-        })
-            .then(function (data) {
-                let task = that.state.task;
-                if (data.result) {
-                    task.pid = data.data[0].pid;
-                    that.setState({
-                        defaultProject: data.data[0],
-                        projectList: data.data,
-                        task: task
-                    })
-
-                }
-
-            });
-    };
-    //选择检验
-
-
-    //点击了弹出框的关闭按钮
-    handleCancel = () => {
-        this.setState({
-            visible: false,
-        });
-        this.props.callbackClick(this.state.visible);
-    };
     //点击选择project
     handleChangeProject = (value) => {
         let task = this.state.task;
@@ -134,18 +87,18 @@ class ModalDialog extends React.Component {
     };
     //格式化日期并限制可选日期在本周内
     disabledDate = (current) => {
-        if(current){
+        if (current) {
             let now = new Date();
             let myyear = now.getFullYear();
-            let mymonth = now.getMonth()+1;
-            let myweekday = now.getDate()-now.getDay()+1;
-            if(mymonth < 10){
+            let mymonth = now.getMonth() + 1;
+            let myweekday = now.getDate() - now.getDay() + 1;
+            if (mymonth < 10) {
                 mymonth = "0" + mymonth;
             }
-            if(myweekday < 10){
+            if (myweekday < 10) {
                 myweekday = "0" + myweekday;
             }
-            let fristDayWeek=moment(myyear+"-"+mymonth + "-" + myweekday, 'YYYY-MM-DD');
+            let fristDayWeek = moment(myyear + "-" + mymonth + "-" + myweekday, 'YYYY-MM-DD');
             return fristDayWeek.valueOf() > current.valueOf() || current.valueOf() > Date.now();
         }
     };
@@ -205,21 +158,23 @@ class ModalDialog extends React.Component {
         e.preventDefault();
         let task = this.state.task;
         this.props.callbackContent(task);
-        this.handleCancel();
     };
 
-    componentDidMount() {
-        this.getProjects();
-    }
+    componentWillReceiveProps(props) {
+        this.setState({
+            projectList: props.projectList,
+            uidName: props.uidName,
+        });
+    };
 
 
     render() {
         return (
             <div>
                 <Modal
-                    visible={this.props.visible}
+                    visible={true}
                     maskClosable={true}
-                    onCancel={this.handleCancel}
+                    onCancel={this.props.callbackAddCancel}
                     title="Add Task"
                     footer={null}
                 >
@@ -229,7 +184,7 @@ class ModalDialog extends React.Component {
                             label="Project:"
                         >
                             <Select className='selectProject'
-                                    defaultValue={this.state.defaultProject.pid}
+                                    defaultValue={this.props.projectList[0].pid}
                                     style={{width: 120}}
                                     onChange={(v) => this.handleChangeProject(v)}>
                                 {
@@ -255,7 +210,8 @@ class ModalDialog extends React.Component {
                             validateStatus={this.state.dateStatus}
                             help={this.state.dataHelp}
                         >
-                            <DatePicker defaultValue={moment(this.state.task.issueDate, 'YYYY-MM-DD')}
+                            <DatePicker defaultValue={moment()}
+                                        format="YYYY-MM-DD"
                                         disabledDate={this.disabledDate}
                                         onChange={this.onChangeDate}/>
                         </FormItem>
@@ -295,12 +251,12 @@ class ModalDialog extends React.Component {
                         <div className="dialog-footer">
                             <Button key="add" className="dialog-footer-button" size="large"
                                     onClick={this.onAdd}
-                                    disabled={this.state.contentError || this.state.dataError|| this.state.durationError}
+                                    disabled={this.state.contentError || this.state.dataError || this.state.durationError}
                             >
                                 Add
                             </Button>
                             <Button key="cancel" className="dialog-footer-button cancel" size="large"
-                                    onClick={this.handleCancel}>cancel</Button>
+                                    onClick={this.props.callbackAddCancel}>cancel</Button>
                         </div>
                     </Form>
                 </Modal>
