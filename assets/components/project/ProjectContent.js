@@ -232,7 +232,7 @@ class ProjectContent extends Component{
                 <Row>
                     <Col span={16}>
                         <Row>
-                            <span className="brief">Brief:</span>
+                            <span className="brief">简介:</span>
                         </Row>
                         <Row className="brief-content">
                             <span>{this.props.project.brief}</span>

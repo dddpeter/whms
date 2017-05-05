@@ -49,8 +49,8 @@
 .content-title-big{
   color: $theme_color;
 }
-.content-title-icon-big{
-  margin: 0 12px;
+.big-left{
+  margin-left:15px;
 }
 .ant-collapse > .ant-collapse-item > .ant-collapse-header > .collapse-panel-title > .title{
   font-size: 14px;
@@ -117,9 +117,10 @@
                   > .ant-col-16 {
                     padding-top: 10px;
                     > .brief-content {
-                      > span {
-                        padding-left: 35px;
-                      }
+                      padding:10px 20px;
+                      font-size:12px;
+                      overflow-y:scroll;
+                      height:80px;
                     }
                     > .ant-row {
                       > .brief {
@@ -339,4 +340,7 @@
 }
 .ant-popover-title{
   font-size:14px!important;
+}
+.table-row{
+  padding-top:15px!important;
 }

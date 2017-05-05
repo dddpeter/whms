@@ -250,7 +250,7 @@ class Project extends Component {
             <Card title={<span className="content-title-big">Projects</span>} className="projects-header"
                   extra={<div className="icon-container">
                       <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
-                      <Icon type="plus-circle" className='content-title-icon-big' onClick={this.showModalAdd}/>
+                      <Icon type="plus-circle" className='content-title-icon-big big-left' onClick={this.showModalAdd}/>
                       <div>
                           {this.state.exportProjectLayer}
                           {this.state.addProjectLayer}
