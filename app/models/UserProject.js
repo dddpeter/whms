@@ -11,11 +11,13 @@ const userProject = sequelize.define('userProject', {
         },
        pid:{
            type: Sequelize.DataTypes.UUID,
-           references: {model:'t_project',key:'pid'}
+           references: {model:'t_project',key:'pid'},
+           allowNull: false
        },
        uid:{
            type: Sequelize.DataTypes.STRING,
-           references: {model:'t_user',key:'uid'}
+           references: {model:'t_user',key:'uid'},
+           allowNull: false
        }
     },
     {
