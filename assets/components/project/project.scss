@@ -45,14 +45,12 @@
       background: #efefef;
     }
   }
-
 }
-
 .content-title-big{
   color: $theme_color;
 }
 .content-title-icon-big{
-  margin: 0 4px;
+  margin: 0 12px;
 }
 .ant-collapse > .ant-collapse-item > .ant-collapse-header > .collapse-panel-title > .title{
   font-size: 14px;
@@ -88,8 +86,6 @@
         }
       }
     }
-
-
     > .filter {
       font-size: 14px!important;
       padding: 0 0 25px 6px;
@@ -295,7 +291,6 @@
           width: 60%;
         }
         >.big-input{
-
           width:67.2%;
           height:40%;
         }

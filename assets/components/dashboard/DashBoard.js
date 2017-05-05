@@ -126,7 +126,6 @@ class DashBoard extends Component {
 
 
     }
-
     //点击add图标之后弹出对话框
     clickPlus = () => {
         let that = this;
@@ -306,7 +305,6 @@ class DashBoard extends Component {
                 that.renderChart(data.data);
             });
     }
-
 //调取姓名接口
     getName() {
         let that = this;
@@ -332,7 +330,6 @@ class DashBoard extends Component {
             }
         });
     }
-
     //调取pageNum和pageSize接口
     getTasks(pageNum = 0) {
         let that = this;
@@ -372,7 +369,6 @@ class DashBoard extends Component {
             }
         });
     };
-
     //删除项目
     deleteTask = (taskId) => {
         let that = this;
@@ -395,7 +391,6 @@ class DashBoard extends Component {
             console.error(err);
         });
     };
-
     //Pagination改变时
     onChange = (page) => {
         this.setState({
@@ -431,7 +426,6 @@ class DashBoard extends Component {
             console.log('not logins', error)
         })
     }
-
     componentDidMount() {
         this.checkLogin();
         this.getName();

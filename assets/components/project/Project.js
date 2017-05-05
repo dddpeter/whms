@@ -48,17 +48,14 @@ class Project extends Component {
             dateDisable: true,
         }
     }
-
     projectsSelect = (value) => {
         let status = this.state.projectStatus;
         this.renderProjectList(0, status, value);
     };
-
     statusSelect = (value) => {
         let pid = this.state.pid;
         this.renderProjectList(0, value, pid);
     };
-
     renderFirstPage() {
         let that = this;
         let projects = this.state.projects;
@@ -85,7 +82,6 @@ class Project extends Component {
                 }
             });
     }
-
     //点击弹出下载窗口
     showModalDownload = () => {
         this.setState({
@@ -109,7 +105,6 @@ class Project extends Component {
         this.setState({
             exportProjectLayer: <span></span>
         });
-
     };
     // 点击弹出添加列表
     showModalAdd = () => {
