@@ -79,12 +79,12 @@ class ProjectExport extends Component {
         projectExportList.pids=value;
         if(value.length){
             this.setState({
-                exportError:true,
+                exportError:false,
             })
         }else{
             this.setState({
                 projectExportList:projectExportList,
-                exportError:false,
+                exportError:true,
             })
         }
     };

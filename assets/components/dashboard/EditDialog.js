@@ -18,18 +18,17 @@ import './modalDialog.scss'
 const FormItem = Form.Item;
 const Option = Select.Option;
 import moment from 'moment'
-
+const typeList={'DEVELOPMENT':'开发','TEST':'测试','REQUIREMENT':'需求','MAINTAIN':'运维','TEAM':'团队','ADMIN':'管理'};
 const formItemLayout = {
     labelCol: {
         xs: {span: 24},
-        sm: {span: 6},
+        sm: {span: 8},
     },
     wrapperCol: {
         xs: {span: 24},
-        sm: {span: 14},
+        sm: {span: 16},
     },
 };
-const typeList={'DEVELOPMENT':'开发','TEST':'测试','REQUIREMENT':'需求','MAINTAIN':'运维','TEAM':'团队','ADMIN':'管理'};
 
 class ModalDialog extends React.Component {
     constructor(props) {
@@ -53,7 +52,6 @@ class ModalDialog extends React.Component {
                 content:this.props.taskList.content
             },
         };
-
     }
     componentWillReceiveProps(props){
         this.setState({
@@ -171,16 +169,6 @@ class ModalDialog extends React.Component {
         }
     };
     render() {
-        const formItemLayout = {
-            labelCol: {
-                xs: {span: 24},
-                sm: {span: 8},
-            },
-            wrapperCol: {
-                xs: {span: 24},
-                sm: {span: 16},
-            },
-        };
         return (
             <div>
 
@@ -239,7 +227,6 @@ class ModalDialog extends React.Component {
                                          defaultValue={this.props.taskList.spendTime}
                                          onChange={this.onChangeDuration}
                             />(单位：h)
-
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
@@ -259,7 +246,6 @@ class ModalDialog extends React.Component {
                                     size="large"
                                     onClick={this.onEdit}
                                     disabled={this.state.contentError || this.state.dataError|| this.state.durationError}
-
                             >Ok</Button>
                             <Button key="cancel"
                                     className="dialog-footer-button cancel"
@@ -272,5 +258,4 @@ class ModalDialog extends React.Component {
         );
     }
 }
-
 export default ModalDialog

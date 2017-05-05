@@ -3,13 +3,12 @@ import { Link } from 'react-router';
 import '../../node_modules/antd/dist/antd.css'
 import '../sass/App.scss'
 import {Layout,Menu} from 'antd';
-
 const { Header, Content, Footer } = Layout;
 
 class App extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
-    }
+    };
     constructor(props) {
         super(props);
         var pathname = this.props.location.pathname.replace('/','');
@@ -31,7 +30,7 @@ class App extends Component {
             current: e.key,
         });
         this.context.router.push('/'+e.key)
-    }
+    };
     gotoIndex(){
         this.setState({
             current: 'dashboard',

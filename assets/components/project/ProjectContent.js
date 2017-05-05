@@ -92,12 +92,6 @@ class ProjectContent extends Component{
                 });
             });
     };
-    selectRange= (v)=>{
-        this.setState({
-            range:v
-        });
-        this.getTasks(0,v);
-    };
     getProjectProfile= ()=>{
         let that = this;
         fetch(`/api/users/duration/${this.state.pid}`, {
@@ -174,6 +168,21 @@ class ProjectContent extends Component{
                 message.info('获取后台数据失败');
             }
         });
+    };
+    selectRange= (v)=>{
+        this.setState({
+            range:v
+        });
+        this.getTasks(0,v);
+    };
+    //Pagination改变时
+    onPageChange = (page) => {
+        this.setState({
+            pageNum: page - 1,
+            current: page - 1
+        });
+        this.getTasks(page - 1,this.state.range);
+
     };
     onAddMemberCancel=()=>{
         this.setState({
@@ -277,7 +286,7 @@ class ProjectContent extends Component{
                                     current={this.state.pageNum + 1}
                                     total={this.state.pageSize * this.state.total}
                                     showQuickJumper
-                                    onChange={(pageNum)=>this.getTasks(pageNum-1)}
+                                    onChange={this.onPageChange}
                                     className="pagination"
                         />
                     </div>

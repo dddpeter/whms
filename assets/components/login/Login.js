@@ -3,12 +3,12 @@
  */
 import React, {Component} from 'react';
 import './login.scss'
-import { Form,Card, Icon, Input, Button,Tooltip,message} from 'antd';
+import {Form, Card, Icon, Input, Button, message} from 'antd';
 const FormItem = Form.Item;
 import ePromise from 'es6-promise'
 ePromise.polyfill();
 import fetch from 'isomorphic-fetch';
-import { browserHistory } from 'react-router';
+import {browserHistory} from 'react-router';
 
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -17,10 +17,11 @@ class Login extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
     };
-    constructor(props){
+
+    constructor(props) {
         super(props);
-        this.state={
-            canSubmit:true,
+        this.state = {
+            canSubmit: true,
         };
     }
     //判断是否是登陆状态
@@ -43,7 +44,7 @@ class Login extends Component {
         }).then((data) => {
             if (data.result) {
                 message.info('已经登陆');
-                that.context.router.push({pathname:'/'});
+                that.context.router.push({pathname: '/'});
             }
 
         }).catch((error) => {
@@ -51,61 +52,60 @@ class Login extends Component {
             console.log('检查登录状态失败', error)
         })
     }
+
     componentDidMount() {
         // To disabled submit button at the beginning.
         this.checkLogin();
         this.props.form.validateFields();
 
     }
+
     //点击登陆按钮
     handleSubmit = (e) => {
-        var returnUrl = decodeURIComponent(browserHistory.getCurrentLocation().query.returnUrl);
-        var that = this;
+        let returnUrl = decodeURIComponent(browserHistory.getCurrentLocation().query.returnUrl);
+        let that = this;
         e.preventDefault();
-        this.setState({canSubmit:false});
+        this.setState({canSubmit: false});
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                fetch('/api/login',{
-                    method:'POST',
+                fetch('/api/login', {
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    credentials:'same-origin',
-                    body:JSON.stringify(values)
-                }).then(function(response) {
+                    credentials: 'same-origin',
+                    body: JSON.stringify(values)
+                }).then(function (response) {
                     if (response.status === 200) {
                         return response.json();
-                    }else{
-                        that.setState({canSubmit:true});
-                       return {}
+                    } else {
+                        that.setState({canSubmit: true});
+                        return {}
                     }
                 })
-                    .then(function(data){
-                       var uid=data.uid;
-                        if(data.result){
-                            message.info('登录成功');
-                            if(returnUrl && returnUrl!='undefined'){
-
+                    .then(function (data) {
+                        let uid = data.uid;
+                        if (data.result) {
+                            message.success('登录成功');
+                            if (returnUrl && returnUrl != 'undefined') {
                                 that.context.router.push(returnUrl);
-
                             }
-                            else{
-                                that.context.router.push({pathname:'/',state:{uid:uid}});
+                            else {
+                                that.context.router.push({pathname: '/', state: {uid: uid}});
                             }
                         }
-                        else{
-                            that.setState({canSubmit:true});
+                        else {
+                            that.setState({canSubmit: true});
                             message.error('登录失败');
                         }
-
                     });
             }
         });
     };
-  //网络错误提示框显示的时间限制
+    //网络错误提示框显示的时间限制
     render() {
-        const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+        const {getFieldDecorator, getFieldsError, getFieldError, isFieldTouched} = this.props.form;
         const userNameError = isFieldTouched('userName') && getFieldError('userName');
         const passwordError = isFieldTouched('password') && getFieldError('password');
         return (
@@ -121,9 +121,9 @@ class Login extends Component {
                                 help={userNameError || ''}
                             >
                                 {getFieldDecorator('uid', {
-                                    rules: [{ required: true, message: 'Please input your username!' }],
+                                    rules: [{required: true, message: 'Please input your username!'}],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
+                                    <Input prefix={<Icon type="user" style={{fontSize: 13}}/>} placeholder="Username"/>
                                 )}
                             </FormItem>
                             <FormItem
@@ -131,21 +131,21 @@ class Login extends Component {
                                 help={passwordError || ''}
                             >
                                 {getFieldDecorator('password', {
-                                    rules: [{ required: true, message: 'Please input your Password!' }],
+                                    rules: [{required: true, message: 'Please input your Password!'}],
                                 })(
-                                    <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
+                                    <Input prefix={<Icon type="lock" style={{fontSize: 13}}/>} type="password"
+                                           placeholder="Password"/>
                                 )}
                             </FormItem>
                             <FormItem>
-
-                                    <Button
-                                        style={{width:'100%'}}
-                                        className='login-content-form-submit'
-                                        htmlType="submit"
-                                        disabled={this.state.canSubmit && hasErrors(getFieldsError())}
-                                    >
-                                        Log in
-                                    </Button>
+                                <Button
+                                    style={{width: '100%'}}
+                                    className='login-content-form-submit'
+                                    htmlType="submit"
+                                    disabled={this.state.canSubmit && hasErrors(getFieldsError())}
+                                >
+                                    Log in
+                                </Button>
                             </FormItem>
                         </Form>
                     </Card>
