@@ -3,7 +3,8 @@
  */
 const sequelize = require('../utils/SequelizeConfig');
 const Task = require('../models/Task');
-const nodeExcel = require('excel-export');
+//const nodeExcel = require('excel-export');
+const excel = require('node-excel-export');
 const moment = require('moment');
 module.exports = function (app, authChecker) {
     app.get('/api/tasks', authChecker, (req, res, next) => {
@@ -98,7 +99,7 @@ module.exports = function (app, authChecker) {
             function (e) {
                 res.writeHead(500,
                     {"Content-Type": "application/json; charset=utf8"});
-                res.end(JSON.stringify({result: false, 'error': 'Task add or update fail:'+e.message}));
+                res.end(JSON.stringify({result: false, 'error': 'Task add or update fail:' + e.message}));
             });
     });
     app.delete('/api/tasks/:taskId', authChecker, (req, res, next) => {
@@ -213,11 +214,11 @@ module.exports = function (app, authChecker) {
                 }
             );
     });
-    app.get('/api/tasks/export', authChecker,(req, res, next) => {
+    app.get('/api/tasks/export', authChecker, (req, res, next) => {
         var start = req.query.start;
         var end = req.query.end;
-        var pids =req.query.pids;
-        var where ='1=1 and ';
+        var pids = req.query.pids;
+        var where = '1=1 and ';
         if (start == undefined) {
             let curr = moment();
             let day = curr.format('d');
@@ -229,64 +230,114 @@ module.exports = function (app, authChecker) {
             let first = curr.add(0 - day, 'days').add(1, 'days').format('YYYY-MM-DD');
             end = moment(first, 'YYYY-MM-DD').add(6, 'days').format('YYYY-MM-DD');
         }
-        if(pids.length>0){
-            let  temp ='';
-            pids.map((pid,i)=>{
+        if (pids.length > 0) {
+            let temp = '';
+            pids.map((pid, i) => {
                 pids[i] = `'${pid}'`;
             });
             where += `t.pid in (${pids.join(',')})`;
         }
-        var conf = {};
-        var configs = [];
-        conf.name = 'test';
-        conf.stylesXmlFile = __dirname + "/styles.xml";
-        conf.cols = [
-            {
-                caption: '项目',
-                type: 'string'
+        const styles = {
+            headerMain: {
+                fill: {
+                    fgColor: {
+                        rgb: 'B3930784'
+                    }
+                },
+                alignment:{
+                    vertical:'center',
+                    horizontal:'center'
+                },
+                font: {
+                    color: {
+                        rgb: 'FFFFFF'
+                    },
+                    sz: 14,
+                    bold: true,
+                    underline: false
+                }
             },
+            cellNormal: {
+                font: {
+                    color: {
+                        rgb: '333333'
+                    },
+                    sz: 12,
 
-            {
-                caption: '内容',
-                type: 'string',
-                width: 30
+                },
+                alignment:{
+                    wrapText:true
+                }
             },
-            {
-                caption: '类型',
-                type: 'string',
-                width: 20
-            },
-            {
-                caption: '用户',
-                type: 'string'
+            cellCenter: {
+                font: {
+                    color: {
+                        rgb: '333333'
+                    },
+                    sz: 12,
 
+                },
+                alignment:{
+                    wrapText:true,
+                    horizontal:'center'
+                }
+            }
+        };
+
+        const specification = {
+            projectName: { // <- the key should match the actual data key
+                displayName: '项目', // <- Here you specify the column header
+                headerStyle: styles.headerMain, // <- Header style
+                cellStyle: styles.cellNormal,
+                width: '20'
             },
-            {
-                caption: '时间',
-                type: 'string',
-                width: 20
+            content: { // <- the key should match the actual data key
+                displayName: '内容', // <- Here you specify the column header
+                headerStyle: styles.headerMain, // <- Header style
+                cellStyle: styles.cellNormal,
+                width: '60'
             },
-        ];
-        sequelize.query(`select p."projectName",t.content,t."type",t.uid,to_char(t."issueDate",'YYYY/MM/DD') from t_task t left join t_project p on (p.pid=t.pid) 
+            spendTime: { // <- the key should match the actual data key
+                displayName: '耗时(h)', // <- Here you specify the column header
+                headerStyle: styles.headerMain, // <- Header style
+                cellStyle: styles.cellCenter,
+                width: '10'
+            },
+            type: { // <- the key should match the actual data key
+                displayName: '类型', // <- Here you specify the column header
+                headerStyle: styles.headerMain, // <- Header style
+                cellStyle: styles.cellCenter,
+                width: '20'
+            },
+            uid: { // <- the key should match the actual data key
+                displayName: '用户', // <- Here you specify the column header
+                headerStyle: styles.headerMain, // <- Header style
+                cellStyle: styles.cellCenter,
+                width: '10'
+            },
+            startTime: { // <- the key should match the actual data key
+                displayName: '时间', // <- Here you specify the column header
+                headerStyle: styles.headerMain, // <- Header style
+                cellStyle: styles.cellCenter,
+                width: '20'
+            }
+        };
+
+        sequelize.query(`select p."projectName",t.content,t."spendTime",t."type",t.uid,to_char(t."issueDate",'YYYY/MM/DD') "startTime" from t_task t left join t_project p on (p.pid=t.pid) 
         where ${ where} and t."issueDate" between '${start}' and '${end}'`, {type: sequelize.QueryTypes.SELECT})
             .then((data) => {
-            console.log(data);
-                let rows = [];
-                data.map((d, i) => {
-                    let row = [];
-                    let j = 0;
-                    for (var key in d) {
-                        row[j] = d[key];
-                        j++;
-                    }
-                    rows[i] = row;
-                });
-                conf.rows = rows;
-                configs.push(conf);
-                let result = nodeExcel.execute(configs);
-                res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-                res.setHeader("Content-Disposition", `attachment; filename=Report(${start}_${end}).xlsx`);
-                res.end(result, 'binary');
+                console.log(data);
+                const report = excel.buildExport(
+                    [ // <- Notice that this is an array. Pass multiple sheets to create multi sheet report
+                        {
+                            name: `Report(${start}_${end}).xlsx`, // <- Specify sheet name (optional)
+                            specification: specification, // <- Report specification
+                            data: data // <-- Report data
+                        }
+                    ]
+                );
+                res.attachment(`Report(${start}_${end}).xlsx`); // This is sails.js specific (in general you need to set headers)
+                return res.send(report);
             });
     });
 
