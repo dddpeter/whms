@@ -1,14 +1,11 @@
 @charset "utf-8";
 @import "../../sass/var";
-
-
 body,html{
   margin:0;
   padding:0;
 }
 .login{
 &-background{
-
   background:#930784;
   width: 99%;
   height: 250px;
@@ -38,10 +35,7 @@ body,html{
       &-submit{
         margin-top:10px;
         width:100%;
-
       }
     }
   }
-
-
 }

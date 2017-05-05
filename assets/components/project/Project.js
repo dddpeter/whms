@@ -97,9 +97,9 @@ class Project extends Component {
         let pidQueryString = 'pids[]='+pids.join('&pids[]=');
         let url = `/api/tasks/export?start=${projectExportList.start}&end=${projectExportList.end}&${pidQueryString}`;
         window.open(url);
-        this.setState({
+        /*this.setState({
             exportProjectLayer: <span></span>
-        });
+        });*/
     };
     callbackExportCancle = () => {
         this.setState({
@@ -146,7 +146,6 @@ class Project extends Component {
             addProjectLayer: <span></span>
         });
     };
-
     callbackAddEdit = (project) => {
         let that = this;
         fetch(`/api/project`, {
@@ -206,8 +205,6 @@ class Project extends Component {
             console.log('not logins', error)
         })
     }
-
-
     renderProjectList(i = 0, status = 'ALL', pid = 'ALL') {
         let that = this;
         if (i == undefined) {
@@ -224,7 +221,6 @@ class Project extends Component {
                 }
             })
             .then(function (data) {
-
                 if (data.result) {
                     that.setState({
                         projectStatus: status,
@@ -241,18 +237,14 @@ class Project extends Component {
                     });
                 }
             });
-
     };
-
     componentWillMount() {
         this.checkLogin();
     }
-
     componentDidMount() {
         this.renderFirstPage();
         this.renderProjectList();
     }
-
     render() {
         return (
             <Card title={<span className="content-title-big">Projects</span>} className="projects-header"
@@ -281,7 +273,9 @@ class Project extends Component {
                     </Select>
                 </div>
                 <div className="projectList">
-                    <Collapse onChange={this.onExpand} className='collapseStyle'>
+                    <Collapse accordion
+                        onChange={this.onExpand}
+                        className='collapseStyle'>
                         {this.state.projectList.map((p) => {
                             return (
                                 <Panel header={<ProjectHeader title={p.projectName}
@@ -308,6 +302,5 @@ class Project extends Component {
             </Card>
         )
     }
-
 }
 export  default  Project;

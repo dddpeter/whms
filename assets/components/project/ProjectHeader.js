@@ -1,6 +1,4 @@
-
 import React, {Component} from 'react';
-
 class ProjectHeader extends Component {
     static defaultProps = {
         extra: '',
@@ -12,7 +10,6 @@ class ProjectHeader extends Component {
         display: 'inline-block',
         float: 'right'
     };
-
     render() {
         return (
             <div className="collapse-panel-title">
@@ -22,5 +19,4 @@ class ProjectHeader extends Component {
         )
     }
 }
-
 export default ProjectHeader;

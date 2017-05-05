@@ -261,14 +261,16 @@ class DashBoard extends Component {
                 } else {
                     message.error('登出失败');
                 }
-            }).then(function (data) {
+            }).then((data)=> {
+                if(data.result){
+                    message.success('登出成功');
+                }
             that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
         }).catch((error) => {
             message.error('登出失败');
             console.log('logout failed', error)
         })
     };
-
     //list
     showTotal = (total) => {
         return `Total ${total} items`;
@@ -403,7 +405,7 @@ class DashBoard extends Component {
 //判断是否是登陆状态
     checkLogin() {
         let that = this;
-        var returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
+        let returnUrl = encodeURIComponent(browserHistory.getCurrentLocation().pathname);
         fetch('/api/check/login', {
             method: 'GET',
             headers: {
@@ -433,7 +435,6 @@ class DashBoard extends Component {
         this.getTasks();
     }
     render() {
-
         return (
             <div className="content">
                 <Row gutter={8}>
@@ -479,7 +480,6 @@ class DashBoard extends Component {
                                             </Row>
                                         </Card>
                                     );
-
                                 }.bind(this))
                             }
                             <div className="clear">

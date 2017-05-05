@@ -3,13 +3,11 @@
  */
 import React, {Component} from 'react';
 import {Icon, Popover,message} from 'antd';
-
 message.config({
     top: 80,
     duration: 2,
 });
 class ProjectStatusHelper extends Component{
-
     constructor(props){
         super(props);
         this.state = {
@@ -25,9 +23,9 @@ class ProjectStatusHelper extends Component{
     statusPopVisibleChange = (visibleStatuspop) => {
 
         this.setState({visibleStatuspop});
-    }
+    };
     statusChange=(e,status)=>{
-        var that =this;
+        let that =this;
         this.setState({
             visibleStatuspop: false
         });
@@ -60,13 +58,12 @@ class ProjectStatusHelper extends Component{
                     message.error('修改失败');
                 }
             });
-    }
+    };
     stopPop=(e)=>{
         e.stopPropagation();
         e.preventDefault()
-    }
+    };
     render(){
-
         return(
             <div className="edit-div" ><span>Status:<span className="project-status">{this.state.status}</span></span>
             <Popover

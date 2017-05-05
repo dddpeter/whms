@@ -8,7 +8,6 @@ import {
 import './project.scss';
 const Option = Select.Option;
 
-
 class ProjectAddHelper extends Component{
 
     constructor(props){
@@ -48,7 +47,7 @@ class ProjectAddHelper extends Component{
         let project = this.state.project;
         let isNameExists = false;
         project.projectName = e.target.value;
-        if(project.projectName.length<4){
+        if(project.projectName.length<2){
             this.setState({
                 projectError:true,
                 projectErrorTip:true,
@@ -115,11 +114,8 @@ class ProjectAddHelper extends Component{
         this.setState({
             usersList:props.usersList
         });
-
     }
-
     render(){
-
         return(
             <div>
                 <Modal title="Add Project"
@@ -150,7 +146,7 @@ class ProjectAddHelper extends Component{
                                 margin:'5px 0 0 104px',color:'#f04134'}}>Project Name Exists!
                             </div>
                             <span style={{display:this.state.projectErrorTip?'inline-block':'none',
-                                margin:'5px 0 0 104px',color:'#f04134'}}>不能少于四个字符</span>
+                                margin:'5px 0 0 104px',color:'#f04134'}}>不能少于两个字符</span>
                         </div>
                         <div className="add-input">
                             <span className="table-title">Team member:</span>
@@ -190,7 +186,6 @@ class ProjectAddHelper extends Component{
                                 onClick={this.props.callbackAddCancel}>Cancel</Button>
                     </div>
                 </Modal>
-
             </div>
         )
     }

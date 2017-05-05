@@ -209,6 +209,7 @@ module.exports = function (app, authChecker) {
         let pageSize = req.query.pageSize;
         let range =req.query.range;
         let whereObj = {};
+        let whereString ='and 1=1';
         let pid = req.params.pid;
         let curr = moment();
         let day =curr.format('d');
@@ -237,13 +238,16 @@ module.exports = function (app, authChecker) {
             let myDate = new Date(year, month, 0);
             last = year + "-" + month + "-" + myDate.getDate()+" 23:59:59";//上个月的最后一天
         }
-
-        if(range!=3){
+        if(range==3){
+            whereString =' and 1=1';
+        }
+        else{
             whereObj["issueDate"] = {
                 $between:[first,last]
             };
+            whereString = ` and "issueDate" between '${first}' and '${last}'`;
         }
-
+        // console.log(whereObj);
         if (pageNum === undefined || isNaN(pageNum)) {
             pageNum = 0;
         }
@@ -253,9 +257,9 @@ module.exports = function (app, authChecker) {
         Task.findAll({where:whereObj, offset: pageSize * pageNum, limit: pageSize,order: [['issueDate', 'DESC']]})
             .then(function (tasks) {
                 var tasks = tasks;
-                sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_task where pid='${pid}' and "issueDate" between '${first}' and '${last}'`,{type: sequelize.QueryTypes.SELECT})
+                sequelize.query(`select ceil(count(*)/(${pageSize}+0.00)) from t_task where pid='${pid}' ${whereString} `,{type: sequelize.QueryTypes.SELECT})
                     .then(function (total) {
-                        console.log(total);
+                        // console.log(total);
                             res.json({
                                 result: true,
                                 current: pageNum,

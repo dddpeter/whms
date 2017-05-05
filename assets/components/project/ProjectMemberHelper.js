@@ -3,7 +3,7 @@
  */
 import {Modal, Button} from 'antd';
 import React, {Component} from 'react';
-import {Select,message, InputNumber} from 'antd';
+import {Select} from 'antd';
 const Option = Select.Option;
 
 class ProjectMemberHelper extends Component {
@@ -36,17 +36,11 @@ class ProjectMemberHelper extends Component {
         let members = this.state.members;
         this.props.callbackMemberEdit(members);
     };
-
-    componentDidMount(){
-
-    }
     componentWillReceiveProps(props){
         this.setState({
             users:props.users
         });
-
     }
-
     render() {
         return (
             <Modal title="Add Project Member" visible={true}

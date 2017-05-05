@@ -26,9 +26,6 @@ const formItemLayout = {
         sm: {span: 16},
     },
 };
-const config = {
-    rules: [{type: 'object', required: true, message: 'Please select time!'}],
-};
 
 class ModalDialog extends React.Component {
     constructor(props) {
@@ -53,8 +50,6 @@ class ModalDialog extends React.Component {
             },
         };
     }
-
-
     //点击选择project
     handleChangeProject = (value) => {
         let task = this.state.task;
@@ -63,7 +58,6 @@ class ModalDialog extends React.Component {
             task: task
         });
     };
-
     //点击date后选择日期
     onChangeDate = (time) => {
         let task = this.state.task;
@@ -166,8 +160,6 @@ class ModalDialog extends React.Component {
             uidName: props.uidName,
         });
     };
-
-
     render() {
         return (
             <div>
@@ -194,9 +186,7 @@ class ModalDialog extends React.Component {
                                         )
                                     }.bind(this))
                                 }
-
                             </Select>
-
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
