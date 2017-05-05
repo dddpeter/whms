@@ -18,11 +18,13 @@ const task = sequelize.define('task', {
         },
         type: {
             type: Sequelize.DataTypes.ENUM,
-            values: ['DEVELOPMENT', 'TEST', 'REQUIREMENT', 'MAINTAIN', 'TEAM', 'ADMIN']
+            values: ['DEVELOPMENT', 'TEST', 'REQUIREMENT', 'MAINTAIN', 'TEAM', 'ADMIN'],
+            allowNull: false
         },
         uid: {
             type: Sequelize.DataTypes.STRING,
-            references: {model: 't_user', key: 'uid'}
+            references: {model: 't_user', key: 'uid'},
+            allowNull: false
         },
         spendTime:{
             type:Sequelize.DataTypes.BIGINT,
@@ -31,7 +33,8 @@ const task = sequelize.define('task', {
         },
         pid: {
             type: Sequelize.DataTypes.UUID,
-            references: {model: 't_project', key: 'pid'}
+            references: {model: 't_project', key: 'pid'},
+            allowNull: false
         },
         status:{
             type:Sequelize.DataTypes.INTEGER,
@@ -40,6 +43,7 @@ const task = sequelize.define('task', {
         },
         content: {
             type: Sequelize.DataTypes.STRING,
+            allowNull: false
         }
     },
     {

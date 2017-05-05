@@ -243,13 +243,19 @@ module.exports = function (app, authChecker) {
         conf.cols = [
             {
                 caption: '项目',
-                type: 'string'
+                type: 'string',
+                width: 40
             },
 
             {
                 caption: '内容',
                 type: 'string',
-                width: 30
+                width: 80
+            },
+            {
+                caption: '耗时(h)',
+                type: 'number',
+                width: 15
             },
             {
                 caption: '类型',
@@ -267,7 +273,7 @@ module.exports = function (app, authChecker) {
                 width: 20
             },
         ];
-        sequelize.query(`select p."projectName",t.content,t."type",t.uid,to_char(t."issueDate",'YYYY/MM/DD') from t_task t left join t_project p on (p.pid=t.pid) 
+        sequelize.query(`select p."projectName",t.content,t."spendTime",t."type",t.uid,to_char(t."issueDate",'YYYY/MM/DD') from t_task t left join t_project p on (p.pid=t.pid) 
         where ${ where} and t."issueDate" between '${start}' and '${end}'`, {type: sequelize.QueryTypes.SELECT})
             .then((data) => {
             console.log(data);
