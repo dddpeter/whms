@@ -14,6 +14,21 @@ Array.prototype.remove = function(val) {
 };
 /**
  *
+ * @param req
+ * @param res
+ * @param next
+ */
+var authRoleChecker = (req, res, next) => {
+        if(req.session.loginUser.email.endsWith('unicc.com.cn')){
+            next();
+        }
+        else{
+            res.writeHead(401, {"Content-Type": "application/json; charset=utf8"});
+            res.end(JSON.stringify({result: false, 'error': 'not authorized'}));
+        }
+}
+/**
+ *
  * @param app
  * @param authChecker
  */
@@ -97,7 +112,7 @@ module.exports = function (app, authChecker) {
     /**
      * 更新一个项目的信息
      */
-    app.post('/api/project/:pid', authChecker, (req, res, next) => {
+    app.post('/api/project/:pid', authChecker,authRoleChecker, (req, res, next) => {
         let data = req.body;
         var pid = req.params.pid;
         Project.findOne({where: {pid: pid}})
@@ -125,7 +140,7 @@ module.exports = function (app, authChecker) {
     /**
      * 添加一个项目
      */
-    app.post('/api/project', authChecker,(req, res, next) => {
+    app.post('/api/project', authChecker,authRoleChecker,(req, res, next) => {
         let project = req.body;
         let members = [];
         if(project.members && project.members.length>0){
@@ -164,7 +179,7 @@ module.exports = function (app, authChecker) {
     /**
      *添加项目成员
      */
-    app.post('/api/project/member/:pid', authChecker,(req, res, next) => {
+    app.post('/api/project/member/:pid', authChecker,authRoleChecker,(req, res, next) => {
         let pid = req.params.pid;
         let members = req.body;
         var membersWillAdd = [];
