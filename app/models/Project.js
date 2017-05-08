@@ -22,7 +22,7 @@ const Project = sequelize.define('proejct', {
         },
         status: {
             type: Sequelize.DataTypes.ENUM,
-            values: ['ACTIVE', 'PENDING', 'CLOSE']
+            values: ['OPEN', 'CLOSE']
         },
         brief: {
             type: Sequelize.DataTypes.STRING
