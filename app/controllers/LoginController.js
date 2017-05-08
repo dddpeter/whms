@@ -224,7 +224,7 @@ module.exports = function (app, authChecker) {
     });
     app.get('/api/check/login', (req, res, next) => {
         if (req.session.loginUser) {
-            res.json({result: true});
+            res.json({result: true,user:req.session.loginUser});
         }
         else {
             res.json({result: false, error: 'not logins'});

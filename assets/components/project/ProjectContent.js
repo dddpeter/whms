@@ -229,10 +229,16 @@ class ProjectContent extends Component{
     }
     render(){
         let icon =<span></span>;
-        let user = JSON.parse(window.localStorage['user']);
-        if (this.state.status=='OPEN' && user.email.endsWith('unicc.com.cn')){
-            icon =  <Icon type="edit" onClick={this.showMemberEdit}></Icon>;
+        let user;
+        if(window.localStorage['user']){
+            user = JSON.parse(window.localStorage['user']);
         }
+        if(user){
+            if (this.state.status=='OPEN' && user.email.endsWith('unicc.com.cn')){
+                icon =  <Icon type="edit" onClick={this.showMemberEdit}></Icon>;
+            }
+        }
+
         return(
             <div>
                 <Row>
