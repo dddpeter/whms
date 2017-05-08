@@ -67,7 +67,7 @@ class ProjectMemberHelper extends Component {
                     <Button key="add" className="dialog-footer-button" size="large"
                              disabled={this.state.addError}
                             onClick={this.memberAdd}>Add</Button>
-                    <Button key="cancel" className="dialog-footer-button cancel" size="large"
+                    <Button key="cancel" className="cancel" size="large"
                             onClick={this.props.callbackCancle}>Cancel</Button>
                 </div>
             </Modal>

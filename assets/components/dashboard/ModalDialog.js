@@ -12,7 +12,7 @@ import {
     Input,
     Button
 } from 'antd';
-import './modalDialog.scss'
+import './dashboard.scss'
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -40,6 +40,7 @@ class ModalDialog extends React.Component {
             contentHelp: '',
             contentError: true,
             projectList: this.props.projectList,
+            descriptionError:true,
             task: {
                 pid: this.props.projectList[0].pid,
                 uid: this.props.uidName,
@@ -137,13 +138,14 @@ class ModalDialog extends React.Component {
             this.setState({
                 contentStatus: 'error',
                 contentHelp: 'Please enter a description on the content',
-                contentError: true
+                contentError: true,
             })
         } else {
             this.setState({
                 contentStatus: 'success',
                 contentHelp: '',
-                contentError: false
+                contentError: false,
+                descriptionError:false
             })
         }
     };
@@ -170,7 +172,7 @@ class ModalDialog extends React.Component {
                     title="Add Task"
                     footer={null}
                 >
-                    <Form className="modal-dialog">
+                    <Form>
                         <FormItem
                             {...formItemLayout}
                             label="Project:"
@@ -237,7 +239,10 @@ class ModalDialog extends React.Component {
                         >
                             <Input ref="content" type="textarea" style={{width: '80%'}} rows={4}
                                    onChange={this.onChangeDescription}/>
+                            <span className="error-tip"
+                                  style={{display: this.state.descriptionError ? 'inline-block' : 'none'}}>*</span>
                         </FormItem>
+                    </Form>
                         <div className="dialog-footer">
                             <Button key="add" className="dialog-footer-button" size="large"
                                     onClick={this.onAdd}
@@ -245,10 +250,9 @@ class ModalDialog extends React.Component {
                             >
                                 Add
                             </Button>
-                            <Button key="cancel" className="dialog-footer-button cancel" size="large"
-                                    onClick={this.props.callbackAddCancel}>cancel</Button>
+                            <Button key="cancel" size="large" className="cancel"
+                                    onClick={this.props.callbackAddCancel}>Cancel</Button>
                         </div>
-                    </Form>
                 </Modal>
             </div>
         );

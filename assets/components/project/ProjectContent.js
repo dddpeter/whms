@@ -54,6 +54,7 @@ class ProjectContent extends Component{
     constructor(props){
         super(props);
         this.state = {
+            status:this.props.project.status,
             teamMember: ['None'],
             duration:0,
             range:0,
@@ -227,6 +228,11 @@ class ProjectContent extends Component{
         this.getProjectProfile();
     }
     render(){
+        let icon =<span></span>;
+        let user = JSON.parse(window.localStorage['user']);
+        if (this.state.status=='OPEN' && user.email.endsWith('unicc.com.cn')){
+            icon =  <Icon type="edit" onClick={this.showMemberEdit}></Icon>;
+        }
         return(
             <div>
                 <Row>
@@ -259,7 +265,7 @@ class ProjectContent extends Component{
                                 <div className="right-info">
                                     <span className="info-label">Team member:</span>
                                    <text className="members">{new Array(this.state.teamMember).join(',')}</text>
-                                    <Icon type="edit" onClick={this.showMemberEdit}></Icon>
+                                    {icon}
                                     {this.state.addMemberLayer}
                                 </div>
                             </Row>

@@ -14,7 +14,7 @@ import {
     Input,
     Button
 } from 'antd';
-import './modalDialog.scss'
+import './dashboard.scss'
 const FormItem = Form.Item;
 const Option = Select.Option;
 import moment from 'moment'
@@ -248,7 +248,7 @@ class ModalDialog extends React.Component {
                                     disabled={this.state.contentError || this.state.dataError|| this.state.durationError}
                             >Ok</Button>
                             <Button key="cancel"
-                                    className="dialog-footer-button cancel"
+                                    className="cancel"
                                     size="large"
                                     onClick={this.handleCancel}>Cancel</Button>
                         </div>
