@@ -98,8 +98,8 @@ class Project extends Component {
         let url = `/api/tasks/export?start=${projectExportList.start}&end=${projectExportList.end}&${pidQueryString}`;
         window.open(url);
         /*this.setState({
-            exportProjectLayer: <span></span>
-        });*/
+         exportProjectLayer: <span></span>
+         });*/
     };
     callbackExportCancle = () => {
         this.setState({
@@ -201,6 +201,9 @@ class Project extends Component {
             if (!data.result) {
                 that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
             }
+            else{
+                window.localStorage['user'] = JSON.stringify(data.user);
+            }
         }).catch((error) => {
             console.log('not logins', error)
         })
@@ -250,18 +253,25 @@ class Project extends Component {
         this.renderProjectList();
     }
     render() {
-        let user = JSON.parse(window.localStorage['user']);
-        let extra = <div className="icon-container"></div>
-        if(user.email.endsWith('unicc.com.cn')){
-            extra = <div className="icon-container">
-                <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
-                <Icon type="plus-circle" className='content-title-icon-big big-left' onClick={this.showModalAdd}/>
-                <div>
-                    {this.state.exportProjectLayer}
-                    {this.state.addProjectLayer}
-                </div>
-            </div>
+        let user;
+        if(window.localStorage['user']){
+            user = JSON.parse(window.localStorage['user']);
         }
+
+        let extra = <div className="icon-container"></div>
+        if(user){
+            if(user.email.endsWith('unicc.com.cn')){
+                extra = <div className="icon-container">
+                    <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
+                    <Icon type="plus-circle" className='content-title-icon-big big-left' onClick={this.showModalAdd}/>
+                    <div>
+                        {this.state.exportProjectLayer}
+                        {this.state.addProjectLayer}
+                    </div>
+                </div>
+            }
+        }
+
         return (
             <Card title={<span className="content-title-big">Projects</span>} className="projects-header"
                   extra={extra}>
@@ -282,8 +292,8 @@ class Project extends Component {
                 </div>
                 <div className="projectList">
                     <Collapse accordion
-                        onChange={this.onExpand}
-                        className='collapseStyle'>
+                              onChange={this.onExpand}
+                              className='collapseStyle'>
                         {this.state.projectList.map((p) => {
                             return (
                                 <Panel header={<ProjectHeader title={p.projectName}

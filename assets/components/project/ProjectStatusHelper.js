@@ -66,10 +66,16 @@ class ProjectStatusHelper extends Component{
     };
     render(){
         let icon =<span style={{ width:'37px',display:'inline-block'}}></span>;
-        let user = JSON.parse(window.localStorage['user']);
-       if (this.state.status=='OPEN' && user.email.endsWith('unicc.com.cn')){
-           icon = <Icon type="edit" className="edit-icon" onClick={this.stopPop}></Icon>;
-       }
+        let user;
+        if(window.localStorage['user']){
+            user = JSON.parse(window.localStorage['user']);
+        }
+        if(user){
+            if (this.state.status=='OPEN' && user.email.endsWith('unicc.com.cn')){
+                icon = <Icon type="edit" className="edit-icon" onClick={this.stopPop}></Icon>;
+            }
+        }
+
 
         return(
             <div className="edit-div" ><span>Status:<span className="project-status">{this.state.status}</span></span>
