@@ -12,7 +12,7 @@ class ProjectStatusHelper extends Component{
         super(props);
         this.state = {
             visibleStatuspop: false,
-            status:''
+            status:this.props.project.status
         }
     }
     componentDidMount(){
@@ -53,6 +53,7 @@ class ProjectStatusHelper extends Component{
                     that.setState({
                         status:status,
                     });
+                    that.props.callbackChangeStatus(that.props.project,status);
                 }
                 else{
                     message.error('修改失败');
@@ -64,13 +65,18 @@ class ProjectStatusHelper extends Component{
         e.preventDefault()
     };
     render(){
+        let icon =<span style={{ width:'37px',display:'inline-block'}}></span>;
+        let user = JSON.parse(window.localStorage['user']);
+       if (this.state.status=='OPEN' && user.email.endsWith('unicc.com.cn')){
+           icon = <Icon type="edit" className="edit-icon" onClick={this.stopPop}></Icon>;
+       }
+
         return(
             <div className="edit-div" ><span>Status:<span className="project-status">{this.state.status}</span></span>
             <Popover
                 content={
                 <div>
-                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'ACTIVE')} >Active</a></p>
-                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'PENDING')}>Pending</a></p>
+                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'OPEN')} >Active</a></p>
                 <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</a></p>
                 </div>
         }
@@ -80,7 +86,7 @@ class ProjectStatusHelper extends Component{
                 visible={this.state.visibleStatuspop}
                 onVisibleChange={this.statusPopVisibleChange}
             >
-                <Icon type="edit" className="edit-icon" onClick={this.stopPop}></Icon>
+                {icon}
             </Popover>
                 </div>
         )

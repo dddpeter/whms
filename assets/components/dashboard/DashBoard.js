@@ -144,10 +144,15 @@ class DashBoard extends Component {
             }
         })
             .then((data)=>{
+           // console.log(data.data);
+                let projectList = data.data.filter(v =>
+                    v.status === 'OPEN'
+                );
+                //console.log(projectList);
                 this.setState({
                     addModalLayer: <ModalDialog callbackContent={that.callbackContent}
                                                 callbackAddCancel={that.callbackAddCancel}
-                                                projectList={data.data}
+                                                projectList={projectList}
                                                 uidName={that.state.uid}
                                                 task={that.props.task}
                     />
@@ -224,12 +229,6 @@ class DashBoard extends Component {
         }).catch(err => {
             message.error('编辑任务失败');
             console.error(err);
-        });
-    };
-    //响应用户是否点击了关闭按钮
-    onClickChanged = () => {
-        this.setState({
-            visibleState: false,
         });
     };
     //点击修改图标后弹出修改对话框
@@ -328,7 +327,9 @@ class DashBoard extends Component {
                 this.setState({
                     uid: data.user.uid,
                     email: data.user.email,
-                })
+                });
+                window.localStorage['user'] = JSON.stringify(data.user);
+
             }
         });
     }

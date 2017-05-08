@@ -205,6 +205,10 @@ class Project extends Component {
             console.log('not logins', error)
         })
     }
+    callbackChangeStatus(p,status){
+        p.status = status;
+    }
+
     renderProjectList(i = 0, status = 'ALL', pid = 'ALL') {
         let that = this;
         if (i == undefined) {
@@ -246,16 +250,21 @@ class Project extends Component {
         this.renderProjectList();
     }
     render() {
+        let user = JSON.parse(window.localStorage['user']);
+        let extra = <div className="icon-container"></div>
+        if(user.email.endsWith('unicc.com.cn')){
+            extra = <div className="icon-container">
+                <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
+                <Icon type="plus-circle" className='content-title-icon-big big-left' onClick={this.showModalAdd}/>
+                <div>
+                    {this.state.exportProjectLayer}
+                    {this.state.addProjectLayer}
+                </div>
+            </div>
+        }
         return (
             <Card title={<span className="content-title-big">Projects</span>} className="projects-header"
-                  extra={<div className="icon-container">
-                      <Icon type="download" className='content-title-icon-big' onClick={this.showModalDownload}/>
-                      <Icon type="plus-circle" className='content-title-icon-big big-left' onClick={this.showModalAdd}/>
-                      <div>
-                          {this.state.exportProjectLayer}
-                          {this.state.addProjectLayer}
-                      </div>
-                  </div>}>
+                  extra={extra}>
                 <div className="filter"><span className="project">Filter Projects:</span>
                     <Select defaultValue="ALL" onSelect={this.projectsSelect}>
                         {this.state.projects.map(
@@ -267,8 +276,7 @@ class Project extends Component {
                     <span className="status">Status:</span>
                     <Select defaultValue="ALL" onSelect={this.statusSelect}>
                         <Option value="ALL">所有</Option>
-                        <Option value="ACTIVE">活动</Option>
-                        <Option value="PENDING">暂停</Option>
+                        <Option value="OPEN">打开</Option>
                         <Option value="CLOSE">关闭</Option>
                     </Select>
                 </div>
@@ -280,6 +288,7 @@ class Project extends Component {
                             return (
                                 <Panel header={<ProjectHeader title={p.projectName}
                                                               extra={<ProjectStatusHelper
+                                                                  callbackChangeStatus={this.callbackChangeStatus}
                                                                   project={p}/>}></ProjectHeader>}
                                        key={p.pid}
                                 >

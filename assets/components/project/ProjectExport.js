@@ -151,7 +151,7 @@ class ProjectExport extends Component {
                         <Button key="export" className="dialog-footer-button" size="large"
                                 disabled={this.state.exportError}
                                 onClick={this.handleOkDownload}>Export</Button>
-                        <Button key="cancel" className="dialog-footer-button cancel" size="large"
+                        <Button key="cancel" className="cancel" size="large"
                                 onClick={this.props.callbackExportCancle}>Cancel</Button>
                     </div>
                 </Modal>

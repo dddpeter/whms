@@ -105,10 +105,21 @@ body,.ant-card{
     }
   }
 }
-.ant-btn:hover, .ant-btn:focus, .ant-btn:active, .ant-btn.active{
+.ant-btn:hover, .ant-btn:focus {
+  color: rgba(145, 6, 133, 0.75)!important;
+  border-color: rgba(145, 6, 133, 0.75)!important;
+}
+.dialog-footer-button:hover, .dialog-footer-button:focus, .dialog-footer-button:active, .dialog-footer-button.active{
   background:rgba(145, 6, 133, 0.75)!important;
   color:#fff!important;
   border:none!important;
+}
+.ant-modal-header{
+  padding:8px 16px!important;
+}
+.ant-modal-close-x{
+  height: 38px!important;
+  line-height: 38px!important;
 }
 .ant-layout-content{
   margin: 65px 50px 0 50px;
