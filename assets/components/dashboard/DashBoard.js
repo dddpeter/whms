@@ -423,15 +423,17 @@ class DashBoard extends Component {
             if (!data.result) {
                 that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
             }
+            else{
+                that.getName();
+                that.getStat(0);
+                that.getTasks();
+            }
         }).catch((error) => {
             console.log('not logins', error)
         })
     }
     componentDidMount() {
         this.checkLogin();
-        this.getName();
-        this.getStat(0);
-        this.getTasks();
     }
     render() {
         return (
