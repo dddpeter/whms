@@ -147,7 +147,6 @@ class ModalDialog extends React.Component {
     onEdit=(e)=>{
         e.preventDefault();
         let task = this.state.task;
-        console.log(task);
         this.props.callbackEdit(task);
         this.handleCancel();
     };
@@ -242,7 +241,7 @@ class ModalDialog extends React.Component {
                         </FormItem>
                         <div className="dialog-footer">
                             <Button key="edit"
-                                    className="dialog-footer-button"
+                                    className="dialog-footer-button button-style"
                                     size="large"
                                     onClick={this.onEdit}
                                     disabled={this.state.contentError || this.state.dataError|| this.state.durationError}

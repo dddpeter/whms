@@ -244,7 +244,7 @@ class ModalDialog extends React.Component {
                         </FormItem>
                     </Form>
                         <div className="dialog-footer">
-                            <Button key="add" className="dialog-footer-button" size="large"
+                            <Button key="add" className="dialog-footer-button button-style" size="large"
                                     onClick={this.onAdd}
                                     disabled={this.state.contentError || this.state.dataError || this.state.durationError}
                             >

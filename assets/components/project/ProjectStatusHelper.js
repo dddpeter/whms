@@ -21,7 +21,6 @@ class ProjectStatusHelper extends Component{
         });
     }
     statusPopVisibleChange = (visibleStatuspop) => {
-
         this.setState({visibleStatuspop});
     };
     statusChange=(e,status)=>{
@@ -53,7 +52,7 @@ class ProjectStatusHelper extends Component{
                     that.setState({
                         status:status,
                     });
-                    that.props.callbackChangeStatus(that.props.project,status);
+                    that.props.callbackChangeStatus();
                 }
                 else{
                     message.error('修改失败');
@@ -75,15 +74,13 @@ class ProjectStatusHelper extends Component{
                 icon = <Icon type="edit" className="edit-icon" onClick={this.stopPop}></Icon>;
             }
         }
-
-
         return(
             <div className="edit-div" ><span>Status:<span className="project-status">{this.state.status}</span></span>
             <Popover
                 content={
                 <div>
-                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'OPEN')} >Active</a></p>
-                <p className="project-status-link"><a onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</a></p>
+                <p className="project-status-link" onClick={(e,v)=>this.statusChange(e,'OPEN')}>Open</p>
+                <p className="project-status-link" onClick={(e,v)=>this.statusChange(e,'CLOSE')}>Close</p>
                 </div>
         }
                 placement="topRight"

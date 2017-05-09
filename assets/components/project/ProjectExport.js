@@ -148,7 +148,7 @@ class ProjectExport extends Component {
                         </div>
                     </div>
                     <div className="dialog-footer">
-                        <Button key="export" className="dialog-footer-button" size="large"
+                        <Button key="export" className="dialog-footer-button button-style" size="large"
                                 disabled={this.state.exportError}
                                 onClick={this.handleOkDownload}>Export</Button>
                         <Button key="cancel" className="cancel" size="large"
