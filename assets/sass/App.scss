@@ -62,9 +62,9 @@ body,.ant-card{
     >.logo-img{
       display: inline-block;
       float: left;
-      margin: 5px 15px;
+      margin: 8px 15px;
       >img{
-        height:40px;
+        height:34px;
       }
 
     }
@@ -76,7 +76,8 @@ body,.ant-card{
         display:block;
         height:50px;
         line-height:50px;
-        font-size: 14px;
+        font-size: 18px;
+        font-weight: 700;
       }
     }
   }
@@ -135,7 +136,7 @@ body,.ant-card{
   color: $theme_color;
 }
 .ant-collapse > .ant-collapse-item{
-border-radius: 5px;
+  border-radius: 5px;
 
 
 }
