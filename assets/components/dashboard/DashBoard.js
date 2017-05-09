@@ -144,11 +144,9 @@ class DashBoard extends Component {
             }
         })
             .then((data)=>{
-           // console.log(data.data);
                 let projectList = data.data.filter(v =>
                     v.status === 'OPEN'
                 );
-                //console.log(projectList);
                 this.setState({
                     addModalLayer: <ModalDialog callbackContent={that.callbackContent}
                                                 callbackAddCancel={that.callbackAddCancel}

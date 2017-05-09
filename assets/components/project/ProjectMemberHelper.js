@@ -64,7 +64,7 @@ class ProjectMemberHelper extends Component {
                     </div>
                 </div>
                 <div className="dialog-footer">
-                    <Button key="add" className="dialog-footer-button" size="large"
+                    <Button key="add" className="dialog-footer-button button-style" size="large"
                              disabled={this.state.addError}
                             onClick={this.memberAdd}>Add</Button>
                     <Button key="cancel" className="cancel" size="large"

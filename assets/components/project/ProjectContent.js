@@ -227,6 +227,12 @@ class ProjectContent extends Component{
         this.getTasks();
         this.getProjectProfile();
     }
+    componentWillReceiveProps(props) {
+        this.setState({
+            status:props.project.status,
+            pid:props.project.pid,
+        });
+    };
     render(){
         let icon =<span></span>;
         let user;

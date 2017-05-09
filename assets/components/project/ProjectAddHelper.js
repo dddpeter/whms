@@ -28,9 +28,8 @@ class ProjectAddHelper extends Component {
         super(props);
         this.state = {
             project: {
-                status: '',
+                status: 'OPEN',
                 members: [],
-                uid: '',
                 brief: ''
             },
             usersList: this.props.usersList,
@@ -40,10 +39,8 @@ class ProjectAddHelper extends Component {
             briefError: true,
             isNameExists: false,
             projects: this.props.projects,
-
         }
     }
-
     handleProjectAdd = (e) => {
         e.preventDefault();
         let project = this.state.project;
@@ -126,7 +123,9 @@ class ProjectAddHelper extends Component {
             })
         }
     };
-
+    // componentWillMount() {
+    //     this.getName();
+    // }
     componentWillReceiveProps(props) {
         this.setState({
             usersList: props.usersList
@@ -147,7 +146,7 @@ class ProjectAddHelper extends Component {
                                 {...formItemLayout}
                                 label="Status:"
                             >
-                                <Select defaultValue="ACTIVE"
+                                <Select defaultValue="OPEN"
                                         className='select-style'
                                         onChange={this.statusChange}
                                 >
@@ -213,7 +212,7 @@ class ProjectAddHelper extends Component {
                         </Form>
                     </div>
                     <div className="dialog-footer">
-                        <Button key="add" className="dialog-footer-button" size="large"
+                        <Button key="add" className="dialog-footer-button button-style" size="large"
                                 disabled={this.state.projectError || this.state.memberError || this.state.briefError}
                                 onClick={this.handleProjectAdd}>Add</Button>
                         <Button key="cancel" className="cancel" size="large"

@@ -32,7 +32,7 @@ body,.ant-card{
   padding:0 16px!important;
 }
 .ant-card-body{
-  padding:10px!important;
+  padding:8px 16px!important;
 }
 .ant-card-extra{
   top: 7px !important;
@@ -45,13 +45,15 @@ body,.ant-card{
   position: fixed;
   z-index: 900;
   width: 100%;
+  height:50px;
   top:0;
-  box-shadow:  1px 0px 2px 1px $primary-outline;
+  box-shadow:  1px 0 2px 1px $primary-outline;
   >.logo{
-    height: 64 - 16px;
+    height: 50px;
+    line-height: 50px;
     background: $theme_color;
     border-radius: 6px;
-    margin: 8px 24px 8px 0;
+    margin-right:25px;
     float: left;
     >a{
       text-decoration: none;
@@ -60,9 +62,9 @@ body,.ant-card{
     >.logo-img{
       display: inline-block;
       float: left;
-      margin: 4px 15px;
+      margin: 5px 15px;
       >img{
-        height: 64 - 24px;
+        height:40px;
       }
 
     }
@@ -72,8 +74,8 @@ body,.ant-card{
       color: white;
       >span{
         display:block;
-        height: 64 - 16px;
-        line-height: 64-16px;
+        height:50px;
+        line-height:50px;
         font-size: 14px;
       }
     }
@@ -85,8 +87,8 @@ body,.ant-card{
     font-size: 16px;
     border: 0;
     >.ant-menu-item{
-      height: 64px;
-      line-height: 64px;
+      height: 50px;
+      line-height: 50px;
       background-color: $theme_color;
       color: white;
       border: 0;
@@ -106,13 +108,14 @@ body,.ant-card{
   }
 }
 .ant-btn:hover, .ant-btn:focus {
-  color: rgba(145, 6, 133, 0.75)!important;
+  color: #ffffff!important;
+  background:rgba(145, 6, 133, 0.75)!important;
   border-color: rgba(145, 6, 133, 0.75)!important;
 }
-.dialog-footer-button:hover, .dialog-footer-button:focus, .dialog-footer-button:active, .dialog-footer-button.active{
-  background:rgba(145, 6, 133, 0.75)!important;
-  color:#fff!important;
-  border:none!important;
+.cancel:hover, .cancel:focus, .cancel:active, .cancel.active{
+  color:rgba(145, 6, 133, 0.75)!important;
+  border:1px solid rgba(145, 6, 133, 0.75)!important;
+  background:#ffffff!important;
 }
 .ant-modal-header{
   padding:8px 16px!important;
@@ -122,7 +125,7 @@ body,.ant-card{
   line-height: 38px!important;
 }
 .ant-layout-content{
-  margin: 65px 50px 0 50px;
+  margin: 51px 50px 0 50px;
   background-color: white;
   border: 1px solid $primary-outline;
   padding: 5px;

@@ -27,7 +27,6 @@ class Project extends Component {
     static contextTypes = {
         router: React.PropTypes.object.isRequired
     };
-
     constructor(props) {
         super(props);
         this.state = {
@@ -46,8 +45,9 @@ class Project extends Component {
             addProjectLayer: <span></span>,
             exportProjectLayer: <span></span>,
             dateDisable: true,
-        }
+        };
     }
+
     projectsSelect = (value) => {
         let status = this.state.projectStatus;
         this.renderProjectList(0, status, value);
@@ -208,8 +208,8 @@ class Project extends Component {
             console.log('not logins', error)
         })
     }
-    callbackChangeStatus(p,status){
-        p.status = status;
+    callbackChangeStatus=()=>{
+        this.renderProjectList();
     }
 
     renderProjectList(i = 0, status = 'ALL', pid = 'ALL') {
@@ -245,6 +245,7 @@ class Project extends Component {
                 }
             });
     };
+
     componentWillMount() {
         this.checkLogin();
     }
