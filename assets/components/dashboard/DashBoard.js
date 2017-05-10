@@ -259,9 +259,9 @@ class DashBoard extends Component {
                     message.error('登出失败');
                 }
             }).then((data)=> {
-                if(data.result){
-                    message.success('登出成功');
-                }
+            if(data.result){
+                message.success('登出成功');
+            }
             that.context.router.push({pathname: `/login?returnUrl=${returnUrl}`});
         }).catch((error) => {
             message.error('登出失败');
@@ -531,7 +531,7 @@ class DashBoard extends Component {
                                 <Option value='1'>Last week</Option>
                                 <Option value='2'>Last month</Option>
                             </Select>
-                            <div id="summaryCharts" style={{height: '300px'}}>
+                            <div id="summaryCharts">
                             </div>
                         </Card>
                     </Col>
