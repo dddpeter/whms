@@ -16,6 +16,7 @@ module.exports = {
     output: {
         path: __dirname + "/build/prod", //打包后的文件存放的地方
         filename: "[name].[chunkhash:8].js",
+        publicPath:"/",
         chunkFilename: "[name].[chunkhash:8].js",
     },
     module: { //在配置文件里添加JSON loader
