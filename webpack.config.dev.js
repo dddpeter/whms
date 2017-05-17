@@ -16,6 +16,7 @@ module.exports = {
     output: {
         path: __dirname + "/build/dev", //打包后的文件存放的地方
         filename: "[name].js",
+        publicPath:"/",
         chunkFilename: "[name].js",
     },
     module: {
