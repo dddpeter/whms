@@ -40,7 +40,7 @@ class Project extends Component {
             pid: 'ALL',
             projectStatus: 'ALL',
             pageNum: 0,
-            pageSize: 10,
+            pageSize: 20,
             total: 1,
             addProjectLayer: <span></span>,
             exportProjectLayer: <span></span>,
