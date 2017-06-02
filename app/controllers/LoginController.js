@@ -85,7 +85,7 @@ module.exports = function (app, authChecker) {
                         //unbind操作，必须要做
                         client.unbind();
                         console.log(req.cookie);
-                        if (resultObj.message === 'ok' && resultObj.user.userPassword) {
+                        if (resultObj && resultObj.message === 'ok' && resultObj.user.userPassword) {
                             let user = {uid: resultObj.user.uid, email: resultObj.user.mail};
                             req.session.loginUser = user;
                             req.session.save(function (err) {
