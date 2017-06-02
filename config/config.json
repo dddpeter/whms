@@ -24,10 +24,10 @@
       }
     },
   "production": {
-    "username": "whmser",
-    "password": "whmser",
-    "database": "whmsdevdb",
-    "host": "101.201.153.154",
+    "username": "tsqa",
+    "password": "f2b6607d8",
+    "database": "timesheet-qa",
+    "host": "10.3.2.28",
     "dialect": "postgres",
     "ldap":{
       "url":"ldap://auth.dev.s.unicc.com.cn:389",
