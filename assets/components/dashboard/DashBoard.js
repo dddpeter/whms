@@ -42,7 +42,7 @@ class DashBoard extends Component {
             dataList: [],
             current: 0,
             total: 1,
-            pageSize: 10,
+            pageSize: 25,
             pageNum: 0,
             loading: false,
             taskList: [],
