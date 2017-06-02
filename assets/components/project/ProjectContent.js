@@ -59,7 +59,7 @@ class ProjectContent extends Component{
             duration:0,
             range:0,
             pageNum:0,
-            pageSize:10,
+            pageSize:20,
             total:1,
             taskList:[],
             pid:this.props.project.pid,
