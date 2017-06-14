@@ -116,7 +116,7 @@ class Login extends Component {
                     <Card className="login-content">
                         <h1>中青IT工时统计系统</h1>
                         <Form onSubmit={this.handleSubmit} className="login-content-form">
-                            <FormItem
+                            <FormItem style={{height:'32px'}}
                                 validateStatus={userNameError ? 'error' : ''}
                                 help={userNameError || ''}
                             >
@@ -126,7 +126,7 @@ class Login extends Component {
                                     <Input prefix={<Icon type="user" style={{fontSize: 13}}/>} placeholder="Username"/>
                                 )}
                             </FormItem>
-                            <FormItem
+                            <FormItem style={{height:'32px'}}
                                 validateStatus={passwordError ? 'error' : ''}
                                 help={passwordError || ''}
                             >

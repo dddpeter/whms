@@ -3,6 +3,10 @@
 body,.ant-card{
   font-size: 12px!important;
 }
+.main-content{
+  width: 1440px!important;
+  margin: 0 auto;
+}
 .clear {
   overflow: auto;
   zoom: 1;
@@ -126,13 +130,14 @@ body,.ant-card{
   line-height: 38px!important;
 }
 .ant-layout-content{
-  margin: 51px 50px 0 50px;
+  margin: 51px 0 0 0;
   background-color: white;
   border: 1px solid $primary-outline;
   padding: 5px;
 }
 .ant-layout-footer{
   text-align: center;
+  background: white;
   color: $theme_color;
 }
 .ant-collapse > .ant-collapse-item{

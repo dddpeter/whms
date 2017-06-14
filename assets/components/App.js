@@ -39,8 +39,8 @@ class App extends Component {
     }
     render() {
         return (
-            <Layout>
-                <Header>
+            <Layout className="main-content">
+                <Header className="main-content">
                     <div className="logo">
                         <Link onClick={()=>this.gotoIndex()} className="logo-img">
                             <img  src="/images/whms-logo.png"/>
@@ -58,10 +58,10 @@ class App extends Component {
                         <Menu.Item key="project">Projects</Menu.Item>
                     </Menu>
                 </Header>
-                <Layout>
+                <Layout className="main-content">
                     <Content>{this.props.children}</Content>
                 </Layout>
-                <Footer>Copyright @2017 Create By UNICC Developer</Footer>
+                <Footer className="main-content">Copyright @2017 Create By UNICC Developer</Footer>
             </Layout>
         );
     }

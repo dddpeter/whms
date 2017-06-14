@@ -95,7 +95,7 @@ module.exports = function (app, authChecker) {
                             res.end(JSON.stringify({result: true, uid: resultObj.user.uid}));
                         }
                         else {
-                            res.end(JSON.stringify({result: false, error: resultObj.err}));
+                            res.end(JSON.stringify({result: false, error: resultObj?resultObj.err?resultObj.err:'未知错误':'连接登录服务器失败'}));
                         }
 
 

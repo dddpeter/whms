@@ -10,8 +10,7 @@ module.exports = {
             __dirname + "/assets/index.js",
             'webpack/hot/dev-server',
             'webpack-dev-server/client?http://localhost:3006'
-        ],
-        "scripts/vendor": ["react", 'react-dom', 'react-router'],
+        ]
     },
     output: {
         path: __dirname + "/build/dev", //打包后的文件存放的地方
@@ -52,10 +51,6 @@ module.exports = {
             template: './assets/html/index.html'
         }),
         new webpack.BannerPlugin("CopyRight @ UNICC Frontend"),
-        new webpack.optimize.CommonsChunkPlugin({
-            names: ['scripts/vendor', '/scripts/manifest'],
-            minChunks: Infinity
-        }),
         new CopyWebpackPlugin([{
             from: './assets/images/', to: 'images'
         },
