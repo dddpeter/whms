@@ -51,16 +51,31 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(['build/prod']),
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
+            }
+        }),
         new HtmlWebpackPlugin({
             template: './assets/html/index.html'
         }),
         new webpack.BannerPlugin("CopyRight @ UNICC Frontend"),
-       // new CleanWebpackPlugin(['public']),
         new webpack.optimize.UglifyJsPlugin(
             {
                 compress: {warnings: false}
             }
         ),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: "scripts/vendor",
+            minChunks: function(module){
+                return module.context && module.context.indexOf("node_modules") !== -1;
+            }
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: "scripts/manifest",
+            minChunks: Infinity
+        }),
+
         new CopyWebpackPlugin([{
             from: './assets/images/', to: 'images'
         },

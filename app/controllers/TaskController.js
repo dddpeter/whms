@@ -132,12 +132,12 @@ module.exports = function (app, authChecker) {
         let uid = loginUser.uid;
         sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
         FROM t_task t
-        WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
+        WHERE to_date(to_char(t."issueDate",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-6
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+1
         AND uid='${uid}')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
         FROM t_task t
-        WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
+        WHERE to_date(to_char(t."issueDate",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-6
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+1
         AND uid='${uid}' GROUP BY t.pid`)
@@ -169,12 +169,12 @@ module.exports = function (app, authChecker) {
         let uid = loginUser.uid;
         sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
         FROM t_task t
-        WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
+        WHERE to_date(to_char(t."issueDate",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         '${firstDay}'
         AND '${lastDay}'
         AND uid='${uid}')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
         FROM t_task t
-        WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
+        WHERE to_date(to_char(t."issueDate",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         '${firstDay}'
         AND '${lastDay}'
         AND uid='${uid}' GROUP BY t.pid`)
@@ -195,12 +195,12 @@ module.exports = function (app, authChecker) {
         let uid = loginUser.uid;
         sequelize.query(`SELECT to_char(sum(t."spendTime")/(select sum(t."spendTime")+0.00
         FROM t_task t
-        WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
+        WHERE to_date(to_char(t."issueDate",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+7
         AND uid='${uid}')*100.00,'999.99') y,(select p."projectName" from t_project p WHERE  p.pid=t.pid) as name
         FROM t_task t
-        WHERE to_date(to_char(t."createdAt",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
+        WHERE to_date(to_char(t."issueDate",'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN
         NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER
         AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER+7
         AND uid='${uid}' GROUP BY t.pid`)

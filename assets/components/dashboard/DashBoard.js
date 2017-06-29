@@ -46,8 +46,8 @@ class DashBoard extends Component {
             pageNum: 0,
             loading: false,
             taskList: [],
-            editState: false,
             addModalLayer: <span></span>,
+            editModalLayer:<span></span>
         };
     }
 
@@ -232,14 +232,18 @@ class DashBoard extends Component {
     //点击修改图标后弹出修改对话框
     editChanged = (e, task) => {
         this.setState({
-            editState: true,
             taskList: task,
+            editModalLayer:<EditDialog
+                    taskList={task}
+                    backEditClick={this.backEditClick}
+                    callbackEdit={this.callbackEdit}
+        />
         });
     };
     //修改页面用户是否点击了关闭按钮
     backEditClick = () => {
         this.setState({
-            editState: false,
+            editModalLayer: <span></span>
         });
     };
     //点击退出
@@ -440,7 +444,7 @@ class DashBoard extends Component {
             <div className="content">
                 <Row gutter={8}>
                     <Col span={16}>
-                        <Card className="content-title" title={<span className="content-title-big">My Entries</span>}
+                        <Card className="content-title" title={<span className="content-title-big">我的任务</span>}
                               extra={<Icon className='content-title-icon-big'
                                            type="plus-circle" onClick={this.clickPlus}
                               />}>
@@ -505,13 +509,13 @@ class DashBoard extends Component {
                         <Card className="right-content">
                             <div className="right-content-table">
                                 <Row className="right-content-table">
-                                    <Col><span className="col-span">Welcome!</span>{this.state.uid}</Col>
+                                    <Col><span className="col-span">欢迎！</span>{this.state.uid}</Col>
                                     <Col>{this.state.email}</Col>
                                     <Col><a href={`http://auth.dev.s.unicc.com.cn/?login=${this.state.uid}`}
-                                            target="about_blank">Change your password</a></Col>
+                                            target="about_blank">修改密码</a></Col>
                                     <Col>
-                                        <Button className='button-purple' onClick={this.handleOutClick}>
-                                            <Icon type="logout"/>Log out
+                                        <Button className='button-purple' size={'large'} onClick={this.handleOutClick}>
+                                            <Icon type="logout"/>退出
                                         </Button>
                                     </Col>
                                 </Row>
@@ -527,20 +531,16 @@ class DashBoard extends Component {
                                 defaultValue={"0"}
                                 filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             >
-                                <Option value='0'>This week</Option>
-                                <Option value='1'>Last week</Option>
-                                <Option value='2'>Last month</Option>
+                                <Option value='0'>本周</Option>
+                                <Option value='1'>上周</Option>
+                                <Option value='2'>上个月</Option>
                             </Select>
                             <div id="summaryCharts">
                             </div>
                         </Card>
                     </Col>
                 </Row>
-                <EditDialog visible={this.state.editState}
-                            taskList={this.state.taskList}
-                            backEditClick={this.backEditClick}
-                            callbackEdit={this.callbackEdit}
-                />
+                {this.state.editModalLayer}
             </div>
         );
     }

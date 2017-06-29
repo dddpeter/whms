@@ -54,8 +54,8 @@ class App extends Component {
                           selectedKeys={[this.state.current]}
                           onClick={this.handleClick}
                     >
-                        <Menu.Item key="dashboard">My Dashboard</Menu.Item>
-                        <Menu.Item key="project">Projects</Menu.Item>
+                        <Menu.Item key="dashboard">任务面板</Menu.Item>
+                        <Menu.Item key="project">项目列表</Menu.Item>
                     </Menu>
                 </Header>
                 <Layout className="main-content">
